@@ -216,6 +216,60 @@ launch_bot/
 }
 ```
 
+## 배포 (Cloudtype)
+
+이 프로젝트는 GitHub Actions를 통해 Cloudtype에 자동으로 배포됩니다.
+
+### 배포 설정
+
+#### 1. Cloudtype 프로젝트 생성
+
+1. [Cloudtype](https://cloudtype.io/)에 로그인
+2. 새 프로젝트 생성
+3. 스페이스와 프로젝트 이름 확인
+
+#### 2. GitHub Secrets 설정
+
+Repository Settings → Secrets and variables → Actions에서 다음 secrets를 추가:
+
+**필수 Secrets:**
+- `CLOUDTYPE_TOKEN`: Cloudtype API 키
+  - Cloudtype 대시보드 → 설정 → API 키에서 발급
+- `GHP_TOKEN`: GitHub Personal Access Token
+  - GitHub Settings → Developer settings → Personal access tokens
+  - 권한: `repo`, `admin:public_key`
+
+**Cloudtype 환경 변수 (Cloudtype 대시보드에서 설정):**
+- `slack-bot-token`: Slack Bot User OAuth Token
+- `slack-app-token`: Slack App-Level Token
+- `slack-signing-secret`: Slack Signing Secret
+- `slack-channel-id`: 주문 메시지를 보낼 채널 ID
+
+#### 3. 워크플로우 설정 수정
+
+`.github/workflows/deploy.yml` 파일에서 프로젝트 이름 수정:
+
+```yaml
+project: your-space-name/launch-bot  # 실제 스페이스명/프로젝트명으로 변경
+```
+
+#### 4. 자동 배포
+
+`main` 브랜치에 push하면 자동으로 배포가 시작됩니다:
+
+```bash
+git push origin main
+```
+
+Actions 탭에서 배포 진행 상황을 확인할 수 있습니다.
+
+### 배포 환경
+
+- Node.js 20
+- 빌드 명령: `npm ci && npm run build`
+- 실행 명령: `npm start`
+- 타임존: Asia/Seoul
+
 ## 문제 해결
 
 ### 봇이 메시지를 보내지 않아요
