@@ -22,7 +22,7 @@ jobs:
         uses: cloudtype-github-actions/deploy@v1
         with:
           token: ${{ secrets.CLOUDTYPE_TOKEN }}
-          project: your-space-name/launch-bot
+          project: pete.jang/launch-bot
           stage: main
           yaml: |
             name: launch-bot
