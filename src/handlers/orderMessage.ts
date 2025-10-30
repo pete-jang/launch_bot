@@ -33,6 +33,13 @@ function createOrderBlocks(): any[] {
       type: 'section',
       text: {
         type: 'mrkdwn',
+        text: '📋 *메뉴 확인*\n<https://www.lunchlab.me/menu|여기에서 오늘의 메뉴를 확인하세요>',
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
         text: '*메뉴를 선택해주세요:*',
       },
     },
