@@ -39,7 +39,7 @@ jobs:
                   secret: slack-channel-id
                 - name: TZ
                   value: Asia/Seoul
-              build: npm ci && npm run build
+              build: npm run build
               start: npm start
             context:
               git:
