@@ -1,4 +1,4 @@
-import { app } from '../bot';
+import { app, isAllowedChannel } from '../bot';
 import { sendOrderMessage } from './orderMessage';
 import { isMessageSent } from '../storage/orders';
 import { formatDate, isTodayWeekday } from '../utils/time';
@@ -11,6 +11,15 @@ export function registerStartCommand(): void {
     await ack();
 
     try {
+      // 채널 확인
+      if (!isAllowedChannel(command.channel_id)) {
+        await respond({
+          text: '애미야, 여기서는 주문 못 받는다니까? 지정된 채널에서만 하라고...',
+          response_type: 'ephemeral',
+        });
+        return;
+      }
+
       const today = formatDate();
 
       // 평일 체크

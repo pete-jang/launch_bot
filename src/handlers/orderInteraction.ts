@@ -1,4 +1,4 @@
-import { app } from '../bot';
+import { app, isAllowedChannel } from '../bot';
 import { addOrder, getTodayOrders, Menu } from '../storage/orders';
 import { isAfterOrderDeadline } from '../utils/time';
 import { updateOrderMessage } from './orderMessage';
@@ -27,6 +27,16 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
   try {
     const userId = body.user.id;
     const userName = body.user.name || body.user.username || '알 수 없음';
+
+    // 채널 확인
+    if (!isAllowedChannel(body.channel.id)) {
+      await client.chat.postEphemeral({
+        channel: body.channel.id,
+        user: userId,
+        text: '애미야, 여기서는 주문 못한다니까? 지정된 채널에서만 하라고...',
+      });
+      return;
+    }
 
     // 주문 마감 확인
     if (isAfterOrderDeadline()) {

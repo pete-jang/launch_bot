@@ -1,4 +1,4 @@
-import { app } from '../bot';
+import { app, isAllowedChannel } from '../bot';
 import {
   getTodayOrders,
   getMenuSummary,
@@ -182,6 +182,15 @@ export function registerQueryCommand(): void {
     await ack();
 
     try {
+      // 채널 확인
+      if (!isAllowedChannel(command.channel_id)) {
+        await respond({
+          text: '애미야, 여기서는 조회 못한다니까? 지정된 채널에서만 하라고...',
+          response_type: 'ephemeral',
+        });
+        return;
+      }
+
       const param = command.text.trim();
 
       // 파라미터가 없으면 선택지 표시

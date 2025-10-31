@@ -30,6 +30,14 @@ export function getChannelId(): string {
 }
 
 /**
+ * 허용된 채널인지 확인
+ */
+export function isAllowedChannel(channelId: string): boolean {
+  const allowedChannelId = process.env.SLACK_CHANNEL_ID;
+  return channelId === allowedChannelId;
+}
+
+/**
  * Bot 시작
  */
 export async function startBot(): Promise<void> {
