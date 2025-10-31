@@ -3,6 +3,7 @@ import { startScheduler, stopScheduler } from './scheduler';
 import { registerOrderInteraction } from './handlers/orderInteraction';
 import { registerQueryCommand } from './handlers/queryCommand';
 import { registerStartCommand } from './handlers/startCommand';
+import { registerDeliveryCommand } from './handlers/deliveryCommand';
 
 /**
  * 애플리케이션 시작
@@ -16,6 +17,7 @@ async function main(): Promise<void> {
     registerOrderInteraction();
     registerQueryCommand();
     registerStartCommand();
+    registerDeliveryCommand();
 
     // Bot 시작
     await startBot();

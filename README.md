@@ -55,6 +55,11 @@
 - **Request URL**: (Socket Mode 사용으로 비워둠)
 - **Short Description**: `오늘의 점심 주문 내역 조회`
 
+#### `/식사도착`
+- **Command**: `/식사도착`
+- **Request URL**: (Socket Mode 사용으로 비워둠)
+- **Short Description**: `식사 도착 알림 전송`
+
 ### 5. Interactivity 활성화
 
 1. **Interactivity & Shortcuts** 메뉴로 이동
@@ -173,6 +178,17 @@ npm run dev
 ```
 원하는 기간의 전체 통계와 사용자별, 날짜별 집계를 확인할 수 있습니다.
 
+### 식사 도착 알림
+
+식사가 도착했을 때 주문한 사람들에게 알림을 보냅니다:
+```
+/식사도착
+```
+
+- 오늘 주문한 모든 사용자에게 멘션과 함께 알림 전송
+- 지정된 채널에서만 사용 가능
+- 주문이 없는 경우 에러 메시지 표시
+
 ## 프로젝트 구조
 
 ```
@@ -184,7 +200,9 @@ launch_bot/
 │   ├── handlers/
 │   │   ├── orderMessage.ts         # 주문 메시지 전송
 │   │   ├── orderInteraction.ts     # 주문 버튼 클릭 처리
-│   │   └── queryCommand.ts         # /주문내역 커맨드
+│   │   ├── startCommand.ts         # /주문시작 커맨드
+│   │   ├── queryCommand.ts         # /주문내역 커맨드
+│   │   └── deliveryCommand.ts      # /식사도착 커맨드
 │   ├── storage/
 │   │   └── orders.ts               # 주문 데이터 저장/조회
 │   └── utils/
