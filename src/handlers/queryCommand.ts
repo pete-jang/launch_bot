@@ -267,7 +267,7 @@ export function registerQueryCommand(): void {
 
         if (todayOrders.orders.length === 0) {
           await respond({
-            text: `📋 ${today} 주문 내역\n\n아직 주문이 없습니다.`,
+            text: `애미야, ${today}에 주문이 하나도 없다니까? 왜 조회를 시키고 그러니?`,
             response_type: 'ephemeral',
           });
           return;
@@ -334,7 +334,7 @@ export function registerQueryCommand(): void {
 
           if (dayOrders.orders.length === 0) {
             await respond({
-              text: `📋 ${param} 주문 내역\n\n해당 날짜에 주문 내역이 없습니다.`,
+              text: `애미야, ${param}에 주문이 없다니까? 왜 없는 걸 조회하라고 시키니?`,
               response_type: 'ephemeral',
             });
             return;
@@ -351,7 +351,7 @@ export function registerQueryCommand(): void {
         } else {
           // 잘못된 파라미터
           await respond({
-            text: `❌ 잘못된 파라미터입니다.\n\n사용법:\n• \`/주문내역\` - 기간 선택 메뉴 표시\n• \`/주문내역 YYYY-MM-DD\` - 특정 날짜 (예: 2025-10-30)\n• \`/주문내역 YYYY-MM-DD~YYYY-MM-DD\` - 기간 지정 (예: 2025-10-01~2025-10-31)`,
+            text: `애미야, 파라미터가 이상하다니까? 왜 이런 걸 입력하고 그러니?\n\n사용법:\n• \`/주문내역\` - 기간 선택 메뉴 표시\n• \`/주문내역 YYYY-MM-DD\` - 특정 날짜 (예: 2025-10-30)\n• \`/주문내역 YYYY-MM-DD~YYYY-MM-DD\` - 기간 지정 (예: 2025-10-01~2025-10-31)`,
             response_type: 'ephemeral',
           });
         }
@@ -361,7 +361,7 @@ export function registerQueryCommand(): void {
     } catch (error) {
       console.error('Error handling query command:', error);
       await respond({
-        text: '❌ 주문 내역을 조회하는 중 오류가 발생했습니다.',
+        text: '애미야, 조회하다가 에러 났다니까? 왜 이런 이상한 걸 시키고 그러니?',
         response_type: 'ephemeral',
       });
     }
@@ -380,7 +380,7 @@ export function registerQueryCommand(): void {
         await client.chat.postEphemeral({
           channel: (body as any).channel.id,
           user: (body as any).user.id,
-          text: `📋 ${today} 주문 내역\n\n아직 주문이 없습니다.`,
+          text: `애미야, ${today}에 주문이 하나도 없다니까? 왜 조회를 시키고 그러니?`,
         });
         return;
       }
