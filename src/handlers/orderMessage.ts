@@ -5,10 +5,10 @@ import { saveMessageTimestamp, getTodayOrders, getMenuSummary } from '../storage
 /**
  * 주문 메시지 블록 생성
  */
-function createOrderBlocks(): any[] {
+async function createOrderBlocks(): Promise<any[]> {
   const now = getCurrentKST();
-  const todayOrders = getTodayOrders();
-  const menuSummary = getMenuSummary();
+  const todayOrders = await getTodayOrders();
+  const menuSummary = await getMenuSummary();
 
   const blocks: any[] = [
     {
@@ -115,7 +115,7 @@ function createOrderBlocks(): any[] {
 export async function sendOrderMessage(): Promise<void> {
   try {
     const channelId = getChannelId();
-    const blocks = createOrderBlocks();
+    const blocks = await createOrderBlocks();
 
     const result = await app.client.chat.postMessage({
       channel: channelId,
@@ -125,7 +125,7 @@ export async function sendOrderMessage(): Promise<void> {
 
     // 메시지 타임스탬프 저장 (나중에 업데이트하기 위해)
     if (result.ts) {
-      saveMessageTimestamp(formatDate(), result.ts);
+      await saveMessageTimestamp(formatDate(), result.ts);
     }
 
     console.log(`[${formatDateTime()}] Order message sent successfully`);
@@ -141,7 +141,7 @@ export async function sendOrderMessage(): Promise<void> {
 export async function updateOrderMessage(messageTs: string): Promise<void> {
   try {
     const channelId = getChannelId();
-    const blocks = createOrderBlocks();
+    const blocks = await createOrderBlocks();
 
     await app.client.chat.update({
       channel: channelId,
@@ -163,8 +163,8 @@ export async function updateOrderMessage(messageTs: string): Promise<void> {
 export async function sendClosedMessage(): Promise<void> {
   try {
     const channelId = getChannelId();
-    const todayOrders = getTodayOrders();
-    const menuSummary = getMenuSummary();
+    const todayOrders = await getTodayOrders();
+    const menuSummary = await getMenuSummary();
 
     const blocks: any[] = [
       {

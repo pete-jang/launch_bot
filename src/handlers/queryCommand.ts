@@ -271,8 +271,8 @@ export function registerQueryCommand(): void {
       if (param === '오늘') {
         // 오늘 주문 내역
         const today = formatDate();
-        const todayOrders = getTodayOrders();
-        const menuSummary = getMenuSummary();
+        const todayOrders = await getTodayOrders();
+        const menuSummary = await getMenuSummary();
 
         if (todayOrders.orders.length === 0) {
           await respond({
@@ -293,7 +293,7 @@ export function registerQueryCommand(): void {
       } else if (param === '이번주') {
         // 이번주 주문 내역
         const { start, end } = getThisWeekRange();
-        const periodSummary = getOrdersForPeriod(start, end);
+        const periodSummary = await getOrdersForPeriod(start, end);
 
         const blocks = createPeriodOrderBlocks('📅 이번주 주문 내역', periodSummary, start, end);
 
@@ -306,7 +306,7 @@ export function registerQueryCommand(): void {
       } else if (param === '이번달' || param === '한달') {
         // 이번달 주문 내역
         const { start, end } = getThisMonthRange();
-        const periodSummary = getOrdersForPeriod(start, end);
+        const periodSummary = await getOrdersForPeriod(start, end);
 
         const blocks = createPeriodOrderBlocks('📆 이번달 주문 내역', periodSummary, start, end);
 
@@ -322,7 +322,7 @@ export function registerQueryCommand(): void {
 
         if (dateRange) {
           // 날짜 범위 조회
-          const periodSummary = getOrdersForPeriod(dateRange.start, dateRange.end);
+          const periodSummary = await getOrdersForPeriod(dateRange.start, dateRange.end);
           const blocks = createPeriodOrderBlocks(
             `📊 기간별 주문 내역`,
             periodSummary,
@@ -338,8 +338,8 @@ export function registerQueryCommand(): void {
 
         } else if (isValidDate(param)) {
           // 특정 날짜 주문 내역
-          const dayOrders = getOrdersForDate(param);
-          const menuSummary = getMenuSummary(param);
+          const dayOrders = await getOrdersForDate(param);
+          const menuSummary = await getMenuSummary(param);
 
           if (dayOrders.orders.length === 0) {
             await respond({
@@ -382,8 +382,8 @@ export function registerQueryCommand(): void {
 
     try {
       const today = formatDate();
-      const todayOrders = getTodayOrders();
-      const menuSummary = getMenuSummary();
+      const todayOrders = await getTodayOrders();
+      const menuSummary = await getMenuSummary();
 
       if (todayOrders.orders.length === 0) {
         await client.chat.postEphemeral({
@@ -415,7 +415,7 @@ export function registerQueryCommand(): void {
 
     try {
       const { start, end } = getThisWeekRange();
-      const periodSummary = getOrdersForPeriod(start, end);
+      const periodSummary = await getOrdersForPeriod(start, end);
       const blocks = createPeriodOrderBlocks('📅 이번주 주문 내역', periodSummary, start, end);
 
       await client.chat.postEphemeral({
@@ -437,7 +437,7 @@ export function registerQueryCommand(): void {
 
     try {
       const { start, end } = getThisMonthRange();
-      const periodSummary = getOrdersForPeriod(start, end);
+      const periodSummary = await getOrdersForPeriod(start, end);
       const blocks = createPeriodOrderBlocks('📆 이번달 주문 내역', periodSummary, start, end);
 
       await client.chat.postEphemeral({

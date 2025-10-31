@@ -16,7 +16,7 @@ function scheduleOrderMessage(): void {
       }
 
       // 이미 수동으로 주문 메시지가 전송되었는지 확인
-      if (isMessageSent(formatDate())) {
+      if (await isMessageSent(formatDate())) {
         console.log(`[${formatDateTime()}] Skipping order message (already sent manually)`);
         return;
       }
@@ -44,7 +44,7 @@ function scheduleOrderClose(): void {
       }
 
       console.log(`[${formatDateTime()}] Closing orders...`);
-      closeOrders();
+      await closeOrders();
       await sendClosedMessage();
     } catch (error) {
       console.error('Error in order close job:', error);

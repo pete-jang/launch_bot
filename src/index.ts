@@ -4,6 +4,7 @@ import { registerOrderInteraction } from './handlers/orderInteraction';
 import { registerQueryCommand } from './handlers/queryCommand';
 import { registerStartCommand } from './handlers/startCommand';
 import { registerDeliveryCommand } from './handlers/deliveryCommand';
+import { testConnection, initializeDatabase, closePool } from './storage/database';
 
 /**
  * 애플리케이션 시작
@@ -11,6 +12,17 @@ import { registerDeliveryCommand } from './handlers/deliveryCommand';
 async function main(): Promise<void> {
   try {
     console.log('🚀 Starting Lunch Order Bot...');
+
+    // 데이터베이스 연결 테스트
+    console.log('🔌 Testing database connection...');
+    const dbConnected = await testConnection();
+    if (!dbConnected) {
+      throw new Error('Database connection failed');
+    }
+
+    // 데이터베이스 초기화 (테이블 생성)
+    console.log('📊 Initializing database...');
+    await initializeDatabase();
 
     // 핸들러 등록
     console.log('📝 Registering handlers...');
@@ -49,6 +61,7 @@ function setupGracefulShutdown(): void {
     try {
       stopScheduler();
       await stopBot();
+      await closePool();
       console.log('✅ Shutdown complete');
       process.exit(0);
     } catch (error) {

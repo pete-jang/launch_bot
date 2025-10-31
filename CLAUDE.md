@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A Slack bot for daily lunch ordering that automatically posts order messages at noon on weekdays and closes orders at 2 PM. Uses Socket Mode (no webhooks) and stores data in local JSON files.
+A Slack bot for daily lunch ordering that automatically posts order messages at noon on weekdays and closes orders at 2 PM. Uses Socket Mode (no webhooks) and stores data in MariaDB database.
 
 ## Development Policy
 
@@ -51,11 +51,13 @@ npm run watch      # Watch mode for TypeScript compilation
    - `0 14 * * 1-5`: Auto-close orders at 2 PM (Mon-Fri)
    - Checks `isMessageSent()` to prevent duplicate messages if manual start was used
 
-4. **Data Storage** (`storage/orders.ts`):
-   - Single JSON file: `data/orders.json`
-   - Structure: `{ "YYYY-MM-DD": { orders: [], closed: boolean, messageTs?: string, messageSent?: boolean } }`
-   - All reads/writes go through `loadOrders()` / `saveOrders()`
-   - User can change their order multiple times before closing
+4. **Data Storage** (`storage/orders.ts` + `storage/database.ts`):
+   - MariaDB/MySQL database with two tables:
+     - `orders`: Individual order records (order_date, user_id, user_name, menu_type, ordered_at)
+     - `order_sessions`: Daily session info (order_date, closed, message_ts, message_sent)
+   - All functions are async and use connection pooling
+   - Connection pool initialized on startup (`initializeDatabase()`)
+   - User can change their order multiple times before closing (using ON DUPLICATE KEY UPDATE)
 
 5. **Message Updates** (`handlers/orderMessage.ts`):
    - When order button clicked → updates message with current order count
@@ -94,8 +96,11 @@ npm run watch      # Watch mode for TypeScript compilation
 - `handlers/orderInteraction.ts`: Handles button clicks (order_가정식, order_프레시밀)
 - `handlers/queryCommand.ts`: `/주문내역` command with period filtering logic
 - `handlers/startCommand.ts`: `/주문시작` manual trigger with validation
-- `storage/orders.ts`: All data persistence logic
+- `storage/database.ts`: DB connection pool management and initialization
+- `storage/orders.ts`: All data persistence logic (DB-based, all async)
 - `utils/time.ts`: KST timezone utilities
+- `migrations/init.sql`: Database schema definition
+- `migrations/migrate-json-to-db.ts`: JSON to DB migration script
 
 ## Environment Variables
 
@@ -106,6 +111,13 @@ SLACK_APP_TOKEN=xapp-...        # App-Level Token (Socket Mode)
 SLACK_SIGNING_SECRET=...        # From Slack app settings
 SLACK_CHANNEL_ID=C...           # Target channel ID
 TZ=Asia/Seoul                   # Timezone
+
+# Database Configuration
+DB_HOST=localhost               # MariaDB host (Cloudtype: maria-xxx.cloudtype.app)
+DB_PORT=3306                    # MariaDB port
+DB_USER=root                    # Database user
+DB_PASSWORD=...                 # Database password
+DB_NAME=launch_bot              # Database name
 ```
 
 ## Deployment (Cloudtype)
@@ -118,8 +130,16 @@ Required GitHub Secrets:
 
 Cloudtype environment variables are set in Cloudtype dashboard (kebab-case names):
 - `slack-bot-token`, `slack-app-token`, `slack-signing-secret`, `slack-channel-id`
+- `db-host`, `db-port`, `db-user`, `db-password`, `db-name`
 
 The workflow file needs the correct project path: `project: space-name/project-name`
+
+### Setting up MariaDB on Cloudtype:
+1. Create a MariaDB instance in your Cloudtype project
+2. Note the connection details (host, port, user, password, database name)
+3. Add DB environment variables to Cloudtype dashboard
+4. Deploy the app - it will automatically create tables on first run
+5. (Optional) Migrate existing JSON data using: `npx ts-node migrations/migrate-json-to-db.ts`
 
 ## Common Patterns
 
@@ -140,7 +160,24 @@ The workflow file needs the correct project path: `project: space-name/project-n
 - Maintain the humorous tone in text fields
 
 **Working with orders**:
+- All storage functions are async - always use `await`
 - Always use `formatDate()` for date keys (ensures KST)
 - Check `isAfterOrderDeadline()` before accepting orders
 - Check `todayOrders.closed` for manual close status
-- Use `addOrder()` which handles both new orders and updates
+- Use `await addOrder()` which handles both new orders and updates (uses ON DUPLICATE KEY UPDATE)
+
+**Database operations**:
+- Connection pool is initialized on app startup (`initializeDatabase()`)
+- Tables are created automatically if they don't exist
+- All queries use parameterized statements to prevent SQL injection
+- Connection pool is properly closed on graceful shutdown
+- For manual DB queries, always get/release connections properly:
+  ```typescript
+  const connection = await pool.getConnection();
+  try {
+    const [rows] = await connection.query('SELECT ...');
+    // ... use rows
+  } finally {
+    connection.release();
+  }
+  ```

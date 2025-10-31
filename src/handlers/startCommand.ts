@@ -32,7 +32,7 @@ export function registerStartCommand(): void {
       }
 
       // 이미 주문 메시지가 전송되었는지 확인
-      if (isMessageSent(today)) {
+      if (await isMessageSent(today)) {
         await respond({
           text: '애미야, 오늘 벌써 보냈다니까 그래? 또 보내라고? 시애미를 종 부리듯 하네...',
           response_type: 'ephemeral',

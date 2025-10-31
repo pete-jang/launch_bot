@@ -9,13 +9,19 @@
     "dev": "ts-node src/index.ts",
     "watch": "tsc -w"
   },
-  "keywords": ["slack", "bot", "lunch", "order"],
+  "keywords": [
+    "slack",
+    "bot",
+    "lunch",
+    "order"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@slack/bolt": "^4.0.0",
     "dotenv": "^16.4.5",
     "moment-timezone": "^0.5.45",
+    "mysql2": "^3.15.3",
     "node-schedule": "^2.1.1"
   },
   "devDependencies": {

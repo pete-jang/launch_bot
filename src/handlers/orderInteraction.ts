@@ -48,7 +48,7 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       return;
     }
 
-    const todayOrders = getTodayOrders();
+    const todayOrders = await getTodayOrders();
 
     // 이미 마감된 경우
     if (todayOrders.closed) {
@@ -60,8 +60,11 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       return;
     }
 
+    // 기존 주문 확인 (주문 추가 전에 확인)
+    const existingOrder = todayOrders.orders.find((order) => order.userId === userId);
+
     // 주문 추가
-    const success = addOrder(userId, userName, menu);
+    const success = await addOrder(userId, userName, menu);
 
     if (!success) {
       await client.chat.postEphemeral({
@@ -71,9 +74,6 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       });
       return;
     }
-
-    // 기존 주문 확인
-    const existingOrder = todayOrders.orders.find((order) => order.userId === userId);
     const isUpdate = !!existingOrder;
 
     // 사용자에게 확인 메시지 전송 (본인만 볼 수 있음)
