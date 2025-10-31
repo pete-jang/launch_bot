@@ -13,6 +13,18 @@ async function main(): Promise<void> {
   try {
     console.log('🚀 Starting Lunch Order Bot...');
 
+    // 환경 변수 디버깅
+    console.log('🔍 Environment Variables Check:');
+    console.log('  DB_HOST:', process.env.DB_HOST || '❌ NOT SET (using default: localhost)');
+    console.log('  DB_PORT:', process.env.DB_PORT || '❌ NOT SET (using default: 3306)');
+    console.log('  DB_USER:', process.env.DB_USER || '❌ NOT SET (using default: root)');
+    console.log('  DB_NAME:', process.env.DB_NAME || '❌ NOT SET (using default: launch_bot)');
+    console.log('  DB_PASSWORD:', process.env.DB_PASSWORD ? '✅ SET' : '❌ NOT SET');
+    console.log('  SLACK_BOT_TOKEN:', process.env.SLACK_BOT_TOKEN ? '✅ SET' : '❌ NOT SET');
+    console.log('  SLACK_APP_TOKEN:', process.env.SLACK_APP_TOKEN ? '✅ SET' : '❌ NOT SET');
+    console.log('  SLACK_CHANNEL_ID:', process.env.SLACK_CHANNEL_ID || '❌ NOT SET');
+    console.log('---');
+
     // 데이터베이스 연결 테스트
     console.log('🔌 Testing database connection...');
     const dbConnected = await testConnection();
