@@ -14,7 +14,7 @@ export function registerStartCommand(): void {
       // 채널 확인
       if (!isAllowedChannel(command.channel_id)) {
         await respond({
-          text: '애미야, 여기서는 주문 못 받는다니까? 지정된 채널에서만 하라고...',
+          text: '애미야, 여기서는 주문 못 받는다니까? 지정된 채널에서만 하라 했잖니...',
           response_type: 'ephemeral',
         });
         return;

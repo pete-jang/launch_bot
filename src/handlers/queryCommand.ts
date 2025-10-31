@@ -185,7 +185,7 @@ export function registerQueryCommand(): void {
       // 채널 확인
       if (!isAllowedChannel(command.channel_id)) {
         await respond({
-          text: '애미야, 여기서는 조회 못한다니까? 지정된 채널에서만 하라고...',
+          text: '애미야, 여기서는 조회 못한다니까? 지정된 채널에서만 하라 했잖니...',
           response_type: 'ephemeral',
         });
         return;
@@ -343,7 +343,7 @@ export function registerQueryCommand(): void {
 
           if (dayOrders.orders.length === 0) {
             await respond({
-              text: `애미야, ${param}에 주문이 없다니까? 왜 없는 걸 조회하라고 시키니?`,
+              text: `애미야, ${param}에 주문이 없다니까? 왜 없는 거 보라 시키니?`,
               response_type: 'ephemeral',
             });
             return;

@@ -33,7 +33,7 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
-        text: '애미야, 여기서는 주문 못한다니까? 지정된 채널에서만 하라고...',
+        text: '애미야, 여기서는 주문 못한다니까? 지정된 채널에서만 하라 했잖니...',
       });
       return;
     }
