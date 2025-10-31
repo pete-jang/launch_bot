@@ -9,6 +9,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import moment from 'moment-timezone';
 import { pool } from '../src/storage/database';
 import { ResultSetHeader } from 'mysql2';
 
@@ -90,11 +91,14 @@ async function migrateData(): Promise<void> {
 
       // orders 테이블에 삽입
       for (const order of dayData.orders) {
+        // ISO 형식을 MySQL DATETIME 형식으로 변환
+        const orderedAt = moment(order.timestamp).format('YYYY-MM-DD HH:mm:ss');
+
         await connection.query<ResultSetHeader>(
           `INSERT INTO orders (order_date, user_id, user_name, menu_type, ordered_at)
            VALUES (?, ?, ?, ?, ?)
            ON DUPLICATE KEY UPDATE user_name = VALUES(user_name), menu_type = VALUES(menu_type), ordered_at = VALUES(ordered_at)`,
-          [date, order.userId, order.userName, order.menu, order.timestamp]
+          [date, order.userId, order.userName, order.menu, orderedAt]
         );
         totalOrders++;
       }

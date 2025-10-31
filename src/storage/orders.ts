@@ -143,7 +143,8 @@ export async function addOrder(userId: string, userName: string, menu: Menu): Pr
       return false; // 이미 마감됨
     }
 
-    const timestamp = getCurrentKST().toISOString();
+    // MySQL DATETIME 형식으로 변환
+    const timestamp = getCurrentKST().format('YYYY-MM-DD HH:mm:ss');
 
     // INSERT ... ON DUPLICATE KEY UPDATE를 사용하여 주문 추가/업데이트
     await pool.query<ResultSetHeader>(
