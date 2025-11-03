@@ -37,6 +37,8 @@ jobs:
                   secret: slack-signing-secret
                 - name: SLACK_CHANNEL_ID
                   secret: slack-channel-id
+                - name: DB_PASSWORD
+                  secret: db-password
                 - name: TZ
                   value: Asia/Seoul
               build: npm run build
