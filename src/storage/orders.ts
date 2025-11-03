@@ -1,6 +1,6 @@
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 import { pool } from './database';
-import { formatDate, getCurrentKST } from '../utils/time';
+import { formatDate, getCurrentKST, getMealDateFromOrderDate } from '../utils/time';
 
 export type Menu = '가정식' | '프레시밀';
 
@@ -304,11 +304,13 @@ export async function getOrdersForPeriod(startDate: string, endDate: string): Pr
     };
 
     for (const row of rows) {
-      const dateStr = formatDate(getCurrentKST().year(row.order_date.getFullYear()).month(row.order_date.getMonth()).date(row.order_date.getDate()));
+      // 주문일을 식사일로 변환하여 집계
+      const orderDateStr = formatDate(getCurrentKST().year(row.order_date.getFullYear()).month(row.order_date.getMonth()).date(row.order_date.getDate()));
+      const mealDateStr = getMealDateFromOrderDate(orderDateStr);
 
-      // 일별 집계 초기화
-      if (!summary.dailySummary[dateStr]) {
-        summary.dailySummary[dateStr] = {
+      // 일별 집계 초기화 (식사일 기준)
+      if (!summary.dailySummary[mealDateStr]) {
+        summary.dailySummary[mealDateStr] = {
           orders: [],
           menuCount: { 가정식: 0, 프레시밀: 0 },
         };
@@ -321,9 +323,9 @@ export async function getOrdersForPeriod(startDate: string, endDate: string): Pr
         timestamp: row.ordered_at.toISOString(),
       };
 
-      // 일별 집계 업데이트
-      summary.dailySummary[dateStr].orders.push(order);
-      summary.dailySummary[dateStr].menuCount[order.menu]++;
+      // 일별 집계 업데이트 (식사일 기준)
+      summary.dailySummary[mealDateStr].orders.push(order);
+      summary.dailySummary[mealDateStr].menuCount[order.menu]++;
 
       // 전체 집계 업데이트
       summary.totalOrders++;

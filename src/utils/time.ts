@@ -77,6 +77,36 @@ export function isAfterOrderDeadline(): boolean {
 }
 
 /**
+ * 주문일로부터 다음 평일(식사일) 계산
+ * 월~목: 다음날 (화~금)
+ * 금요일: 다음 월요일 (+3일)
+ */
+export function getNextWeekday(date: moment.Moment): moment.Moment {
+  const dayOfWeek = date.day(); // 0(일) ~ 6(토)
+
+  if (dayOfWeek >= 1 && dayOfWeek <= 4) {
+    // 월~목: 다음 날
+    return date.clone().add(1, 'day');
+  } else if (dayOfWeek === 5) {
+    // 금요일: 다음 월요일 (+3일)
+    return date.clone().add(3, 'days');
+  } else {
+    // 토, 일: 다음 월요일 (이론상 주문 불가능하지만 방어 코드)
+    const daysUntilMonday = dayOfWeek === 6 ? 2 : 1;
+    return date.clone().add(daysUntilMonday, 'days');
+  }
+}
+
+/**
+ * 주문일을 식사일로 변환
+ */
+export function getMealDateFromOrderDate(orderDate: string): string {
+  const orderMoment = moment.tz(orderDate, TIMEZONE);
+  const mealMoment = getNextWeekday(orderMoment);
+  return formatDate(mealMoment);
+}
+
+/**
  * 이번 주의 시작일과 종료일 반환 (월요일 ~ 일요일)
  */
 export function getThisWeekRange(): { start: string; end: string } {
@@ -91,16 +121,53 @@ export function getThisWeekRange(): { start: string; end: string } {
 }
 
 /**
- * 이번 달의 시작일과 종료일 반환
+ * 이번 달의 시작일과 종료일 반환 (식사일 기준)
+ * 이번 달에 먹을 식사들의 주문일 범위를 반환
+ * 예: 11월 식사(11/3~11/28) → 주문일(10/31~11/27)
  */
 export function getThisMonthRange(): { start: string; end: string } {
   const now = getCurrentKST();
   const startOfMonth = now.clone().startOf('month');
   const endOfMonth = now.clone().endOf('month');
 
+  // 이번 달의 첫 평일 찾기 (첫 식사일)
+  let firstMealDate = startOfMonth.clone();
+  while (!isWeekday(firstMealDate)) {
+    firstMealDate.add(1, 'day');
+  }
+
+  // 이번 달의 마지막 평일 찾기 (마지막 식사일)
+  let lastMealDate = endOfMonth.clone();
+  while (!isWeekday(lastMealDate)) {
+    lastMealDate.subtract(1, 'day');
+  }
+
+  // 식사일의 전날이 주문일
+  // 첫 식사일의 주문일 계산
+  const firstOrderDate = firstMealDate.clone();
+  const firstDayOfWeek = firstMealDate.day();
+  if (firstDayOfWeek === 1) {
+    // 월요일 식사 → 전주 금요일 주문 (-3일)
+    firstOrderDate.subtract(3, 'days');
+  } else {
+    // 화~금 식사 → 전날 주문 (-1일)
+    firstOrderDate.subtract(1, 'day');
+  }
+
+  // 마지막 식사일의 주문일 계산
+  const lastOrderDate = lastMealDate.clone();
+  const lastDayOfWeek = lastMealDate.day();
+  if (lastDayOfWeek === 1) {
+    // 월요일 식사 → 전주 금요일 주문 (-3일)
+    lastOrderDate.subtract(3, 'days');
+  } else {
+    // 화~금 식사 → 전날 주문 (-1일)
+    lastOrderDate.subtract(1, 'day');
+  }
+
   return {
-    start: formatDate(startOfMonth),
-    end: formatDate(endOfMonth),
+    start: formatDate(firstOrderDate),
+    end: formatDate(lastOrderDate),
   };
 }
 

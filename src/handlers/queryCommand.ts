@@ -304,14 +304,14 @@ export function registerQueryCommand(): void {
         });
 
       } else if (param === '이번달' || param === '한달') {
-        // 이번달 주문 내역
+        // 이번달 식사 내역 (식사일 기준)
         const { start, end } = getThisMonthRange();
         const periodSummary = await getOrdersForPeriod(start, end);
 
-        const blocks = createPeriodOrderBlocks('📆 이번달 주문 내역', periodSummary, start, end);
+        const blocks = createPeriodOrderBlocks('📆 이번달 식사 내역', periodSummary, start, end);
 
         await respond({
-          text: '📆 이번달 주문 내역',
+          text: '📆 이번달 식사 내역',
           blocks: blocks,
           response_type: 'ephemeral',
         });
@@ -438,12 +438,12 @@ export function registerQueryCommand(): void {
     try {
       const { start, end } = getThisMonthRange();
       const periodSummary = await getOrdersForPeriod(start, end);
-      const blocks = createPeriodOrderBlocks('📆 이번달 주문 내역', periodSummary, start, end);
+      const blocks = createPeriodOrderBlocks('📆 이번달 식사 내역', periodSummary, start, end);
 
       await client.chat.postEphemeral({
         channel: (body as any).channel.id,
         user: (body as any).user.id,
-        text: '📆 이번달 주문 내역',
+        text: '📆 이번달 식사 내역',
         blocks: blocks,
       });
 
