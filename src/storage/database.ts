@@ -6,11 +6,11 @@ import mysql from 'mysql2/promise';
  * - 환경 변수를 통해 연결 정보 설정
  */
 export const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
+  host: 'mariadb',
   port: parseInt(process.env.DB_PORT || '3306', 10),
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'launch_bot',
+  database: 'launch_bot',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
