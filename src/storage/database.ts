@@ -7,8 +7,8 @@ import mysql from 'mysql2/promise';
  */
 export const pool = mysql.createPool({
   host: 'mariadb',
-  port: parseInt(process.env.DB_PORT || '3306', 10),
-  user: process.env.DB_USER || 'root',
+  port: 3306,
+  user: 'root',
   password: process.env.DB_PASSWORD || '',
   database: 'launch_bot',
   waitForConnections: true,
