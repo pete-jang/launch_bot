@@ -38,7 +38,7 @@ jobs:
                 - name: SLACK_CHANNEL_ID
                   secret: slack-channel-id
                 - name: DB_PASSWORD
-                  secret: db-password
+                  secret: mariadb-root-password
                 - name: TZ
                   value: Asia/Seoul
               build: npm run build
