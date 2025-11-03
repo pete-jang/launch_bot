@@ -73,9 +73,9 @@ npm run watch      # Watch mode for TypeScript compilation
 - Environment variable `TZ=Asia/Seoul` should be set
 
 **Message Tone**:
-- All user-facing messages use a humorous "nagging mother-in-law" tone (애미야...)
-- This is intentional and part of the bot's personality
-- Examples: "애미야, 2시 지났다니까? 뭐 하다가 이제 주문하는거니?"
+- All user-facing messages use a clean, professional tone
+- Messages are clear and informative
+- Examples: "주문 마감 시간(2시)이 지났습니다.", "주문이 완료되었습니다."
 
 **Order State Management**:
 - `closed: false` → accepting orders
@@ -157,7 +157,7 @@ The workflow file needs the correct project path: `project: space-name/project-n
 **Modifying message blocks**:
 - Message blocks are created in `handlers/orderMessage.ts`: `createOrderBlocks()` and `sendClosedMessage()`
 - Use Slack's Block Kit Builder to design: https://app.slack.com/block-kit-builder
-- Maintain the humorous tone in text fields
+- Maintain a clean, professional tone in text fields
 
 **Working with orders**:
 - All storage functions are async - always use `await`

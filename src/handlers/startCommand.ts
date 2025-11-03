@@ -14,7 +14,7 @@ export function registerStartCommand(): void {
       // 채널 확인
       if (!isAllowedChannel(command.channel_id)) {
         await respond({
-          text: '애미야, 여기서는 주문 못 받는다니까? 지정된 채널에서만 하라 했잖니...',
+          text: '지정된 채널에서만 주문 시작이 가능합니다.',
           response_type: 'ephemeral',
         });
         return;
@@ -25,7 +25,7 @@ export function registerStartCommand(): void {
       // 평일 체크
       if (!isTodayWeekday()) {
         await respond({
-          text: '애미야, 주말에 이런 걸 시키고 그러니? 주말엔 주문 안 된다니까?',
+          text: '주말에는 주문을 받지 않습니다.',
           response_type: 'ephemeral',
         });
         return;
@@ -34,7 +34,7 @@ export function registerStartCommand(): void {
       // 이미 주문 메시지가 전송되었는지 확인
       if (await isMessageSent(today)) {
         await respond({
-          text: '애미야, 오늘 벌써 보냈다니까 그래? 또 보내라고? 시애미를 종 부리듯 하네...',
+          text: '오늘 이미 주문 메시지가 전송되었습니다.',
           response_type: 'ephemeral',
         });
         return;
@@ -44,7 +44,7 @@ export function registerStartCommand(): void {
       await sendOrderMessage();
 
       await respond({
-        text: '애미야, 메시지 보냈다... 이것도 내가 다 해야 되니?',
+        text: '주문 메시지가 전송되었습니다.',
         response_type: 'ephemeral',
       });
 
@@ -52,7 +52,7 @@ export function registerStartCommand(): void {
     } catch (error) {
       console.error('Error handling start command:', error);
       await respond({
-        text: '애미야, 에러 났다니까? 이런 이상한 걸 시켜서 에러 나잖니?',
+        text: '오류가 발생했습니다.',
         response_type: 'ephemeral',
       });
     }

@@ -185,7 +185,7 @@ export function registerQueryCommand(): void {
       // 채널 확인
       if (!isAllowedChannel(command.channel_id)) {
         await respond({
-          text: '애미야, 여기서는 조회 못한다니까? 지정된 채널에서만 하라 했잖니...',
+          text: '지정된 채널에서만 조회 가능합니다.',
           response_type: 'ephemeral',
         });
         return;
@@ -276,7 +276,7 @@ export function registerQueryCommand(): void {
 
         if (todayOrders.orders.length === 0) {
           await respond({
-            text: `애미야, ${today}에 주문이 하나도 없다니까? 왜 조회를 시키고 그러니?`,
+            text: `${today}에 주문 내역이 없습니다.`,
             response_type: 'ephemeral',
           });
           return;
@@ -343,7 +343,7 @@ export function registerQueryCommand(): void {
 
           if (dayOrders.orders.length === 0) {
             await respond({
-              text: `애미야, ${param}에 주문이 없다니까? 왜 없는 거 보라 시키니?`,
+              text: `${param}에 주문 내역이 없습니다.`,
               response_type: 'ephemeral',
             });
             return;
@@ -360,7 +360,7 @@ export function registerQueryCommand(): void {
         } else {
           // 잘못된 파라미터
           await respond({
-            text: `애미야, 파라미터가 이상하다니까? 왜 이런 걸 입력하고 그러니?\n\n사용법:\n• \`/주문내역\` - 기간 선택 메뉴 표시\n• \`/주문내역 YYYY-MM-DD\` - 특정 날짜 (예: 2025-10-30)\n• \`/주문내역 YYYY-MM-DD~YYYY-MM-DD\` - 기간 지정 (예: 2025-10-01~2025-10-31)`,
+            text: `잘못된 입력 형식입니다.\n\n사용법:\n• \`/주문내역\` - 기간 선택 메뉴 표시\n• \`/주문내역 YYYY-MM-DD\` - 특정 날짜 (예: 2025-10-30)\n• \`/주문내역 YYYY-MM-DD~YYYY-MM-DD\` - 기간 지정 (예: 2025-10-01~2025-10-31)`,
             response_type: 'ephemeral',
           });
         }
@@ -370,7 +370,7 @@ export function registerQueryCommand(): void {
     } catch (error) {
       console.error('Error handling query command:', error);
       await respond({
-        text: '애미야, 조회하다가 에러 났다니까? 왜 이런 이상한 걸 시키고 그러니?',
+        text: '조회 중 오류가 발생했습니다.',
         response_type: 'ephemeral',
       });
     }
@@ -389,7 +389,7 @@ export function registerQueryCommand(): void {
         await client.chat.postEphemeral({
           channel: (body as any).channel.id,
           user: (body as any).user.id,
-          text: `애미야, ${today}에 주문이 하나도 없다니까? 왜 조회를 시키고 그러니?`,
+          text: `${today}에 주문 내역이 없습니다.`,
         });
         return;
       }

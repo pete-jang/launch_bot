@@ -15,7 +15,7 @@ async function createOrderBlocks(): Promise<any[]> {
       type: 'header',
       text: {
         type: 'plain_text',
-        text: '🍱 애미야, 점심 주문이다',
+        text: '🍱 점심 주문',
         emoji: true,
       },
     },
@@ -23,7 +23,7 @@ async function createOrderBlocks(): Promise<any[]> {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `*${formatDate(now)}*\n2시까지 안 시키면 굶는다?`,
+        text: `*${formatDate(now)}*\n2시까지 주문해주세요.`,
       },
     },
     {
@@ -33,14 +33,14 @@ async function createOrderBlocks(): Promise<any[]> {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: '📋 *메뉴 확인*\n<https://www.lunchlab.me/menu|메뉴가 뭔지는 여기 가서 봐라>',
+        text: '📋 *메뉴 확인*\n<https://www.lunchlab.me/menu|메뉴 확인하기>',
       },
     },
     {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: '*메뉴 골라라:*',
+        text: '*메뉴를 선택하세요:*',
       },
     },
     {
@@ -77,7 +77,7 @@ async function createOrderBlocks(): Promise<any[]> {
 
   // 현재 주문 현황 추가
   if (todayOrders.orders.length > 0) {
-    const orderText = `*현재 주문 현황*\n가정식: ${menuSummary.가정식}개 | 프레시밀: ${menuSummary.프레시밀}개\n지금까지 ${todayOrders.orders.length}명이 시켰다`;
+    const orderText = `*현재 주문 현황*\n가정식: ${menuSummary.가정식}개 | 프레시밀: ${menuSummary.프레시밀}개\n현재 ${todayOrders.orders.length}명이 주문했습니다`;
 
     blocks.push({
       type: 'section',
@@ -91,7 +91,7 @@ async function createOrderBlocks(): Promise<any[]> {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: '*주문이 하나도 없네? 다들 뭐하니?*',
+        text: '*아직 주문이 없습니다.*',
       },
     });
   }
@@ -171,7 +171,7 @@ export async function sendClosedMessage(): Promise<void> {
         type: 'header',
         text: {
           type: 'plain_text',
-          text: '🔒 애미야, 이제 마감이다',
+          text: '🔒 주문 마감',
           emoji: true,
         },
       },
@@ -189,7 +189,7 @@ export async function sendClosedMessage(): Promise<void> {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `*최종 주문 현황*\n🍚 가정식: ${menuSummary.가정식}개\n🥗 프레시밀: ${menuSummary.프레시밀}개\n\n총 ${todayOrders.orders.length}명 시켰다. 이제 늦으면 굶는다?`,
+          text: `*최종 주문 현황*\n🍚 가정식: ${menuSummary.가정식}개\n🥗 프레시밀: ${menuSummary.프레시밀}개\n\n총 ${todayOrders.orders.length}명이 주문했습니다.`,
         },
       },
       {

@@ -33,7 +33,7 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
-        text: '애미야, 여기서는 주문 못한다니까? 지정된 채널에서만 하라 했잖니...',
+        text: '지정된 채널에서만 주문 가능합니다.',
       });
       return;
     }
@@ -43,7 +43,7 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
-        text: '애미야, 2시 지났다니까? 뭐 하다가 이제 주문하는거니?',
+        text: '주문 마감 시간(2시)이 지났습니다.',
       });
       return;
     }
@@ -55,7 +55,7 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
-        text: '애미야, 벌써 마감했다니까 그래? 시애미를 뭘로 보고 이런 걸 시키고 그러니?',
+        text: '이미 주문이 마감되었습니다.',
       });
       return;
     }
@@ -70,7 +70,7 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
-        text: '애미야, 주문이 안 된다니까? 왜 이런 이상한 짓을 시키고 그러니?',
+        text: '주문 처리 중 오류가 발생했습니다.',
       });
       return;
     }
@@ -81,13 +81,13 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
-        text: `애미야, 주문을 또 바꾸네? *${menu}*로? 아까는 ${existingOrder.menu}였잖니? 시애미를 종 부리듯 하네...`,
+        text: `주문이 *${menu}*로 변경되었습니다. (이전: ${existingOrder.menu})`,
       });
     } else {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
-        text: `애미야, *${menu}* 시킨다고? 맛없으면 내가 알아서 하니?`,
+        text: `*${menu}* 주문이 완료되었습니다.`,
       });
     }
 
