@@ -361,3 +361,35 @@ export async function getOrdersForPeriod(startDate: string, endDate: string): Pr
     };
   }
 }
+
+/**
+ * 특정 날짜의 주문 건수 조회
+ */
+export async function getOrderCountForDate(date: string): Promise<number> {
+  try {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      'SELECT COUNT(*) as count FROM orders WHERE order_date = ?',
+      [date]
+    );
+    return rows[0]?.count || 0;
+  } catch (error) {
+    console.error('Failed to get order count for date:', error);
+    return 0;
+  }
+}
+
+/**
+ * 특정 날짜의 주문 삭제
+ */
+export async function deleteOrdersForDate(date: string): Promise<number> {
+  try {
+    const [result] = await pool.query<ResultSetHeader>(
+      'DELETE FROM orders WHERE order_date = ?',
+      [date]
+    );
+    return result.affectedRows;
+  } catch (error) {
+    console.error('Failed to delete orders for date:', error);
+    throw error;
+  }
+}

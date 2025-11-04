@@ -38,6 +38,18 @@ export function isAllowedChannel(channelId: string): boolean {
 }
 
 /**
+ * 관리자 사용자인지 확인
+ */
+export function isAdminUser(userId: string): boolean {
+  const adminIds = process.env.SLACK_ADMIN_IDS;
+  if (!adminIds) {
+    return false;
+  }
+  const adminIdList = adminIds.split(',').map(id => id.trim());
+  return adminIdList.includes(userId);
+}
+
+/**
  * Bot 시작
  */
 export async function startBot(): Promise<void> {

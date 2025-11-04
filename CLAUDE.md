@@ -30,6 +30,7 @@ npm run watch      # Watch mode for TypeScript compilation
    - `/주문시작` - Manually trigger order message
    - `/주문내역` - View order history (supports: 오늘, 이번주, 이번달, YYYY-MM-DD, YYYY-MM-DD~YYYY-MM-DD)
    - Click menu buttons (🍚 가정식, 🥗 프레시밀) to place orders
+   - Open App Home tab to view order history and access admin features (if admin)
 
 ## Architecture
 
@@ -90,14 +91,15 @@ npm run watch      # Watch mode for TypeScript compilation
 
 ### File Responsibilities
 
-- `bot.ts`: Slack App initialization, exports `app` instance and helpers
+- `bot.ts`: Slack App initialization, exports `app` instance and helpers (including `isAdminUser()`)
 - `scheduler.ts`: Cron jobs for auto-messages and auto-close
 - `handlers/orderMessage.ts`: Creates/updates order messages, sends closed message
 - `handlers/orderInteraction.ts`: Handles button clicks (order_가정식, order_프레시밀)
 - `handlers/queryCommand.ts`: `/주문내역` command with period filtering logic
 - `handlers/startCommand.ts`: `/주문시작` manual trigger with validation
+- `handlers/appHome.ts`: App Home tab UI and admin delete functionality
 - `storage/database.ts`: DB connection pool management and initialization
-- `storage/orders.ts`: All data persistence logic (DB-based, all async)
+- `storage/orders.ts`: All data persistence logic (DB-based, all async, includes delete functions)
 - `utils/time.ts`: KST timezone utilities
 - `migrations/init.sql`: Database schema definition
 - `migrations/migrate-json-to-db.ts`: JSON to DB migration script
@@ -110,6 +112,7 @@ SLACK_BOT_TOKEN=xoxb-...        # Bot User OAuth Token
 SLACK_APP_TOKEN=xapp-...        # App-Level Token (Socket Mode)
 SLACK_SIGNING_SECRET=...        # From Slack app settings
 SLACK_CHANNEL_ID=C...           # Target channel ID
+SLACK_ADMIN_IDS=U...,U...       # Comma-separated admin user IDs (for delete functionality)
 TZ=Asia/Seoul                   # Timezone
 
 # Database Configuration
