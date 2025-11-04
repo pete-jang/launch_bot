@@ -4,6 +4,7 @@ import { registerOrderInteraction } from './handlers/orderInteraction';
 import { registerQueryCommand } from './handlers/queryCommand';
 import { registerStartCommand } from './handlers/startCommand';
 import { registerDeliveryCommand } from './handlers/deliveryCommand';
+import { registerAppHome } from './handlers/appHome';
 import { testConnection, initializeDatabase, closePool } from './storage/database';
 
 /**
@@ -42,6 +43,7 @@ async function main(): Promise<void> {
     registerQueryCommand();
     registerStartCommand();
     registerDeliveryCommand();
+    registerAppHome();
 
     // Bot 시작
     await startBot();
