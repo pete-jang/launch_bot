@@ -393,3 +393,57 @@ export async function deleteOrdersForDate(date: string): Promise<number> {
     throw error;
   }
 }
+
+/**
+ * 주문이 Lunchlab에 제출되었는지 확인
+ */
+export async function isOrderSubmitted(date: string = formatDate()): Promise<boolean> {
+  try {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      'SELECT submitted FROM order_sessions WHERE order_date = ?',
+      [date]
+    );
+
+    return rows.length > 0 ? !!rows[0].submitted : false;
+  } catch (error) {
+    console.error('Failed to check if order submitted:', error);
+    return false;
+  }
+}
+
+/**
+ * Lunchlab 제출 상태 저장
+ */
+export async function markOrderAsSubmitted(
+  date: string,
+  submissionId?: string
+): Promise<void> {
+  try {
+    await pool.query<ResultSetHeader>(
+      `INSERT INTO order_sessions (order_date, submitted, submission_id)
+       VALUES (?, TRUE, ?)
+       ON DUPLICATE KEY UPDATE submitted = TRUE, submission_id = VALUES(submission_id)`,
+      [date, submissionId || null]
+    );
+  } catch (error) {
+    console.error('Failed to mark order as submitted:', error);
+    throw error;
+  }
+}
+
+/**
+ * Lunchlab 제출 ID 조회
+ */
+export async function getSubmissionId(date: string = formatDate()): Promise<string | null> {
+  try {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      'SELECT submission_id FROM order_sessions WHERE order_date = ?',
+      [date]
+    );
+
+    return rows.length > 0 ? rows[0].submission_id : null;
+  } catch (error) {
+    console.error('Failed to get submission ID:', error);
+    return null;
+  }
+}

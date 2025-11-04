@@ -6,11 +6,11 @@ import mysql from 'mysql2/promise';
  * - 환경 변수를 통해 연결 정보 설정
  */
 export const pool = mysql.createPool({
-  host: 'mariadb',
-  port: 3306,
-  user: 'root',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '3306'),
+  user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: 'launch_bot',
+  database: process.env.DB_NAME || 'launch_bot',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -64,10 +64,34 @@ export async function initializeDatabase(): Promise<void> {
         closed BOOLEAN DEFAULT FALSE COMMENT '주문 마감 여부',
         message_ts VARCHAR(50) NULL COMMENT 'Slack 메시지 타임스탬프 (업데이트용)',
         message_sent BOOLEAN DEFAULT FALSE COMMENT '주문 메시지 전송 여부',
+        submitted BOOLEAN DEFAULT FALSE COMMENT 'Lunchlab 제출 완료 여부',
+        submission_id VARCHAR(100) NULL COMMENT 'Lunchlab 주문 ID (수정용)',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '세션 생성 시각',
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '마지막 업데이트 시각'
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='일별 주문 세션 정보'
     `);
+
+    // 기존 테이블에 submission 필드가 없다면 추가 (마이그레이션)
+    try {
+      await connection.query(`
+        ALTER TABLE order_sessions
+        ADD COLUMN IF NOT EXISTS submitted BOOLEAN DEFAULT FALSE COMMENT 'Lunchlab 제출 완료 여부' AFTER message_sent,
+        ADD COLUMN IF NOT EXISTS submission_id VARCHAR(100) NULL COMMENT 'Lunchlab 주문 ID (수정용)' AFTER submitted
+      `);
+    } catch (error) {
+      // MySQL 5.7 doesn't support IF NOT EXISTS in ALTER TABLE, so we check first
+      const [columns] = await connection.query(
+        `SHOW COLUMNS FROM order_sessions WHERE Field IN ('submitted', 'submission_id')`
+      );
+
+      if (!Array.isArray(columns) || columns.length === 0) {
+        await connection.query(`
+          ALTER TABLE order_sessions
+          ADD COLUMN submitted BOOLEAN DEFAULT FALSE COMMENT 'Lunchlab 제출 완료 여부' AFTER message_sent,
+          ADD COLUMN submission_id VARCHAR(100) NULL COMMENT 'Lunchlab 주문 ID (수정용)' AFTER submitted
+        `);
+      }
+    }
 
     console.log('✅ Database tables initialized');
   } catch (error) {

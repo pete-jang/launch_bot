@@ -1,7 +1,8 @@
 import { app, isAllowedChannel } from '../bot';
-import { addOrder, getOrdersForDate, Menu } from '../storage/orders';
+import { addOrder, getOrdersForDate, Menu, isOrderSubmitted } from '../storage/orders';
 import { isOrderDeadlinePassed } from '../utils/time';
 import { updateOrderMessage } from './orderMessage';
+import { submitOrdersIfReady, updateSubmittedOrder } from '../automation/submitter';
 
 /**
  * 주문 버튼 인터랙션 등록
@@ -105,6 +106,19 @@ async function handleOrder(body: any, client: any, menu: Menu, orderDate: string
     }
 
     console.log(`Order received: ${userName} (${userId}) ordered ${menu} for ${orderDate}`);
+
+    // 자동 제출 로직: 주문 3개 이상 시 자동으로 Lunchlab에 제출
+    const alreadySubmitted = await isOrderSubmitted(orderDate);
+
+    if (alreadySubmitted) {
+      // 이미 제출된 경우, 수정 요청
+      console.log(`Order already submitted for ${orderDate}, updating...`);
+      await updateSubmittedOrder(orderDate, body.channel.id);
+    } else {
+      // 아직 제출되지 않은 경우, 최소 수량 확인 후 제출
+      console.log(`Checking if ready to submit for ${orderDate}...`);
+      await submitOrdersIfReady(orderDate, body.channel.id);
+    }
   } catch (error) {
     console.error('Error handling order:', error);
   }
