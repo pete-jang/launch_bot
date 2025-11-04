@@ -453,9 +453,234 @@ export async function updateOrder(
   menuSummary: MenuSummary,
   submissionId?: string
 ): Promise<OrderSubmissionResult> {
-  // For Lunchlab, updating and submitting are likely the same process
-  // Just navigate to the same page and re-submit
-  return await submitOrder(orderDate, menuSummary);
+  let browser: Browser | null = null;
+
+  try {
+    console.log(`Updating order for ${orderDate}:`, menuSummary);
+
+    browser = await initBrowser(); // headless = true (production)
+    const page = await browser.newPage();
+
+    // Login (force fresh login for update to ensure valid session)
+    if (!(await ensureLoggedIn(page, true))) {
+      return {
+        success: false,
+        error: 'Failed to login',
+        screenshotPath: await saveScreenshot(page, `login-failed-${Date.now()}.png`),
+      };
+    }
+
+    // Navigate to order page for specific date
+    console.log(`Navigating to ${LUNCHLAB_BASE_URL}/console/order?date=${orderDate}`);
+    await page.goto(`${LUNCHLAB_BASE_URL}/console/order?date=${orderDate}`, {
+      waitUntil: 'networkidle2',
+      timeout: 30000,
+    });
+    console.log(`Current URL: ${page.url()}`);
+
+    // Wait extra time for React to render
+    console.log('Waiting for page to fully render...');
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // Take screenshot to see what's on the page
+    await saveScreenshot(page, `page-loaded-${orderDate}.png`);
+
+    // Check if form exists
+    const formExists = await page.evaluate(() => {
+      // @ts-ignore
+      const form = document.querySelector('form');
+      // @ts-ignore
+      const body = document.body.innerHTML;
+      return {
+        formExists: !!form,
+        bodyLength: body.length,
+        // @ts-ignore
+        title: document.title
+      };
+    });
+
+    console.log('Page check:', formExists);
+
+    // If form doesn't exist, might be on order detail page - click "주문 수정" button
+    if (!formExists.formExists) {
+      console.log('Form not found - checking for "주문 수정" button...');
+
+      // Look for "주문 수정" button
+      const modifyButton = await page.$('button:has-text("주문 수정")').catch(() => null);
+
+      if (!modifyButton) {
+        // Try finding button by text content
+        const buttonFound = await page.evaluate(() => {
+          // @ts-ignore
+          const buttons = Array.from(document.querySelectorAll('button'));
+          // @ts-ignore
+          const modifyBtn = buttons.find(btn => btn.textContent.includes('주문 수정'));
+          if (modifyBtn) {
+            // @ts-ignore
+            modifyBtn.click();
+            return true;
+          }
+          return false;
+        });
+
+        if (buttonFound) {
+          console.log('Clicked "주문 수정" button');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } else {
+          console.log('Could not find "주문 수정" button');
+        }
+      } else {
+        await modifyButton.click();
+        console.log('Clicked "주문 수정" button');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+
+    // Wait for form to load
+    await page.waitForSelector('form', { timeout: 10000 });
+    console.log('Order form loaded');
+
+    // Wait for menu items to load
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Take screenshot before update
+    await saveScreenshot(page, `before-update-${orderDate}.png`);
+
+    // Get current quantities from input fields
+    const currentQuantities = await page.evaluate(() => {
+      // @ts-ignore
+      const inputs = Array.from(document.querySelectorAll('input[type="number"]'));
+      // @ts-ignore
+      return inputs.map(input => parseInt(input.value) || 0);
+    });
+
+    console.log('Current quantities:', currentQuantities);
+
+    // Menu mapping: index 0 = 가정식, index 1 = 프레시밀
+    const menuMap = ['가정식', '프레시밀'];
+    const targetQuantities = [menuSummary.가정식, menuSummary.프레시밀];
+
+    // Find add and remove buttons
+    const addButtons = await page.$$('button svg[data-testid="AddIcon"]');
+    const removeButtons = await page.$$('button svg[data-testid="RemoveIcon"]');
+
+    console.log(`Found ${addButtons.length} add buttons, ${removeButtons.length} remove buttons`);
+
+    // Adjust quantities for each menu
+    for (let i = 0; i < menuMap.length && i < currentQuantities.length; i++) {
+      const menuType = menuMap[i];
+      const currentQty = currentQuantities[i];
+      const targetQty = targetQuantities[i];
+      const diff = targetQty - currentQty;
+
+      if (diff > 0) {
+        // Need to add
+        console.log(`${menuType}: Adding ${diff} (current: ${currentQty}, target: ${targetQty})`);
+
+        const buttonElement = await page.evaluateHandle(
+          (svg) => {
+            // @ts-ignore
+            return svg.closest('button');
+          },
+          addButtons[i]
+        );
+
+        for (let j = 0; j < diff; j++) {
+          await (buttonElement as any).click();
+          console.log(`  Added ${j + 1}/${diff}`);
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      } else if (diff < 0) {
+        // Need to remove
+        const removeCount = Math.abs(diff);
+        console.log(`${menuType}: Removing ${removeCount} (current: ${currentQty}, target: ${targetQty})`);
+
+        const buttonElement = await page.evaluateHandle(
+          (svg) => {
+            // @ts-ignore
+            return svg.closest('button');
+          },
+          removeButtons[i]
+        );
+
+        for (let j = 0; j < removeCount; j++) {
+          await (buttonElement as any).click();
+          console.log(`  Removed ${j + 1}/${removeCount}`);
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      } else {
+        console.log(`${menuType}: No change needed (already ${currentQty})`);
+      }
+    }
+
+    // Wait for React to update
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Take screenshot after adjusting quantities
+    await saveScreenshot(page, `after-update-${orderDate}.png`);
+
+    // Check if submit button is enabled
+    const submitButtonEnabled = await page.evaluate(() => {
+      // @ts-ignore
+      const submitButton = document.querySelector('button[type="submit"]');
+      // @ts-ignore
+      return submitButton && !submitButton.disabled;
+    });
+
+    console.log(`Submit button enabled: ${submitButtonEnabled}`);
+
+    if (!submitButtonEnabled) {
+      return {
+        success: false,
+        error: 'Submit button not enabled - check minimum quantity',
+        screenshotPath: await saveScreenshot(page, `submit-disabled-update-${orderDate}.png`),
+      };
+    }
+
+    // Click submit button
+    console.log('Clicking submit button...');
+    await page.click('button[type="submit"]');
+
+    // Wait for response
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // Take screenshot after submission
+    const afterSubmitScreenshot = await saveScreenshot(page, `after-submit-update-${orderDate}.png`);
+
+    // Check if submission was successful
+    const currentUrl = page.url();
+    console.log(`Current URL after update: ${currentUrl}`);
+
+    if (currentUrl.includes('/console')) {
+      return {
+        success: true,
+        submissionId: submissionId || orderDate,
+        screenshotPath: afterSubmitScreenshot,
+      };
+    } else {
+      return {
+        success: false,
+        error: 'Unexpected URL after update',
+        screenshotPath: afterSubmitScreenshot,
+      };
+    }
+  } catch (error) {
+    console.error('Order update failed:', error);
+    const page = browser ? (await browser.pages())[0] : null;
+    const screenshotPath = page
+      ? await saveScreenshot(page, `error-update-${Date.now()}.png`)
+      : undefined;
+
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      screenshotPath,
+    };
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
 }
 
 /**
