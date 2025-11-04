@@ -5,7 +5,7 @@ import mysql from 'mysql2/promise';
  * - Cloudtype에서 제공하는 MariaDB 인스턴스에 연결
  * - 환경 변수를 통해 연결 정보 설정
  */
-export const pool = mysql.createPool({
+const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '3306'),
   user: process.env.DB_USER || 'root',
@@ -16,7 +16,27 @@ export const pool = mysql.createPool({
   queueLimit: 0,
   timezone: '+09:00', // KST (Korea Standard Time)
   charset: 'utf8mb4',
+};
+
+// 연결 정보 로그 (비밀번호는 마스킹)
+console.log('🔌 Database connection config:', {
+  host: dbConfig.host,
+  port: dbConfig.port,
+  user: dbConfig.user,
+  password: dbConfig.password ? '****' : '(empty)',
+  database: dbConfig.database,
 });
+
+// 환경 변수 원본 값 로그
+console.log('📝 Environment variables:', {
+  DB_HOST: process.env.DB_HOST || '(not set)',
+  DB_PORT: process.env.DB_PORT || '(not set)',
+  DB_USER: process.env.DB_USER || '(not set)',
+  DB_PASSWORD: process.env.DB_PASSWORD ? '****' : '(not set)',
+  DB_NAME: process.env.DB_NAME || '(not set)',
+});
+
+export const pool = mysql.createPool(dbConfig);
 
 /**
  * 데이터베이스 연결 테스트
