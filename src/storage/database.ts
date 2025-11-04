@@ -6,7 +6,7 @@ import mysql from 'mysql2/promise';
  * - 환경 변수를 통해 연결 정보 설정
  */
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
+  host: process.env.DB_HOST || 'mariadb',
   port: parseInt(process.env.DB_PORT || '3306'),
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
