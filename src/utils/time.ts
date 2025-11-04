@@ -202,3 +202,70 @@ export function parseDateRange(rangeString: string): { start: string; end: strin
 
   return { start, end };
 }
+
+/**
+ * 날짜 문자열이 평일인지 확인
+ */
+export function isWeekdayDate(dateString: string): boolean {
+  if (!isValidDate(dateString)) {
+    return false;
+  }
+  const date = moment.tz(dateString, TIMEZONE);
+  return isWeekday(date);
+}
+
+/**
+ * 날짜 문자열이 과거 날짜인지 확인 (오늘 포함하지 않음)
+ */
+export function isPastDate(dateString: string): boolean {
+  if (!isValidDate(dateString)) {
+    return true; // 유효하지 않은 날짜는 과거로 간주
+  }
+  const date = moment.tz(dateString, TIMEZONE).startOf('day');
+  const today = getCurrentKST().startOf('day');
+  return date.isBefore(today);
+}
+
+/**
+ * 특정 날짜의 주문 마감 시간이 지났는지 확인
+ * @param orderDate 주문 날짜 (YYYY-MM-DD)
+ */
+export function isOrderDeadlinePassed(orderDate: string): boolean {
+  if (!isValidDate(orderDate)) {
+    return true;
+  }
+
+  // 평일이 아니면 마감
+  if (!isWeekdayDate(orderDate)) {
+    return true;
+  }
+
+  const now = getCurrentKST();
+  const targetDate = moment.tz(orderDate, TIMEZONE);
+
+  // 과거 날짜는 마감
+  if (targetDate.isBefore(now, 'day')) {
+    return true;
+  }
+
+  // 미래 날짜는 마감되지 않음
+  if (targetDate.isAfter(now, 'day')) {
+    return false;
+  }
+
+  // 같은 날짜면 시간 확인 (14시 이후 마감)
+  return now.hour() >= 14;
+}
+
+/**
+ * 날짜를 요일과 함께 포맷 (예: "2025-11-08 (금요일)")
+ */
+export function formatDateWithDay(dateString: string): string {
+  if (!isValidDate(dateString)) {
+    return dateString;
+  }
+  const date = moment.tz(dateString, TIMEZONE);
+  const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+  const dayName = dayNames[date.day()];
+  return `${dateString} (${dayName})`;
+}

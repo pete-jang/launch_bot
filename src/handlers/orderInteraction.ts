@@ -1,29 +1,37 @@
 import { app, isAllowedChannel } from '../bot';
-import { addOrder, getTodayOrders, Menu } from '../storage/orders';
-import { isAfterOrderDeadline } from '../utils/time';
+import { addOrder, getOrdersForDate, Menu } from '../storage/orders';
+import { isOrderDeadlinePassed } from '../utils/time';
 import { updateOrderMessage } from './orderMessage';
 
 /**
  * 주문 버튼 인터랙션 등록
  */
 export function registerOrderInteraction(): void {
-  // 가정식 주문
-  app.action('order_가정식', async ({ ack, body, client }) => {
+  // 날짜가 포함된 주문 버튼 패턴 매칭
+  app.action(/^order_(가정식|프레시밀)_(\d{4}-\d{2}-\d{2})$/, async ({ ack, body, client, action }) => {
     await ack();
-    await handleOrder(body, client, '가정식');
-  });
 
-  // 프레시밀 주문
-  app.action('order_프레시밀', async ({ ack, body, client }) => {
-    await ack();
-    await handleOrder(body, client, '프레시밀');
+    // action_id에서 메뉴와 날짜 추출
+    const actionId = (action as any).action_id;
+    const match = actionId.match(/^order_(가정식|프레시밀)_(\d{4}-\d{2}-\d{2})$/);
+
+    if (!match) {
+      console.error('Invalid action_id format:', actionId);
+      return;
+    }
+
+    const menu = match[1] as Menu;
+    const orderDate = match[2];
+
+    await handleOrder(body, client, menu, orderDate);
   });
 }
 
 /**
  * 주문 처리 로직
+ * @param orderDate 주문 날짜
  */
-async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
+async function handleOrder(body: any, client: any, menu: Menu, orderDate: string): Promise<void> {
   try {
     const userId = body.user.id;
     const userName = body.user.name || body.user.username || '알 수 없음';
@@ -38,8 +46,8 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       return;
     }
 
-    // 주문 마감 확인
-    if (isAfterOrderDeadline()) {
+    // 해당 날짜의 주문 마감 확인
+    if (isOrderDeadlinePassed(orderDate)) {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
@@ -48,10 +56,10 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
       return;
     }
 
-    const todayOrders = await getTodayOrders();
+    const orders = await getOrdersForDate(orderDate);
 
     // 이미 마감된 경우
-    if (todayOrders.closed) {
+    if (orders.closed) {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
@@ -61,10 +69,10 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
     }
 
     // 기존 주문 확인 (주문 추가 전에 확인)
-    const existingOrder = todayOrders.orders.find((order) => order.userId === userId);
+    const existingOrder = orders.orders.find((order) => order.userId === userId);
 
     // 주문 추가
-    const success = await addOrder(userId, userName, menu);
+    const success = await addOrder(userId, userName, menu, orderDate);
 
     if (!success) {
       await client.chat.postEphemeral({
@@ -93,10 +101,10 @@ async function handleOrder(body: any, client: any, menu: Menu): Promise<void> {
 
     // 주문 메시지 업데이트 (현황 반영)
     if (body.message?.ts) {
-      await updateOrderMessage(body.message.ts);
+      await updateOrderMessage(body.message.ts, orderDate);
     }
 
-    console.log(`Order received: ${userName} (${userId}) ordered ${menu}`);
+    console.log(`Order received: ${userName} (${userId}) ordered ${menu} for ${orderDate}`);
   } catch (error) {
     console.error('Error handling order:', error);
   }

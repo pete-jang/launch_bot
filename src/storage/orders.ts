@@ -128,15 +128,19 @@ export async function getTodayOrders(): Promise<DayOrders> {
 
 /**
  * 주문 추가
+ * @param orderDate 주문 날짜 (기본값: 오늘)
  */
-export async function addOrder(userId: string, userName: string, menu: Menu): Promise<boolean> {
-  const today = formatDate();
-
+export async function addOrder(
+  userId: string,
+  userName: string,
+  menu: Menu,
+  orderDate: string = formatDate()
+): Promise<boolean> {
   try {
     // 세션이 마감되었는지 확인
     const [sessionRows] = await pool.query<RowDataPacket[]>(
       'SELECT closed FROM order_sessions WHERE order_date = ?',
-      [today]
+      [orderDate]
     );
 
     if (sessionRows.length > 0 && sessionRows[0].closed) {
@@ -151,7 +155,7 @@ export async function addOrder(userId: string, userName: string, menu: Menu): Pr
       `INSERT INTO orders (order_date, user_id, user_name, menu_type, ordered_at)
        VALUES (?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE user_name = VALUES(user_name), menu_type = VALUES(menu_type), ordered_at = VALUES(ordered_at)`,
-      [today, userId, userName, menu, timestamp]
+      [orderDate, userId, userName, menu, timestamp]
     );
 
     return true;
