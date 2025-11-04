@@ -24,3 +24,7 @@ Thumbs.db
 
 # Data files (comment out if you want to version control orders)
 data/orders.json
+data/lunchlab-cookies.json
+
+# Screenshots (debugging/automation)
+screenshots/

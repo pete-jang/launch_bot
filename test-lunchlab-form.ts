@@ -21,7 +21,8 @@ async function main() {
   const testDate = '2025-11-07';
 
   console.log(`Inspecting form for date: ${testDate}`);
-  await inspectForm(testDate, true); // Force fresh login
+  console.log('\n⚠️  Browser window will open - watch the automation process\n');
+  await inspectForm(testDate, true, false); // Force fresh login, headless = false
 
   console.log('\nForm inspection complete!');
   console.log('Check the screenshots directory for:');

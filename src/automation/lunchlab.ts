@@ -73,6 +73,37 @@ async function login(page: Page): Promise<boolean> {
   try {
     console.log('Attempting to login to Lunchlab...');
 
+    // Enable request/response logging
+    const loginRequests: any[] = [];
+    page.on('request', (request) => {
+      if (request.url().includes('/api/auth') || request.url().includes('callback')) {
+        const postData = request.postData();
+        loginRequests.push({
+          url: request.url(),
+          method: request.method(),
+          postData: postData,
+        });
+        console.log(`  📤 Request: ${request.method()} ${request.url()}`);
+        if (postData && request.method() === 'POST') {
+          console.log(`     POST data: ${postData.substring(0, 200)}`);
+        }
+      }
+    });
+
+    page.on('response', async (response) => {
+      if (response.url().includes('/api/auth') || response.url().includes('callback')) {
+        console.log(`  📥 Response: ${response.status()} ${response.url()}`);
+        try {
+          const text = await response.text();
+          if (text && text.length < 500) {
+            console.log(`     Body: ${text}`);
+          }
+        } catch (e) {
+          // Ignore
+        }
+      }
+    });
+
     // Navigate to login page
     await page.goto(`${LUNCHLAB_BASE_URL}/auth/sign-in`, {
       waitUntil: 'networkidle2',
@@ -85,60 +116,139 @@ async function login(page: Page): Promise<boolean> {
       timeout: 10000,
     });
 
-    // Fill in credentials (for React controlled inputs)
+    // Fill in credentials (simple approach with proper focus)
     console.log('Filling in credentials...');
 
-    // For React apps, we need to trigger input events properly
-    // @ts-ignore - this code runs in browser context
-    await page.evaluate((username: string, password: string) => {
-      // @ts-ignore
-      const usernameInput = document.querySelector('input[name="username"]');
-      // @ts-ignore
-      const passwordInput = document.querySelector('input[name="password"]');
+    // Focus and type into username field
+    const usernameSelector = 'input[name="username"]';
+    await page.click(usernameSelector);
+    await page.focus(usernameSelector);
+    await new Promise(resolve => setTimeout(resolve, 200));
 
-      if (usernameInput) {
-        // @ts-ignore
-        usernameInput.value = username;
-        usernameInput.dispatchEvent(new Event('input', { bubbles: true }));
-        usernameInput.dispatchEvent(new Event('change', { bubbles: true }));
-      }
+    // Type username slowly
+    console.log('  Typing username...');
+    await page.keyboard.type(LUNCHLAB_USERNAME, { delay: 100 });
 
-      if (passwordInput) {
-        // @ts-ignore
-        passwordInput.value = password;
-        passwordInput.dispatchEvent(new Event('input', { bubbles: true }));
-        passwordInput.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    }, LUNCHLAB_USERNAME, LUNCHLAB_PASSWORD);
+    // Wait a bit
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Wait a bit for React to process
+    // Focus and type into password field
+    const passwordSelector = 'input[name="password"]';
+    await page.click(passwordSelector);
+    await page.focus(passwordSelector);
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // Type password slowly
+    console.log('  Typing password...');
+    await page.keyboard.type(LUNCHLAB_PASSWORD, { delay: 100 });
+
+    // Wait for React to update
     await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Take a screenshot before clicking login
+    await saveScreenshot(page, 'before-login-click.png');
+    console.log('  Screenshot saved before clicking login');
 
     // Click login button and wait for navigation
     console.log('Clicking login button...');
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 }).catch(err => {
-        console.log('Navigation warning:', err.message);
-      }),
-      page.click('button[type="submit"]'),
-    ]);
+
+    // Take screenshot of button before clicking
+    await saveScreenshot(page, 'before-button-click.png');
+
+    // Click the button
+    await page.click('button[type="submit"]');
+    console.log('  Button clicked, waiting for response...');
+
+    // Wait for either navigation or error message
+    try {
+      await Promise.race([
+        page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 10000 }),
+        page.waitForSelector('.MuiAlert-message, .error, [role="alert"]', { timeout: 3000 }).then(async () => {
+          const errorText = await page.evaluate(() => {
+            // @ts-ignore
+            const errorEl = document.querySelector('.MuiAlert-message, .error, [role="alert"]');
+            // @ts-ignore
+            return errorEl ? errorEl.innerText : null;
+          });
+          console.log('  ⚠️ Error message found:', errorText);
+        }),
+      ]);
+    } catch (err) {
+      console.log('  No navigation or error within timeout');
+    }
 
     // Wait a bit more for any redirects
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     const finalUrl = page.url();
     console.log('Final URL after login:', finalUrl);
 
+    // Take screenshot after login attempt
+    await saveScreenshot(page, 'after-login-attempt.png');
+
     // Check if login was successful by checking URL
     if (finalUrl.includes('/auth/sign-in')) {
-      console.error('Still on login page - login may have failed');
-      await saveScreenshot(page, `login-failed-${Date.now()}.png`);
+      console.log('⚠️  Still on login page after first attempt - trying second login...');
 
-      // Check for error messages (screenshot saved above)
-      const html = await page.content();
-      console.log('Page HTML length:', html.length, 'characters');
+      // Second login attempt (some systems require this)
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      return false;
+      // Check if form fields are still filled
+      const formFilled = await page.evaluate(() => {
+        // @ts-ignore
+        const usernameInput = document.querySelector('input[name="username"]');
+        // @ts-ignore
+        const passwordInput = document.querySelector('input[name="password"]');
+        // @ts-ignore
+        return usernameInput?.value && passwordInput?.value;
+      });
+
+      if (!formFilled) {
+        console.log('  Refilling credentials for second attempt...');
+
+        // Refill credentials
+        const usernameSelector = 'input[name="username"]';
+        await page.click(usernameSelector);
+        await page.focus(usernameSelector);
+        await new Promise(resolve => setTimeout(resolve, 200));
+        await page.keyboard.type(LUNCHLAB_USERNAME, { delay: 100 });
+
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        const passwordSelector = 'input[name="password"]';
+        await page.click(passwordSelector);
+        await page.focus(passwordSelector);
+        await new Promise(resolve => setTimeout(resolve, 200));
+        await page.keyboard.type(LUNCHLAB_PASSWORD, { delay: 100 });
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } else {
+        console.log('  Form still filled, clicking login again...');
+      }
+
+      // Click login button again
+      await page.click('button[type="submit"]');
+      console.log('  Second login button clicked...');
+
+      // Wait for navigation or error
+      try {
+        await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 10000 });
+      } catch (err) {
+        console.log('  No navigation after second attempt');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const secondAttemptUrl = page.url();
+      console.log('  URL after second attempt:', secondAttemptUrl);
+
+      if (secondAttemptUrl.includes('/auth/sign-in')) {
+        console.error('❌ Login failed after 2 attempts');
+        await saveScreenshot(page, 'login-failed-after-2-attempts.png');
+        return false;
+      } else {
+        console.log('✅ Second login attempt successful!');
+      }
     }
 
     // Save cookies for future use
@@ -222,25 +332,100 @@ export async function submitOrder(
     });
 
     // Wait for form to load
-    await page.waitForSelector('form, input, select', { timeout: 10000 });
+    await page.waitForSelector('form', { timeout: 10000 });
+    console.log('Order form loaded');
 
-    // Take screenshot for inspection
-    const inspectScreenshot = await saveScreenshot(page, `order-form-${orderDate}.png`);
-    console.log(`Order form screenshot saved: ${inspectScreenshot}`);
+    // Wait for menu items to load
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // TODO: Implement actual form filling logic after inspecting the form structure
-    // This will be completed after we test and see the actual form structure
+    // Take screenshot before filling
+    await saveScreenshot(page, `before-filling-${orderDate}.png`);
 
-    // For now, just log what we would do
-    console.log('Form inspection needed - check screenshot to implement form filling');
-    console.log('Expected to fill:', menuSummary);
+    // Find all add buttons (+ icons)
+    const addButtons = await page.$$('button svg[data-testid="AddIcon"]');
+    console.log(`Found ${addButtons.length} add buttons`);
 
-    // Placeholder: Return success for now (will implement actual submission)
-    return {
-      success: false,
-      error: 'Form filling not yet implemented - needs inspection',
-      screenshotPath: inspectScreenshot,
-    };
+    // Menu mapping: index 0 = 가정식, index 1 = 프레시밀
+    const menuMap = ['가정식', '프레시밀'];
+
+    for (let i = 0; i < addButtons.length && i < menuMap.length; i++) {
+      const menuType = menuMap[i] as '가정식' | '프레시밀';
+      const quantity = menuSummary[menuType];
+
+      if (quantity > 0) {
+        console.log(`Clicking + button for ${menuType} ${quantity} times...`);
+
+        // Get the button element (parent of the SVG)
+        const buttonElement = await page.evaluateHandle(
+          (svg) => {
+            // @ts-ignore
+            return svg.closest('button');
+          },
+          addButtons[i]
+        );
+
+        // Click the + button multiple times
+        for (let j = 0; j < quantity; j++) {
+          await (buttonElement as any).click();
+          console.log(`  Clicked ${j + 1}/${quantity}`);
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      }
+    }
+
+    // Wait for React to update
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Take screenshot after filling
+    await saveScreenshot(page, `after-filling-${orderDate}.png`);
+
+    // Check if submit button is enabled
+    const submitButtonEnabled = await page.evaluate(() => {
+      // @ts-ignore
+      const submitButton = document.querySelector('button[type="submit"]');
+      // @ts-ignore
+      return submitButton && !submitButton.disabled;
+    });
+
+    console.log(`Submit button enabled: ${submitButtonEnabled}`);
+
+    if (!submitButtonEnabled) {
+      return {
+        success: false,
+        error: 'Submit button not enabled - check minimum quantity',
+        screenshotPath: await saveScreenshot(page, `submit-disabled-${orderDate}.png`),
+      };
+    }
+
+    // Click submit button
+    console.log('Clicking submit button...');
+    await page.click('button[type="submit"]');
+
+    // Wait for response
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // Take screenshot after submission
+    const afterSubmitScreenshot = await saveScreenshot(page, `after-submit-${orderDate}.png`);
+
+    // Check if submission was successful
+    const currentUrl = page.url();
+    console.log(`Current URL after submission: ${currentUrl}`);
+
+    // TODO: Add logic to check for success message or confirmation
+    // For now, assume success if still on console page
+    if (currentUrl.includes('/console')) {
+      return {
+        success: true,
+        submissionId: orderDate, // Use order date as ID for now
+        screenshotPath: afterSubmitScreenshot,
+      };
+    } else {
+      return {
+        success: false,
+        error: 'Unexpected URL after submission',
+        screenshotPath: afterSubmitScreenshot,
+      };
+    }
   } catch (error) {
     console.error('Order submission failed:', error);
     const page = browser ? (await browser.pages())[0] : null;
