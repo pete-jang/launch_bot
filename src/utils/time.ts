@@ -269,3 +269,26 @@ export function formatDateWithDay(dateString: string): string {
   const dayName = dayNames[date.day()];
   return `${dateString} (${dayName})`;
 }
+
+/**
+ * 날짜 범위 검증
+ * @returns { valid: true } 또는 { valid: false, error: string }
+ */
+export function validateDateRange(startDate: string, endDate: string): { valid: boolean; error?: string } {
+  if (!isValidDate(startDate)) {
+    return { valid: false, error: '시작일이 올바른 날짜 형식이 아닙니다.' };
+  }
+
+  if (!isValidDate(endDate)) {
+    return { valid: false, error: '종료일이 올바른 날짜 형식이 아닙니다.' };
+  }
+
+  const start = moment.tz(startDate, TIMEZONE);
+  const end = moment.tz(endDate, TIMEZONE);
+
+  if (start.isAfter(end)) {
+    return { valid: false, error: '시작일이 종료일보다 늦습니다.' };
+  }
+
+  return { valid: true };
+}
