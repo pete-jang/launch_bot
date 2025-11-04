@@ -10,8 +10,8 @@ import {
   isOrderSubmitted,
   markOrderAsSubmitted,
   getSubmissionId,
-  formatDate,
 } from '../storage/orders';
+import { formatDate } from '../utils/time';
 import { app } from '../bot';
 
 const MINIMUM_ORDER_COUNT = 3;
