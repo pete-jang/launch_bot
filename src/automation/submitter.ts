@@ -3,7 +3,8 @@
  * Handles automatic submission to Lunchlab when orders reach minimum quantity
  */
 
-import { submitOrder, updateOrder } from './lunchlab';
+// Use API client instead of Puppeteer automation
+import { submitOrder, updateOrder } from './lunchlab-api';
 import {
   getMenuSummary,
   getOrderCountForDate,
