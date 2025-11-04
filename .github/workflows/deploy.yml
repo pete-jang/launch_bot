@@ -37,6 +37,8 @@ jobs:
                   secret: slack-signing-secret
                 - name: SLACK_CHANNEL_ID
                   secret: slack-channel-id
+                - name: SLACK_ADMIN_IDS
+                  value: U08MNHQFG0J
                 - name: DB_PASSWORD
                   secret: mariadb-root-password
                 - name: TZ
