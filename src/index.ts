@@ -5,6 +5,7 @@ import { registerQueryCommand } from "./handlers/queryCommand";
 import { registerStartCommand } from "./handlers/startCommand";
 import { registerDeliveryCommand } from "./handlers/deliveryCommand";
 import { registerAppHome } from "./handlers/appHome";
+import { registerAdminCommand } from "./handlers/adminCommand";
 import {
   testConnection,
   initializeDatabase,
@@ -36,6 +37,7 @@ async function main(): Promise<void> {
     registerStartCommand();
     registerDeliveryCommand();
     registerAppHome();
+    registerAdminCommand();
 
     // Bot 시작
     await startBot();

@@ -258,6 +258,13 @@ export async function submitOrder(
     if (error.response) {
       console.error('Response status:', error.response.status);
       console.error('Response data:', error.response.data);
+
+      // If order already exists (400 error), automatically try updating instead
+      if (error.response.status === 400 &&
+          error.response.data?.message?.includes('이미 등록된 주문')) {
+        console.log('🔄 Order already exists, automatically switching to update...');
+        return await updateOrder(orderDate, menuSummary);
+      }
     }
 
     return {
@@ -273,7 +280,8 @@ export async function submitOrder(
 export async function updateOrder(
   orderDate: string,
   menuSummary: MenuSummary,
-  submissionId?: string
+  submissionId?: string,
+  isRetry: boolean = false
 ): Promise<OrderSubmissionResult> {
   try {
     console.log(`Updating order for ${orderDate} via API:`, menuSummary);
@@ -360,9 +368,9 @@ export async function updateOrder(
       console.error('Response data:', error.response.data);
     }
 
-    // If update fails, try creating a new order instead
-    // (Lunchlab might handle updates as new submissions)
-    console.log('Retrying as new order submission...');
-    return await submitOrder(orderDate, menuSummary);
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Unknown error',
+    };
   }
 }
