@@ -145,8 +145,12 @@ async function getOrderPageData(orderDate: string, cookieHeader: string, token?:
   existingOrder?: any;
 }> {
 
+  // IMPORTANT: Use meal date (not order date) to fetch page data
+  // This ensures we get existing order information
+  const mealDate = getMealDateFromOrderDate(orderDate);
+
   // Get the Next.js build ID first
-  const htmlResponse = await axios.get(`${B2B_BASE_URL}/console/order?date=${orderDate}`, {
+  const htmlResponse = await axios.get(`${B2B_BASE_URL}/console/order?date=${mealDate}`, {
     headers: {
       'Cookie': cookieHeader,
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
@@ -161,8 +165,8 @@ async function getOrderPageData(orderDate: string, cookieHeader: string, token?:
 
   const buildId = buildIdMatch[1];
 
-  // Fetch order page data
-  const dataUrl = `${B2B_BASE_URL}/_next/data/${buildId}/console/order.json?date=${orderDate}`;
+  // Fetch order page data (use meal date to get existing order info)
+  const dataUrl = `${B2B_BASE_URL}/_next/data/${buildId}/console/order.json?date=${mealDate}`;
   const dataResponse = await axios.get(dataUrl, {
     headers: {
       'Cookie': cookieHeader,
