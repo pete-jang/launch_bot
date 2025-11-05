@@ -4,16 +4,16 @@
  */
 
 // Use API client instead of Puppeteer automation
-import { submitOrder, updateOrder } from './lunchlab-api';
+import { submitOrder, updateOrder } from "./lunchlab-api";
 import {
   getMenuSummary,
   getOrderCountForDate,
   isOrderSubmitted,
   markOrderAsSubmitted,
   getSubmissionId,
-} from '../storage/orders';
-import { formatDate } from '../utils/time';
-import { app } from '../bot';
+} from "../storage/orders";
+import { formatDate } from "../utils/time";
+import { app } from "../bot";
 
 const MINIMUM_ORDER_COUNT = 3;
 const MAX_RETRIES = 3;
@@ -24,7 +24,7 @@ const RETRY_DELAY_MS = 5 * 60 * 1000; // 5 minutes
  */
 export async function submitOrdersIfReady(
   orderDate: string = formatDate(),
-  channelId?: string
+  channelId?: string,
 ): Promise<void> {
   try {
     console.log(`Checking if orders are ready to submit for ${orderDate}...`);
@@ -32,7 +32,9 @@ export async function submitOrdersIfReady(
     // Check if already submitted
     const alreadySubmitted = await isOrderSubmitted(orderDate);
     if (alreadySubmitted) {
-      console.log(`Orders for ${orderDate} already submitted. Use updateSubmittedOrder() to modify.`);
+      console.log(
+        `Orders for ${orderDate} already submitted. Use updateSubmittedOrder() to modify.`,
+      );
       return;
     }
 
@@ -42,7 +44,9 @@ export async function submitOrdersIfReady(
 
     // Check minimum quantity
     if (orderCount < MINIMUM_ORDER_COUNT) {
-      console.log(`Order count (${orderCount}) below minimum (${MINIMUM_ORDER_COUNT}). Not submitting yet.`);
+      console.log(
+        `Order count (${orderCount}) below minimum (${MINIMUM_ORDER_COUNT}). Not submitting yet.`,
+      );
 
       // Notify channel if provided
       if (channelId) {
@@ -72,11 +76,16 @@ export async function submitOrdersIfReady(
 
       // Notify failure
       if (channelId) {
-        await notifySubmissionFailure(channelId, orderDate, result.error, result.screenshotPath);
+        await notifySubmissionFailure(
+          channelId,
+          orderDate,
+          result.error,
+          result.screenshotPath,
+        );
       }
     }
   } catch (error) {
-    console.error('Error in submitOrdersIfReady:', error);
+    console.error("Error in submitOrdersIfReady:", error);
   }
 }
 
@@ -85,7 +94,7 @@ export async function submitOrdersIfReady(
  */
 export async function updateSubmittedOrder(
   orderDate: string = formatDate(),
-  channelId?: string
+  channelId?: string,
 ): Promise<void> {
   try {
     console.log(`Updating submitted order for ${orderDate}...`);
@@ -93,7 +102,9 @@ export async function updateSubmittedOrder(
     // Check if already submitted
     const alreadySubmitted = await isOrderSubmitted(orderDate);
     if (!alreadySubmitted) {
-      console.log(`Orders for ${orderDate} not yet submitted. Use submitOrdersIfReady() first.`);
+      console.log(
+        `Orders for ${orderDate} not yet submitted. Use submitOrdersIfReady() first.`,
+      );
       return;
     }
 
@@ -102,7 +113,9 @@ export async function updateSubmittedOrder(
 
     // Check minimum quantity
     if (orderCount < MINIMUM_ORDER_COUNT) {
-      console.log(`Order count (${orderCount}) below minimum (${MINIMUM_ORDER_COUNT}). Cannot update.`);
+      console.log(
+        `Order count (${orderCount}) below minimum (${MINIMUM_ORDER_COUNT}). Cannot update.`,
+      );
       return;
     }
 
@@ -113,7 +126,11 @@ export async function updateSubmittedOrder(
     console.log(`Updating order for ${orderDate}:`, menuSummary);
 
     // Update with retry logic
-    const result = await updateWithRetry(orderDate, menuSummary, submissionId || undefined);
+    const result = await updateWithRetry(
+      orderDate,
+      menuSummary,
+      submissionId || undefined,
+    );
 
     if (result.success) {
       // Update submission ID if changed
@@ -131,11 +148,16 @@ export async function updateSubmittedOrder(
 
       // Notify failure
       if (channelId) {
-        await notifySubmissionFailure(channelId, orderDate, result.error, result.screenshotPath);
+        await notifySubmissionFailure(
+          channelId,
+          orderDate,
+          result.error,
+          result.screenshotPath,
+        );
       }
     }
   } catch (error) {
-    console.error('Error in updateSubmittedOrder:', error);
+    console.error("Error in updateSubmittedOrder:", error);
   }
 }
 
@@ -145,15 +167,17 @@ export async function updateSubmittedOrder(
 async function submitWithRetry(
   orderDate: string,
   menuSummary: { 가정식: number; 프레시밀: number },
-  retryCount: number = 0
+  retryCount: number = 0,
 ): Promise<any> {
   const result = await submitOrder(orderDate, menuSummary);
 
   if (!result.success && retryCount < MAX_RETRIES) {
-    console.log(`Submission failed (attempt ${retryCount + 1}/${MAX_RETRIES}). Retrying in ${RETRY_DELAY_MS / 1000}s...`);
+    console.log(
+      `Submission failed (attempt ${retryCount + 1}/${MAX_RETRIES}). Retrying in ${RETRY_DELAY_MS / 1000}s...`,
+    );
 
     // Wait before retry
-    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
 
     // Retry
     return submitWithRetry(orderDate, menuSummary, retryCount + 1);
@@ -169,18 +193,25 @@ async function updateWithRetry(
   orderDate: string,
   menuSummary: { 가정식: number; 프레시밀: number },
   submissionId?: string,
-  retryCount: number = 0
+  retryCount: number = 0,
 ): Promise<any> {
   const result = await updateOrder(orderDate, menuSummary, submissionId);
 
   if (!result.success && retryCount < MAX_RETRIES) {
-    console.log(`Update failed (attempt ${retryCount + 1}/${MAX_RETRIES}). Retrying in ${RETRY_DELAY_MS / 1000}s...`);
+    console.log(
+      `Update failed (attempt ${retryCount + 1}/${MAX_RETRIES}). Retrying in ${RETRY_DELAY_MS / 1000}s...`,
+    );
 
     // Wait before retry
-    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
 
     // Retry
-    return updateWithRetry(orderDate, menuSummary, submissionId, retryCount + 1);
+    return updateWithRetry(
+      orderDate,
+      menuSummary,
+      submissionId,
+      retryCount + 1,
+    );
   }
 
   return result;
@@ -189,14 +220,17 @@ async function updateWithRetry(
 /**
  * Notify that minimum order count not met
  */
-async function notifyMinimumNotMet(channelId: string, currentCount: number): Promise<void> {
+async function notifyMinimumNotMet(
+  channelId: string,
+  currentCount: number,
+): Promise<void> {
   try {
     await app.client.chat.postMessage({
       channel: channelId,
       text: `⚠️ 최소 주문 수량(${MINIMUM_ORDER_COUNT}개)에 미달하여 실제 주문이 제출되지 않았습니다.\n현재 주문: ${currentCount}개`,
     });
   } catch (error) {
-    console.error('Failed to notify minimum not met:', error);
+    console.error("Failed to notify minimum not met:", error);
   }
 }
 
@@ -206,7 +240,7 @@ async function notifyMinimumNotMet(channelId: string, currentCount: number): Pro
 async function notifySubmissionSuccess(
   channelId: string,
   orderDate: string,
-  menuSummary: { 가정식: number; 프레시밀: number }
+  menuSummary: { 가정식: number; 프레시밀: number },
 ): Promise<void> {
   try {
     await app.client.chat.postMessage({
@@ -214,7 +248,7 @@ async function notifySubmissionSuccess(
       text: `✅ Lunchlab 주문이 자동으로 제출되었습니다!\n날짜: ${orderDate}\n🍚 가정식: ${menuSummary.가정식}개\n🥗 프레시밀: ${menuSummary.프레시밀}개`,
     });
   } catch (error) {
-    console.error('Failed to notify submission success:', error);
+    console.error("Failed to notify submission success:", error);
   }
 }
 
@@ -224,7 +258,7 @@ async function notifySubmissionSuccess(
 async function notifyUpdateSuccess(
   channelId: string,
   orderDate: string,
-  menuSummary: { 가정식: number; 프레시밀: number }
+  menuSummary: { 가정식: number; 프레시밀: number },
 ): Promise<void> {
   try {
     await app.client.chat.postMessage({
@@ -232,7 +266,7 @@ async function notifyUpdateSuccess(
       text: `🔄 Lunchlab 주문이 수정되었습니다.\n날짜: ${orderDate}\n🍚 가정식: ${menuSummary.가정식}개\n🥗 프레시밀: ${menuSummary.프레시밀}개`,
     });
   } catch (error) {
-    console.error('Failed to notify update success:', error);
+    console.error("Failed to notify update success:", error);
   }
 }
 
@@ -243,11 +277,11 @@ async function notifySubmissionFailure(
   channelId: string,
   orderDate: string,
   error?: string,
-  screenshotPath?: string
+  screenshotPath?: string,
 ): Promise<void> {
   try {
-    const adminIds = process.env.SLACK_ADMIN_IDS?.split(',') || [];
-    const adminMentions = adminIds.map(id => `<@${id.trim()}>`).join(' ');
+    const adminIds = process.env.SLACK_ADMIN_IDS?.split(",") || [];
+    const adminMentions = adminIds.map((id) => `<@${id.trim()}>`).join(" ");
 
     let text = `❌ Lunchlab 주문 제출에 실패했습니다. ${adminMentions}\n날짜: ${orderDate}`;
 
@@ -264,6 +298,6 @@ async function notifySubmissionFailure(
       text,
     });
   } catch (error) {
-    console.error('Failed to notify submission failure:', error);
+    console.error("Failed to notify submission failure:", error);
   }
 }

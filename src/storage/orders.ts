@@ -1,8 +1,12 @@
-import { RowDataPacket, ResultSetHeader } from 'mysql2';
-import { pool } from './database';
-import { formatDate, getCurrentKST, getMealDateFromOrderDate } from '../utils/time';
+import { RowDataPacket, ResultSetHeader } from "mysql2";
+import { pool } from "./database";
+import {
+  formatDate,
+  getCurrentKST,
+  getMealDateFromOrderDate,
+} from "../utils/time";
 
-export type Menu = '가정식' | '프레시밀';
+export type Menu = "가정식" | "프레시밀";
 
 export interface Order {
   userId: string;
@@ -30,18 +34,23 @@ export interface OrdersData {
 export async function loadOrders(): Promise<OrdersData> {
   try {
     const [orderRows] = await pool.query<RowDataPacket[]>(
-      'SELECT order_date, user_id, user_name, menu_type, ordered_at FROM orders ORDER BY order_date DESC, ordered_at ASC'
+      "SELECT order_date, user_id, user_name, menu_type, ordered_at FROM orders ORDER BY order_date DESC, ordered_at ASC",
     );
 
     const [sessionRows] = await pool.query<RowDataPacket[]>(
-      'SELECT order_date, closed, message_ts, message_sent FROM order_sessions'
+      "SELECT order_date, closed, message_ts, message_sent FROM order_sessions",
     );
 
     const data: OrdersData = {};
 
     // 세션 정보 먼저 구성
     for (const session of sessionRows) {
-      const dateStr = formatDate(getCurrentKST().year(session.order_date.getFullYear()).month(session.order_date.getMonth()).date(session.order_date.getDate()));
+      const dateStr = formatDate(
+        getCurrentKST()
+          .year(session.order_date.getFullYear())
+          .month(session.order_date.getMonth())
+          .date(session.order_date.getDate()),
+      );
       data[dateStr] = {
         orders: [],
         closed: !!session.closed,
@@ -52,7 +61,12 @@ export async function loadOrders(): Promise<OrdersData> {
 
     // 주문 정보 추가
     for (const order of orderRows) {
-      const dateStr = formatDate(getCurrentKST().year(order.order_date.getFullYear()).month(order.order_date.getMonth()).date(order.order_date.getDate()));
+      const dateStr = formatDate(
+        getCurrentKST()
+          .year(order.order_date.getFullYear())
+          .month(order.order_date.getMonth())
+          .date(order.order_date.getDate()),
+      );
 
       if (!data[dateStr]) {
         data[dateStr] = { orders: [], closed: false };
@@ -68,7 +82,7 @@ export async function loadOrders(): Promise<OrdersData> {
 
     return data;
   } catch (error) {
-    console.error('Failed to load orders from DB:', error);
+    console.error("Failed to load orders from DB:", error);
     return {};
   }
 }
@@ -80,7 +94,9 @@ export async function loadOrders(): Promise<OrdersData> {
 export async function saveOrders(data: OrdersData): Promise<void> {
   // DB 기반으로 전환되었으므로, 이 함수는 더 이상 사용되지 않습니다.
   // 기존 코드와의 호환성을 위해 남겨둡니다.
-  console.warn('saveOrders() is deprecated. Use DB-specific functions instead.');
+  console.warn(
+    "saveOrders() is deprecated. Use DB-specific functions instead.",
+  );
 }
 
 /**
@@ -89,13 +105,13 @@ export async function saveOrders(data: OrdersData): Promise<void> {
 export async function getOrdersForDate(date: string): Promise<DayOrders> {
   try {
     const [orderRows] = await pool.query<RowDataPacket[]>(
-      'SELECT user_id, user_name, menu_type, ordered_at FROM orders WHERE order_date = ? ORDER BY ordered_at ASC',
-      [date]
+      "SELECT user_id, user_name, menu_type, ordered_at FROM orders WHERE order_date = ? ORDER BY ordered_at ASC",
+      [date],
     );
 
     const [sessionRows] = await pool.query<RowDataPacket[]>(
-      'SELECT closed, message_ts, message_sent FROM order_sessions WHERE order_date = ?',
-      [date]
+      "SELECT closed, message_ts, message_sent FROM order_sessions WHERE order_date = ?",
+      [date],
     );
 
     const session = sessionRows[0];
@@ -113,7 +129,7 @@ export async function getOrdersForDate(date: string): Promise<DayOrders> {
       messageSent: session ? !!session.message_sent : false,
     };
   } catch (error) {
-    console.error('Failed to get orders for date:', error);
+    console.error("Failed to get orders for date:", error);
     return { orders: [], closed: false };
   }
 }
@@ -134,13 +150,13 @@ export async function addOrder(
   userId: string,
   userName: string,
   menu: Menu,
-  orderDate: string = formatDate()
+  orderDate: string = formatDate(),
 ): Promise<boolean> {
   try {
     // 세션이 마감되었는지 확인
     const [sessionRows] = await pool.query<RowDataPacket[]>(
-      'SELECT closed FROM order_sessions WHERE order_date = ?',
-      [orderDate]
+      "SELECT closed FROM order_sessions WHERE order_date = ?",
+      [orderDate],
     );
 
     if (sessionRows.length > 0 && sessionRows[0].closed) {
@@ -148,19 +164,19 @@ export async function addOrder(
     }
 
     // MySQL DATETIME 형식으로 변환
-    const timestamp = getCurrentKST().format('YYYY-MM-DD HH:mm:ss');
+    const timestamp = getCurrentKST().format("YYYY-MM-DD HH:mm:ss");
 
     // INSERT ... ON DUPLICATE KEY UPDATE를 사용하여 주문 추가/업데이트
     await pool.query<ResultSetHeader>(
       `INSERT INTO orders (order_date, user_id, user_name, menu_type, ordered_at)
        VALUES (?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE user_name = VALUES(user_name), menu_type = VALUES(menu_type), ordered_at = VALUES(ordered_at)`,
-      [orderDate, userId, userName, menu, timestamp]
+      [orderDate, userId, userName, menu, timestamp],
     );
 
     return true;
   } catch (error) {
-    console.error('Failed to add order:', error);
+    console.error("Failed to add order:", error);
     return false;
   }
 }
@@ -174,10 +190,10 @@ export async function closeOrders(date: string = formatDate()): Promise<void> {
       `INSERT INTO order_sessions (order_date, closed)
        VALUES (?, TRUE)
        ON DUPLICATE KEY UPDATE closed = TRUE`,
-      [date]
+      [date],
     );
   } catch (error) {
-    console.error('Failed to close orders:', error);
+    console.error("Failed to close orders:", error);
     throw error;
   }
 }
@@ -185,16 +201,19 @@ export async function closeOrders(date: string = formatDate()): Promise<void> {
 /**
  * 주문 메시지 타임스탬프 저장
  */
-export async function saveMessageTimestamp(date: string, messageTs: string): Promise<void> {
+export async function saveMessageTimestamp(
+  date: string,
+  messageTs: string,
+): Promise<void> {
   try {
     await pool.query<ResultSetHeader>(
       `INSERT INTO order_sessions (order_date, message_ts, message_sent)
        VALUES (?, ?, TRUE)
        ON DUPLICATE KEY UPDATE message_ts = VALUES(message_ts), message_sent = TRUE`,
-      [date, messageTs]
+      [date, messageTs],
     );
   } catch (error) {
-    console.error('Failed to save message timestamp:', error);
+    console.error("Failed to save message timestamp:", error);
     throw error;
   }
 }
@@ -202,16 +221,18 @@ export async function saveMessageTimestamp(date: string, messageTs: string): Pro
 /**
  * 주문 메시지가 이미 전송되었는지 확인
  */
-export async function isMessageSent(date: string = formatDate()): Promise<boolean> {
+export async function isMessageSent(
+  date: string = formatDate(),
+): Promise<boolean> {
   try {
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT message_sent FROM order_sessions WHERE order_date = ?',
-      [date]
+      "SELECT message_sent FROM order_sessions WHERE order_date = ?",
+      [date],
     );
 
     return rows.length > 0 ? !!rows[0].message_sent : false;
   } catch (error) {
-    console.error('Failed to check if message sent:', error);
+    console.error("Failed to check if message sent:", error);
     return false;
   }
 }
@@ -219,11 +240,13 @@ export async function isMessageSent(date: string = formatDate()): Promise<boolea
 /**
  * 메뉴별 주문 수량 집계
  */
-export async function getMenuSummary(date: string = formatDate()): Promise<{ [key in Menu]: number }> {
+export async function getMenuSummary(
+  date: string = formatDate(),
+): Promise<{ [key in Menu]: number }> {
   try {
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT menu_type, COUNT(*) as count FROM orders WHERE order_date = ? GROUP BY menu_type',
-      [date]
+      "SELECT menu_type, COUNT(*) as count FROM orders WHERE order_date = ? GROUP BY menu_type",
+      [date],
     );
 
     const summary: { [key in Menu]: number } = {
@@ -237,7 +260,7 @@ export async function getMenuSummary(date: string = formatDate()): Promise<{ [ke
 
     return summary;
   } catch (error) {
-    console.error('Failed to get menu summary:', error);
+    console.error("Failed to get menu summary:", error);
     return { 가정식: 0, 프레시밀: 0 };
   }
 }
@@ -251,11 +274,13 @@ export interface UserOrderSummary {
   menu: Menu;
 }
 
-export async function getUserOrders(date: string = formatDate()): Promise<UserOrderSummary[]> {
+export async function getUserOrders(
+  date: string = formatDate(),
+): Promise<UserOrderSummary[]> {
   try {
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT user_id, user_name, menu_type FROM orders WHERE order_date = ? ORDER BY ordered_at ASC',
-      [date]
+      "SELECT user_id, user_name, menu_type FROM orders WHERE order_date = ? ORDER BY ordered_at ASC",
+      [date],
     );
 
     return rows.map((row) => ({
@@ -264,7 +289,7 @@ export async function getUserOrders(date: string = formatDate()): Promise<UserOr
       menu: row.menu_type,
     }));
   } catch (error) {
-    console.error('Failed to get user orders:', error);
+    console.error("Failed to get user orders:", error);
     return [];
   }
 }
@@ -292,11 +317,14 @@ export interface PeriodOrdersSummary {
   };
 }
 
-export async function getOrdersForPeriod(startDate: string, endDate: string): Promise<PeriodOrdersSummary> {
+export async function getOrdersForPeriod(
+  startDate: string,
+  endDate: string,
+): Promise<PeriodOrdersSummary> {
   try {
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT order_date, user_id, user_name, menu_type, ordered_at FROM orders WHERE order_date BETWEEN ? AND ? ORDER BY order_date ASC, ordered_at ASC',
-      [startDate, endDate]
+      "SELECT order_date, user_id, user_name, menu_type, ordered_at FROM orders WHERE order_date BETWEEN ? AND ? ORDER BY order_date ASC, ordered_at ASC",
+      [startDate, endDate],
     );
 
     const summary: PeriodOrdersSummary = {
@@ -309,7 +337,12 @@ export async function getOrdersForPeriod(startDate: string, endDate: string): Pr
 
     for (const row of rows) {
       // 주문일을 식사일로 변환하여 집계
-      const orderDateStr = formatDate(getCurrentKST().year(row.order_date.getFullYear()).month(row.order_date.getMonth()).date(row.order_date.getDate()));
+      const orderDateStr = formatDate(
+        getCurrentKST()
+          .year(row.order_date.getFullYear())
+          .month(row.order_date.getMonth())
+          .date(row.order_date.getDate()),
+      );
       const mealDateStr = getMealDateFromOrderDate(orderDateStr);
 
       // 일별 집계 초기화 (식사일 기준)
@@ -351,7 +384,7 @@ export async function getOrdersForPeriod(startDate: string, endDate: string): Pr
 
     return summary;
   } catch (error) {
-    console.error('Failed to get orders for period:', error);
+    console.error("Failed to get orders for period:", error);
     return {
       totalOrders: 0,
       totalUsers: new Set<string>(),
@@ -368,12 +401,12 @@ export async function getOrdersForPeriod(startDate: string, endDate: string): Pr
 export async function getOrderCountForDate(date: string): Promise<number> {
   try {
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT COUNT(*) as count FROM orders WHERE order_date = ?',
-      [date]
+      "SELECT COUNT(*) as count FROM orders WHERE order_date = ?",
+      [date],
     );
     return rows[0]?.count || 0;
   } catch (error) {
-    console.error('Failed to get order count for date:', error);
+    console.error("Failed to get order count for date:", error);
     return 0;
   }
 }
@@ -384,12 +417,12 @@ export async function getOrderCountForDate(date: string): Promise<number> {
 export async function deleteOrdersForDate(date: string): Promise<number> {
   try {
     const [result] = await pool.query<ResultSetHeader>(
-      'DELETE FROM orders WHERE order_date = ?',
-      [date]
+      "DELETE FROM orders WHERE order_date = ?",
+      [date],
     );
     return result.affectedRows;
   } catch (error) {
-    console.error('Failed to delete orders for date:', error);
+    console.error("Failed to delete orders for date:", error);
     throw error;
   }
 }
@@ -397,16 +430,18 @@ export async function deleteOrdersForDate(date: string): Promise<number> {
 /**
  * 주문이 Lunchlab에 제출되었는지 확인
  */
-export async function isOrderSubmitted(date: string = formatDate()): Promise<boolean> {
+export async function isOrderSubmitted(
+  date: string = formatDate(),
+): Promise<boolean> {
   try {
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT submitted FROM order_sessions WHERE order_date = ?',
-      [date]
+      "SELECT submitted FROM order_sessions WHERE order_date = ?",
+      [date],
     );
 
     return rows.length > 0 ? !!rows[0].submitted : false;
   } catch (error) {
-    console.error('Failed to check if order submitted:', error);
+    console.error("Failed to check if order submitted:", error);
     return false;
   }
 }
@@ -416,17 +451,17 @@ export async function isOrderSubmitted(date: string = formatDate()): Promise<boo
  */
 export async function markOrderAsSubmitted(
   date: string,
-  submissionId?: string
+  submissionId?: string,
 ): Promise<void> {
   try {
     await pool.query<ResultSetHeader>(
       `INSERT INTO order_sessions (order_date, submitted, submission_id)
        VALUES (?, TRUE, ?)
        ON DUPLICATE KEY UPDATE submitted = TRUE, submission_id = VALUES(submission_id)`,
-      [date, submissionId || null]
+      [date, submissionId || null],
     );
   } catch (error) {
-    console.error('Failed to mark order as submitted:', error);
+    console.error("Failed to mark order as submitted:", error);
     throw error;
   }
 }
@@ -434,16 +469,18 @@ export async function markOrderAsSubmitted(
 /**
  * Lunchlab 제출 ID 조회
  */
-export async function getSubmissionId(date: string = formatDate()): Promise<string | null> {
+export async function getSubmissionId(
+  date: string = formatDate(),
+): Promise<string | null> {
   try {
     const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT submission_id FROM order_sessions WHERE order_date = ?',
-      [date]
+      "SELECT submission_id FROM order_sessions WHERE order_date = ?",
+      [date],
     );
 
     return rows.length > 0 ? rows[0].submission_id : null;
   } catch (error) {
-    console.error('Failed to get submission ID:', error);
+    console.error("Failed to get submission ID:", error);
     return null;
   }
 }

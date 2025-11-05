@@ -1,10 +1,15 @@
-import { App } from '@slack/bolt';
-import dotenv from 'dotenv';
+import { App } from "@slack/bolt";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 // 환경 변수 검증
-const requiredEnvVars = ['SLACK_BOT_TOKEN', 'SLACK_APP_TOKEN', 'SLACK_SIGNING_SECRET', 'SLACK_CHANNEL_ID'];
+const requiredEnvVars = [
+  "SLACK_BOT_TOKEN",
+  "SLACK_APP_TOKEN",
+  "SLACK_SIGNING_SECRET",
+  "SLACK_CHANNEL_ID",
+];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     throw new Error(`Missing required environment variable: ${envVar}`);
@@ -19,7 +24,7 @@ export const app = new App({
   appToken: process.env.SLACK_APP_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   socketMode: true, // Socket Mode 사용
-  logLevel: process.env.LOG_LEVEL as any || 'info',
+  logLevel: (process.env.LOG_LEVEL as any) || "info",
 });
 
 /**
@@ -45,7 +50,7 @@ export function isAdminUser(userId: string): boolean {
   if (!adminIds) {
     return false;
   }
-  const adminIdList = adminIds.split(',').map(id => id.trim());
+  const adminIdList = adminIds.split(",").map((id) => id.trim());
   return adminIdList.includes(userId);
 }
 
@@ -54,7 +59,7 @@ export function isAdminUser(userId: string): boolean {
  */
 export async function startBot(): Promise<void> {
   await app.start();
-  console.log('⚡️ Lunch Order Bot is running!');
+  console.log("⚡️ Lunch Order Bot is running!");
 }
 
 /**
@@ -62,5 +67,5 @@ export async function startBot(): Promise<void> {
  */
 export async function stopBot(): Promise<void> {
   await app.stop();
-  console.log('👋 Lunch Order Bot stopped');
+  console.log("👋 Lunch Order Bot stopped");
 }

@@ -3,18 +3,18 @@
  * Direct API calls instead of browser automation
  */
 
-import axios from 'axios';
-import { OrderSubmissionResult, MenuSummary } from './types';
-import { getMealDateFromOrderDate } from '../utils/time';
+import axios from "axios";
+import { OrderSubmissionResult, MenuSummary } from "./types";
+import { getMealDateFromOrderDate } from "../utils/time";
 
-const API_BASE_URL = 'https://api.lunchlab.me/b2b/core-service';
-const ORDER_API_BASE_URL = 'https://api.order.lunchlab.me/b2b';  // Separate base URL for order retrieval
-const B2B_BASE_URL = process.env.LUNCHLAB_BASE_URL || 'https://b2b.lunchlab.me';
+const API_BASE_URL = "https://api.lunchlab.me/b2b/core-service";
+const ORDER_API_BASE_URL = "https://api.order.lunchlab.me/b2b"; // Separate base URL for order retrieval
+const B2B_BASE_URL = process.env.LUNCHLAB_BASE_URL || "https://b2b.lunchlab.me";
 
 interface OrderItem {
   productId: string;
   quantity: number;
-  id?: number;  // Required for update requests
+  id?: number; // Required for update requests
 }
 
 interface OrderRequest {
@@ -29,8 +29,8 @@ interface OrderRequest {
  * These are consistent across all dates
  */
 const PRODUCT_ID_MAP: { [key: number]: string } = {
-  4: 'recEP1DuEfJi8VZUS',      // 가정식
-  23: '60b98b1c-bcd2-4d12-95b2-435f65b3fee3',  // 프레시밀
+  4: "recEP1DuEfJi8VZUS", // 가정식
+  23: "60b98b1c-bcd2-4d12-95b2-435f65b3fee3", // 프레시밀
 };
 
 /**
@@ -41,20 +41,23 @@ async function login(): Promise<string> {
   const password = process.env.LUNCHLAB_PASSWORD;
 
   if (!username || !password) {
-    throw new Error('LUNCHLAB_USERNAME and LUNCHLAB_PASSWORD must be set in environment variables');
+    throw new Error(
+      "LUNCHLAB_USERNAME and LUNCHLAB_PASSWORD must be set in environment variables",
+    );
   }
 
   // Step 1: Get CSRF token
   const csrfResponse = await axios.get(`${B2B_BASE_URL}/api/auth/csrf`, {
     headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
     },
   });
 
   const csrfToken = csrfResponse.data.csrfToken;
-  const csrfCookies = csrfResponse.headers['set-cookie'] || [];
+  const csrfCookies = csrfResponse.headers["set-cookie"] || [];
 
-  console.log('✅ Got CSRF token');
+  console.log("✅ Got CSRF token");
 
   // Step 2: Login with credentials
   const loginData = new URLSearchParams({
@@ -68,27 +71,28 @@ async function login(): Promise<string> {
     loginData.toString(),
     {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': csrfCookies.map(c => c.split(';')[0]).join('; '),
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        "Content-Type": "application/x-www-form-urlencoded",
+        Cookie: csrfCookies.map((c) => c.split(";")[0]).join("; "),
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
       },
       maxRedirects: 0,
       validateStatus: (status) => status === 302 || status === 200,
-    }
+    },
   );
 
-  const sessionCookies = loginResponse.headers['set-cookie'] || [];
+  const sessionCookies = loginResponse.headers["set-cookie"] || [];
 
   if (sessionCookies.length === 0) {
-    throw new Error('Login failed: No session cookies received');
+    throw new Error("Login failed: No session cookies received");
   }
 
-  console.log('✅ Login successful');
+  console.log("✅ Login successful");
 
   // Combine all cookies
   const allCookies = [...csrfCookies, ...sessionCookies]
-    .map(c => c.split(';')[0])
-    .join('; ');
+    .map((c) => c.split(";")[0])
+    .join("; ");
 
   return allCookies;
 }
@@ -96,7 +100,10 @@ async function login(): Promise<string> {
 /**
  * Get existing order via History API
  */
-async function getExistingOrderFromHistory(orderDate: string, token: string): Promise<{
+async function getExistingOrderFromHistory(
+  orderDate: string,
+  token: string,
+): Promise<{
   orderId?: string;
   order?: any;
 }> {
@@ -110,8 +117,8 @@ async function getExistingOrderFromHistory(orderDate: string, token: string): Pr
         endDate: mealDate,
       },
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
       },
     });
 
@@ -120,7 +127,7 @@ async function getExistingOrderFromHistory(orderDate: string, token: string): Pr
     if (orders.length > 0) {
       const order = orders[0];
       const orderId = order.recordId || order.id;
-      console.log('📋 Found existing order via history API:', {
+      console.log("📋 Found existing order via history API:", {
         id: orderId,
         deliveryDate: order.deliveryDate,
       });
@@ -130,7 +137,7 @@ async function getExistingOrderFromHistory(orderDate: string, token: string): Pr
       };
     }
   } catch (error: any) {
-    console.log('⚠️  Could not fetch from history API:', error.message);
+    console.log("⚠️  Could not fetch from history API:", error.message);
   }
 
   return {};
@@ -139,7 +146,10 @@ async function getExistingOrderFromHistory(orderDate: string, token: string): Pr
 /**
  * Get existing order via API
  */
-async function getExistingOrder(orderDate: string, token: string): Promise<{
+async function getExistingOrder(
+  orderDate: string,
+  token: string,
+): Promise<{
   orderId?: string;
   order?: any;
 }> {
@@ -156,11 +166,11 @@ async function getExistingOrder(orderDate: string, token: string): Promise<{
     const response = await axios.get(`${ORDER_API_BASE_URL}/order`, {
       params: {
         date: mealDate,
-        'with[]': 'address',
+        "with[]": "address",
       },
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
       },
     });
 
@@ -169,7 +179,7 @@ async function getExistingOrder(orderDate: string, token: string): Promise<{
     if (orders.length > 0) {
       const order = orders[0];
       const orderId = order.recordId;
-      console.log('📋 Found existing order via order API:', {
+      console.log("📋 Found existing order via order API:", {
         id: orderId,
         deliveryDate: order.deliveryDate,
         orderNum: order.orderNum,
@@ -180,7 +190,7 @@ async function getExistingOrder(orderDate: string, token: string): Promise<{
       };
     }
   } catch (error: any) {
-    console.log('⚠️  Could not fetch existing order via API:', error.message);
+    console.log("⚠️  Could not fetch existing order via API:", error.message);
   }
 
   return {};
@@ -189,30 +199,37 @@ async function getExistingOrder(orderDate: string, token: string): Promise<{
 /**
  * Get order page data to extract product IDs and address ID
  */
-async function getOrderPageData(orderDate: string, cookieHeader: string, token?: string): Promise<{
+async function getOrderPageData(
+  orderDate: string,
+  cookieHeader: string,
+  token?: string,
+): Promise<{
   productIds: { [key: string]: string };
   addressId: string;
   deliveryScheduleId: number;
   existingOrderId?: string;
   existingOrder?: any;
 }> {
-
   // IMPORTANT: Use meal date (not order date) to fetch page data
   // This ensures we get existing order information
   const mealDate = getMealDateFromOrderDate(orderDate);
 
   // Get the Next.js build ID first
-  const htmlResponse = await axios.get(`${B2B_BASE_URL}/console/order?date=${mealDate}`, {
-    headers: {
-      'Cookie': cookieHeader,
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+  const htmlResponse = await axios.get(
+    `${B2B_BASE_URL}/console/order?date=${mealDate}`,
+    {
+      headers: {
+        Cookie: cookieHeader,
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      },
     },
-  });
+  );
 
   // Extract build ID from HTML
   const buildIdMatch = htmlResponse.data.match(/"buildId":"([^"]+)"/);
   if (!buildIdMatch) {
-    throw new Error('Could not find build ID');
+    throw new Error("Could not find build ID");
   }
 
   const buildId = buildIdMatch[1];
@@ -221,9 +238,10 @@ async function getOrderPageData(orderDate: string, cookieHeader: string, token?:
   const dataUrl = `${B2B_BASE_URL}/_next/data/${buildId}/console/order.json?date=${mealDate}`;
   const dataResponse = await axios.get(dataUrl, {
     headers: {
-      'Cookie': cookieHeader,
-      'Accept': 'application/json',
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      Cookie: cookieHeader,
+      Accept: "application/json",
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
     },
   });
 
@@ -238,29 +256,35 @@ async function getOrderPageData(orderDate: string, cookieHeader: string, token?:
     // Stock order: 가정식 (productId: 4), 프레시밀 (productId: 23)
     if (stocks.length >= 1) {
       const internalId = stocks[0].productId;
-      productIds['가정식'] = PRODUCT_ID_MAP[internalId] || '';
+      productIds["가정식"] = PRODUCT_ID_MAP[internalId] || "";
     }
     if (stocks.length >= 2) {
       const internalId = stocks[1].productId;
-      productIds['프레시밀'] = PRODUCT_ID_MAP[internalId] || '';
+      productIds["프레시밀"] = PRODUCT_ID_MAP[internalId] || "";
     }
   } else {
     // Fallback: Use direct mapping when deliverySchedule is null
     // This happens when modifying orders or on non-orderable dates
-    console.log('⚠️  No stocks data, using direct product ID mapping');
-    productIds['가정식'] = PRODUCT_ID_MAP[4];
-    productIds['프레시밀'] = PRODUCT_ID_MAP[23];
+    console.log("⚠️  No stocks data, using direct product ID mapping");
+    productIds["가정식"] = PRODUCT_ID_MAP[4];
+    productIds["프레시밀"] = PRODUCT_ID_MAP[23];
   }
 
   // Get address ID from addresses
-  const addressId = pageData.addresses?.[0]?.recordId || '';
+  const addressId = pageData.addresses?.[0]?.recordId || "";
 
   // Check for existing order in various possible fields
   let existingOrderId: string | undefined;
   let existingOrder: any;
 
   // Try different possible field names
-  const possibleOrderFields = ['order', 'currentOrder', 'existingOrder', 'orderData', 'data'];
+  const possibleOrderFields = [
+    "order",
+    "currentOrder",
+    "existingOrder",
+    "orderData",
+    "data",
+  ];
 
   for (const field of possibleOrderFields) {
     if (pageData[field]) {
@@ -285,7 +309,10 @@ async function getOrderPageData(orderDate: string, cookieHeader: string, token?:
 
   // Debug: log all pageData keys if no order found
   if (!existingOrderId) {
-    console.log('⚠️  No existing order found. PageData structure:', JSON.stringify(pageData, null, 2).substring(0, 1000));
+    console.log(
+      "⚠️  No existing order found. PageData structure:",
+      JSON.stringify(pageData, null, 2).substring(0, 1000),
+    );
   }
 
   return {
@@ -302,7 +329,7 @@ async function getOrderPageData(orderDate: string, cookieHeader: string, token?:
  */
 export async function submitOrder(
   orderDate: string,
-  menuSummary: MenuSummary
+  menuSummary: MenuSummary,
 ): Promise<OrderSubmissionResult> {
   try {
     console.log(`Submitting order for ${orderDate} via API:`, menuSummary);
@@ -313,22 +340,26 @@ export async function submitOrder(
     // Get JWT token
     const tokenResponse = await axios.get(`${B2B_BASE_URL}/api/auth/token`, {
       headers: {
-        'Cookie': cookieHeader,
-        'Accept': '*/*',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        Cookie: cookieHeader,
+        Accept: "*/*",
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
       },
     });
 
-    if (typeof tokenResponse.data !== 'string') {
-      throw new Error('Invalid token response');
+    if (typeof tokenResponse.data !== "string") {
+      throw new Error("Invalid token response");
     }
 
     const token = tokenResponse.data;
-    console.log('✅ Got auth token');
+    console.log("✅ Got auth token");
 
     // Get product IDs and address ID
-    const { productIds, addressId } = await getOrderPageData(orderDate, cookieHeader);
-    console.log('✅ Got order page data:', { productIds, addressId });
+    const { productIds, addressId } = await getOrderPageData(
+      orderDate,
+      cookieHeader,
+    );
+    console.log("✅ Got order page data:", { productIds, addressId });
 
     // Build order items
     const items: OrderItem[] = [];
@@ -350,7 +381,7 @@ export async function submitOrder(
     if (items.length === 0) {
       return {
         success: false,
-        error: 'No items to order',
+        error: "No items to order",
       };
     }
 
@@ -364,48 +395,52 @@ export async function submitOrder(
       items: items,
     };
 
-    console.log(`📤 Submitting order for ${orderDate} (meal date: ${mealDate}):`, JSON.stringify(orderRequest, null, 2));
-
-    const response = await axios.post(
-      `${API_BASE_URL}/order`,
-      orderRequest,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json, text/plain, */*',
-          'Origin': B2B_BASE_URL,
-          'Referer': `${B2B_BASE_URL}/`,
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-        },
-      }
+    console.log(
+      `📤 Submitting order for ${orderDate} (meal date: ${mealDate}):`,
+      JSON.stringify(orderRequest, null, 2),
     );
 
-    console.log('✅ Order submitted successfully');
-    console.log('Response:', response.data);
+    const response = await axios.post(`${API_BASE_URL}/order`, orderRequest, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json, text/plain, */*",
+        Origin: B2B_BASE_URL,
+        Referer: `${B2B_BASE_URL}/`,
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      },
+    });
+
+    console.log("✅ Order submitted successfully");
+    console.log("Response:", response.data);
 
     return {
       success: true,
       submissionId: response.data?.id || response.data?.orderId || orderDate,
     };
   } catch (error: any) {
-    console.error('❌ Order submission failed:', error.message);
+    console.error("❌ Order submission failed:", error.message);
 
     if (error.response) {
-      console.error('Response status:', error.response.status);
-      console.error('Response data:', error.response.data);
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
 
       // If order already exists (400 error), automatically try updating instead
-      if (error.response.status === 400 &&
-          error.response.data?.message?.includes('이미 등록된 주문')) {
-        console.log('🔄 Order already exists, automatically switching to update...');
+      if (
+        error.response.status === 400 &&
+        error.response.data?.message?.includes("이미 등록된 주문")
+      ) {
+        console.log(
+          "🔄 Order already exists, automatically switching to update...",
+        );
         return await updateOrder(orderDate, menuSummary);
       }
     }
 
     return {
       success: false,
-      error: error.response?.data?.message || error.message || 'Unknown error',
+      error: error.response?.data?.message || error.message || "Unknown error",
     };
   }
 }
@@ -417,7 +452,7 @@ export async function updateOrder(
   orderDate: string,
   menuSummary: MenuSummary,
   submissionId?: string,
-  isRetry: boolean = false
+  isRetry: boolean = false,
 ): Promise<OrderSubmissionResult> {
   try {
     console.log(`Updating order for ${orderDate} via API:`, menuSummary);
@@ -428,25 +463,27 @@ export async function updateOrder(
     // Get JWT token
     const tokenResponse = await axios.get(`${B2B_BASE_URL}/api/auth/token`, {
       headers: {
-        'Cookie': cookieHeader,
-        'Accept': '*/*',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        Cookie: cookieHeader,
+        Accept: "*/*",
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
       },
     });
 
-    if (typeof tokenResponse.data !== 'string') {
-      throw new Error('Invalid token response');
+    if (typeof tokenResponse.data !== "string") {
+      throw new Error("Invalid token response");
     }
 
     const token = tokenResponse.data;
-    console.log('✅ Got auth token');
+    console.log("✅ Got auth token");
 
     // Get product IDs, address ID, and existing order info (pass token to fetch existing orders)
-    const { productIds, addressId, existingOrderId, existingOrder } = await getOrderPageData(orderDate, cookieHeader, token);
-    console.log('✅ Got order page data');
+    const { productIds, addressId, existingOrderId, existingOrder } =
+      await getOrderPageData(orderDate, cookieHeader, token);
+    console.log("✅ Got order page data");
 
     if (!existingOrderId) {
-      throw new Error('No existing order found to update');
+      throw new Error("No existing order found to update");
     }
 
     console.log(`📝 Found existing order ID: ${existingOrderId}`);
@@ -456,7 +493,7 @@ export async function updateOrder(
 
     if (menuSummary.가정식 > 0 && productIds.가정식) {
       items.push({
-        id: 4,  // Internal product ID for 가정식
+        id: 4, // Internal product ID for 가정식
         productId: productIds.가정식,
         quantity: menuSummary.가정식,
       });
@@ -464,7 +501,7 @@ export async function updateOrder(
 
     if (menuSummary.프레시밀 > 0 && productIds.프레시밀) {
       items.push({
-        id: 23,  // Internal product ID for 프레시밀
+        id: 23, // Internal product ID for 프레시밀
         productId: productIds.프레시밀,
         quantity: menuSummary.프레시밀,
       });
@@ -475,11 +512,14 @@ export async function updateOrder(
 
     const orderRequest: OrderRequest = {
       deliveryDate: mealDate,
-      addressId: addressId || '',  // Use empty string if no addressId
+      addressId: addressId || "", // Use empty string if no addressId
       items: items,
     };
 
-    console.log(`📤 Updating order for ${orderDate} (meal date: ${mealDate}):`, JSON.stringify(orderRequest, null, 2));
+    console.log(
+      `📤 Updating order for ${orderDate} (meal date: ${mealDate}):`,
+      JSON.stringify(orderRequest, null, 2),
+    );
 
     // PUT request with orderId in path
     const response = await axios.put(
@@ -487,34 +527,35 @@ export async function updateOrder(
       orderRequest,
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json, text/plain, */*',
-          'Origin': B2B_BASE_URL,
-          'Referer': `${B2B_BASE_URL}/`,
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+          Origin: B2B_BASE_URL,
+          Referer: `${B2B_BASE_URL}/`,
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
         },
-      }
+      },
     );
 
-    console.log('✅ Order updated successfully');
-    console.log('Response:', response.data);
+    console.log("✅ Order updated successfully");
+    console.log("Response:", response.data);
 
     return {
       success: true,
       submissionId: response.data?.id || existingOrderId,
     };
   } catch (error: any) {
-    console.error('❌ Order update failed:', error.message);
+    console.error("❌ Order update failed:", error.message);
 
     if (error.response) {
-      console.error('Response status:', error.response.status);
-      console.error('Response data:', error.response.data);
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
     }
 
     return {
       success: false,
-      error: error.response?.data?.message || error.message || 'Unknown error',
+      error: error.response?.data?.message || error.message || "Unknown error",
     };
   }
 }

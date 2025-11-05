@@ -1,6 +1,6 @@
-import moment from 'moment-timezone';
+import moment from "moment-timezone";
 
-const TIMEZONE = 'Asia/Seoul';
+const TIMEZONE = "Asia/Seoul";
 
 /**
  * 현재 한국 시간을 반환
@@ -13,14 +13,14 @@ export function getCurrentKST(): moment.Moment {
  * 날짜를 'YYYY-MM-DD' 형식 문자열로 변환
  */
 export function formatDate(date: moment.Moment = getCurrentKST()): string {
-  return date.format('YYYY-MM-DD');
+  return date.format("YYYY-MM-DD");
 }
 
 /**
  * 날짜를 'YYYY-MM-DD HH:mm:ss' 형식 문자열로 변환
  */
 export function formatDateTime(date: moment.Moment = getCurrentKST()): string {
-  return date.format('YYYY-MM-DD HH:mm:ss');
+  return date.format("YYYY-MM-DD HH:mm:ss");
 }
 
 /**
@@ -86,14 +86,14 @@ export function getNextWeekday(date: moment.Moment): moment.Moment {
 
   if (dayOfWeek >= 1 && dayOfWeek <= 4) {
     // 월~목: 다음 날
-    return date.clone().add(1, 'day');
+    return date.clone().add(1, "day");
   } else if (dayOfWeek === 5) {
     // 금요일: 다음 월요일 (+3일)
-    return date.clone().add(3, 'days');
+    return date.clone().add(3, "days");
   } else {
     // 토, 일: 다음 월요일 (이론상 주문 불가능하지만 방어 코드)
     const daysUntilMonday = dayOfWeek === 6 ? 2 : 1;
-    return date.clone().add(daysUntilMonday, 'days');
+    return date.clone().add(daysUntilMonday, "days");
   }
 }
 
@@ -111,8 +111,8 @@ export function getMealDateFromOrderDate(orderDate: string): string {
  */
 export function getThisWeekRange(): { start: string; end: string } {
   const now = getCurrentKST();
-  const startOfWeek = now.clone().startOf('week'); // 일요일
-  const endOfWeek = now.clone().endOf('week'); // 토요일
+  const startOfWeek = now.clone().startOf("week"); // 일요일
+  const endOfWeek = now.clone().endOf("week"); // 토요일
 
   return {
     start: formatDate(startOfWeek),
@@ -127,19 +127,19 @@ export function getThisWeekRange(): { start: string; end: string } {
  */
 export function getThisMonthRange(): { start: string; end: string } {
   const now = getCurrentKST();
-  const startOfMonth = now.clone().startOf('month');
-  const endOfMonth = now.clone().endOf('month');
+  const startOfMonth = now.clone().startOf("month");
+  const endOfMonth = now.clone().endOf("month");
 
   // 이번 달의 첫 평일 찾기 (첫 식사일)
   let firstMealDate = startOfMonth.clone();
   while (!isWeekday(firstMealDate)) {
-    firstMealDate.add(1, 'day');
+    firstMealDate.add(1, "day");
   }
 
   // 이번 달의 마지막 평일 찾기 (마지막 식사일)
   let lastMealDate = endOfMonth.clone();
   while (!isWeekday(lastMealDate)) {
-    lastMealDate.subtract(1, 'day');
+    lastMealDate.subtract(1, "day");
   }
 
   // 식사일의 전날이 주문일
@@ -148,10 +148,10 @@ export function getThisMonthRange(): { start: string; end: string } {
   const firstDayOfWeek = firstMealDate.day();
   if (firstDayOfWeek === 1) {
     // 월요일 식사 → 전주 금요일 주문 (-3일)
-    firstOrderDate.subtract(3, 'days');
+    firstOrderDate.subtract(3, "days");
   } else {
     // 화~금 식사 → 전날 주문 (-1일)
-    firstOrderDate.subtract(1, 'day');
+    firstOrderDate.subtract(1, "day");
   }
 
   // 마지막 식사일의 주문일 계산
@@ -159,10 +159,10 @@ export function getThisMonthRange(): { start: string; end: string } {
   const lastDayOfWeek = lastMealDate.day();
   if (lastDayOfWeek === 1) {
     // 월요일 식사 → 전주 금요일 주문 (-3일)
-    lastOrderDate.subtract(3, 'days');
+    lastOrderDate.subtract(3, "days");
   } else {
     // 화~금 식사 → 전날 주문 (-1일)
-    lastOrderDate.subtract(1, 'day');
+    lastOrderDate.subtract(1, "day");
   }
 
   return {
@@ -175,15 +175,17 @@ export function getThisMonthRange(): { start: string; end: string } {
  * 날짜 문자열이 유효한지 확인
  */
 export function isValidDate(dateString: string): boolean {
-  return moment(dateString, 'YYYY-MM-DD', true).isValid();
+  return moment(dateString, "YYYY-MM-DD", true).isValid();
 }
 
 /**
  * 날짜 범위 문자열 파싱 (예: "2025-10-01~2025-10-31")
  * @returns { start, end } 또는 null (유효하지 않은 경우)
  */
-export function parseDateRange(rangeString: string): { start: string; end: string } | null {
-  const parts = rangeString.split('~');
+export function parseDateRange(
+  rangeString: string,
+): { start: string; end: string } | null {
+  const parts = rangeString.split("~");
   if (parts.length !== 2) {
     return null;
   }
@@ -221,8 +223,8 @@ export function isPastDate(dateString: string): boolean {
   if (!isValidDate(dateString)) {
     return true; // 유효하지 않은 날짜는 과거로 간주
   }
-  const date = moment.tz(dateString, TIMEZONE).startOf('day');
-  const today = getCurrentKST().startOf('day');
+  const date = moment.tz(dateString, TIMEZONE).startOf("day");
+  const today = getCurrentKST().startOf("day");
   return date.isBefore(today);
 }
 
@@ -244,12 +246,12 @@ export function isOrderDeadlinePassed(orderDate: string): boolean {
   const targetDate = moment.tz(orderDate, TIMEZONE);
 
   // 과거 날짜는 마감
-  if (targetDate.isBefore(now, 'day')) {
+  if (targetDate.isBefore(now, "day")) {
     return true;
   }
 
   // 미래 날짜는 마감되지 않음
-  if (targetDate.isAfter(now, 'day')) {
+  if (targetDate.isAfter(now, "day")) {
     return false;
   }
 
@@ -265,7 +267,15 @@ export function formatDateWithDay(dateString: string): string {
     return dateString;
   }
   const date = moment.tz(dateString, TIMEZONE);
-  const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+  const dayNames = [
+    "일요일",
+    "월요일",
+    "화요일",
+    "수요일",
+    "목요일",
+    "금요일",
+    "토요일",
+  ];
   const dayName = dayNames[date.day()];
   return `${dateString} (${dayName})`;
 }
@@ -274,20 +284,23 @@ export function formatDateWithDay(dateString: string): string {
  * 날짜 범위 검증
  * @returns { valid: true } 또는 { valid: false, error: string }
  */
-export function validateDateRange(startDate: string, endDate: string): { valid: boolean; error?: string } {
+export function validateDateRange(
+  startDate: string,
+  endDate: string,
+): { valid: boolean; error?: string } {
   if (!isValidDate(startDate)) {
-    return { valid: false, error: '시작일이 올바른 날짜 형식이 아닙니다.' };
+    return { valid: false, error: "시작일이 올바른 날짜 형식이 아닙니다." };
   }
 
   if (!isValidDate(endDate)) {
-    return { valid: false, error: '종료일이 올바른 날짜 형식이 아닙니다.' };
+    return { valid: false, error: "종료일이 올바른 날짜 형식이 아닙니다." };
   }
 
   const start = moment.tz(startDate, TIMEZONE);
   const end = moment.tz(endDate, TIMEZONE);
 
   if (start.isAfter(end)) {
-    return { valid: false, error: '시작일이 종료일보다 늦습니다.' };
+    return { valid: false, error: "시작일이 종료일보다 늦습니다." };
   }
 
   return { valid: true };

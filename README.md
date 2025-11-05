@@ -46,16 +46,19 @@
 **Slash Commands** 메뉴에서 다음 커맨드들을 생성:
 
 #### `/주문시작`
+
 - **Command**: `/주문시작`
 - **Request URL**: (Socket Mode 사용으로 비워둠)
 - **Short Description**: `즉시 주문 받기 시작`
 
 #### `/주문내역`
+
 - **Command**: `/주문내역`
 - **Request URL**: (Socket Mode 사용으로 비워둠)
 - **Short Description**: `오늘의 점심 주문 내역 조회`
 
 #### `/식사도착`
+
 - **Command**: `/식사도착`
 - **Request URL**: (Socket Mode 사용으로 비워둠)
 - **Short Description**: `식사 도착 알림 전송`
@@ -82,6 +85,7 @@
 ### 8. 봇을 채널에 초대
 
 해당 채널에서:
+
 ```
 /invite @점심주문봇
 ```
@@ -103,6 +107,7 @@ cp .env.example .env
 ```
 
 `.env` 파일 예시:
+
 ```env
 SLACK_BOT_TOKEN=xoxb-your-bot-token-here
 SLACK_APP_TOKEN=xapp-your-app-token-here
@@ -124,6 +129,7 @@ npm start
 ```
 
 개발 모드 (TypeScript 직접 실행):
+
 ```bash
 npm run dev
 ```
@@ -139,6 +145,7 @@ npm run dev
 ### 수동 주문 시작
 
 정오 이전이나 특정 시간에 바로 주문을 시작하고 싶을 때:
+
 ```
 /주문시작
 ```
@@ -150,11 +157,13 @@ npm run dev
 ### 주문 내역 조회
 
 채널에서 다음 커맨드를 입력:
+
 ```
 /주문내역
 ```
 
 선택 버튼이 표시됩니다:
+
 - **📅 오늘** - 오늘의 주문 내역 (메뉴별 수량, 사용자별 주문)
 - **📆 이번주** - 일요일부터 토요일까지의 주문
   - 전체 요약 (총 주문 수, 참여 인원, 메뉴별 합계)
@@ -165,22 +174,27 @@ npm run dev
   - 날짜별 집계
 
 #### 직접 입력 조회
+
 특정 날짜나 기간을 직접 입력할 수도 있습니다:
 
 **특정 날짜 조회:**
+
 ```
 /주문내역 2025-10-30
 ```
 
 **기간 지정 조회:**
+
 ```
 /주문내역 2025-10-01~2025-10-31
 ```
+
 원하는 기간의 전체 통계와 사용자별, 날짜별 집계를 확인할 수 있습니다.
 
 ### 식사 도착 알림
 
 식사가 도착했을 때 알림 메시지를 보냅니다:
+
 ```
 /식사도착
 ```
@@ -217,6 +231,7 @@ launch_bot/
 주문 데이터는 `data/orders.json` 파일에 JSON 형식으로 저장됩니다.
 
 구조 예시:
+
 ```json
 {
   "2025-10-30": {
@@ -250,6 +265,7 @@ launch_bot/
 Repository Settings → Secrets and variables → Actions에서 다음 secrets를 추가:
 
 **필수 Secrets:**
+
 - `CLOUDTYPE_TOKEN`: Cloudtype API 키
   - Cloudtype 대시보드 → 설정 → API 키에서 발급
 - `GHP_TOKEN`: GitHub Personal Access Token
@@ -257,6 +273,7 @@ Repository Settings → Secrets and variables → Actions에서 다음 secrets�
   - 권한: `repo`, `admin:public_key`
 
 **Cloudtype 환경 변수 (Cloudtype 대시보드에서 설정):**
+
 - `slack-bot-token`: Slack Bot User OAuth Token
 - `slack-app-token`: Slack App-Level Token
 - `slack-signing-secret`: Slack Signing Secret
@@ -267,7 +284,7 @@ Repository Settings → Secrets and variables → Actions에서 다음 secrets�
 `.github/workflows/deploy.yml` 파일에서 프로젝트 이름 수정:
 
 ```yaml
-project: your-space-name/launch-bot  # 실제 스페이스명/프로젝트명으로 변경
+project: your-space-name/launch-bot # 실제 스페이스명/프로젝트명으로 변경
 ```
 
 #### 4. 자동 배포
@@ -290,16 +307,19 @@ Actions 탭에서 배포 진행 상황을 확인할 수 있습니다.
 ## 문제 해결
 
 ### 봇이 메시지를 보내지 않아요
+
 - 봇이 채널에 초대되었는지 확인
 - `.env` 파일의 `SLACK_CHANNEL_ID`가 올바른지 확인
 - Bot Token Scopes에 `chat:write` 권한이 있는지 확인
 
 ### 슬래시 커맨드가 작동하지 않아요
+
 - Socket Mode가 활성화되어 있는지 확인
 - Slash Commands 메뉴에서 `/주문내역` 커맨드가 등록되어 있는지 확인
 - Bot Token Scopes에 `commands` 권한이 있는지 확인
 
 ### 버튼을 클릭해도 반응이 없어요
+
 - Interactivity & Shortcuts가 활성화되어 있는지 확인
 - Socket Mode가 올바르게 설정되어 있는지 확인
 

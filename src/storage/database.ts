@@ -1,4 +1,4 @@
-import mysql from 'mysql2/promise';
+import mysql from "mysql2/promise";
 
 /**
  * MariaDB/MySQL 연결 풀
@@ -6,34 +6,34 @@ import mysql from 'mysql2/promise';
  * - 환경 변수를 통해 연결 정보 설정
  */
 const dbConfig = {
-  host: process.env.DB_HOST || 'mariadb',
-  port: parseInt(process.env.DB_PORT || '3306'),
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'launch_bot',
+  host: process.env.DB_HOST || "mariadb",
+  port: parseInt(process.env.DB_PORT || "3306"),
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "launch_bot",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  timezone: '+09:00', // KST (Korea Standard Time)
-  charset: 'utf8mb4',
+  timezone: "+09:00", // KST (Korea Standard Time)
+  charset: "utf8mb4",
 };
 
 // 연결 정보 로그 (비밀번호는 마스킹)
-console.log('🔌 Database connection config:', {
+console.log("🔌 Database connection config:", {
   host: dbConfig.host,
   port: dbConfig.port,
   user: dbConfig.user,
-  password: dbConfig.password ? '****' : '(empty)',
+  password: dbConfig.password ? "****" : "(empty)",
   database: dbConfig.database,
 });
 
 // 환경 변수 원본 값 로그
-console.log('📝 Environment variables:', {
-  DB_HOST: process.env.DB_HOST || '(not set)',
-  DB_PORT: process.env.DB_PORT || '(not set)',
-  DB_USER: process.env.DB_USER || '(not set)',
-  DB_PASSWORD: process.env.DB_PASSWORD ? '****' : '(not set)',
-  DB_NAME: process.env.DB_NAME || '(not set)',
+console.log("📝 Environment variables:", {
+  DB_HOST: process.env.DB_HOST || "(not set)",
+  DB_PORT: process.env.DB_PORT || "(not set)",
+  DB_USER: process.env.DB_USER || "(not set)",
+  DB_PASSWORD: process.env.DB_PASSWORD ? "****" : "(not set)",
+  DB_NAME: process.env.DB_NAME || "(not set)",
 });
 
 export const pool = mysql.createPool(dbConfig);
@@ -44,11 +44,11 @@ export const pool = mysql.createPool(dbConfig);
 export async function testConnection(): Promise<boolean> {
   try {
     const connection = await pool.getConnection();
-    console.log('✅ Database connection successful');
+    console.log("✅ Database connection successful");
     connection.release();
     return true;
   } catch (error) {
-    console.error('❌ Database connection failed:', error);
+    console.error("❌ Database connection failed:", error);
     return false;
   }
 }
@@ -101,7 +101,7 @@ export async function initializeDatabase(): Promise<void> {
     } catch (error) {
       // MySQL 5.7 doesn't support IF NOT EXISTS in ALTER TABLE, so we check first
       const [columns] = await connection.query(
-        `SHOW COLUMNS FROM order_sessions WHERE Field IN ('submitted', 'submission_id')`
+        `SHOW COLUMNS FROM order_sessions WHERE Field IN ('submitted', 'submission_id')`,
       );
 
       if (!Array.isArray(columns) || columns.length === 0) {
@@ -113,9 +113,9 @@ export async function initializeDatabase(): Promise<void> {
       }
     }
 
-    console.log('✅ Database tables initialized');
+    console.log("✅ Database tables initialized");
   } catch (error) {
-    console.error('❌ Failed to initialize database:', error);
+    console.error("❌ Failed to initialize database:", error);
     throw error;
   } finally {
     connection.release();
@@ -128,8 +128,8 @@ export async function initializeDatabase(): Promise<void> {
 export async function closePool(): Promise<void> {
   try {
     await pool.end();
-    console.log('✅ Database connection pool closed');
+    console.log("✅ Database connection pool closed");
   } catch (error) {
-    console.error('❌ Failed to close database pool:', error);
+    console.error("❌ Failed to close database pool:", error);
   }
 }
