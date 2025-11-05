@@ -199,14 +199,37 @@ async function getOrderPageData(orderDate: string, cookieHeader: string, token?:
   // Get address ID from addresses
   const addressId = pageData.addresses?.[0]?.recordId || '';
 
-  // Try to get existing order via API if token is provided
+  // Check for existing order in various possible fields
   let existingOrderId: string | undefined;
   let existingOrder: any;
 
-  if (token) {
+  // Try different possible field names
+  const possibleOrderFields = ['order', 'currentOrder', 'existingOrder', 'orderData', 'data'];
+
+  for (const field of possibleOrderFields) {
+    if (pageData[field]) {
+      existingOrder = pageData[field];
+      existingOrderId = existingOrder?.recordId || existingOrder?.id;
+      if (existingOrderId) {
+        console.log(`📋 Found existing order in pageData.${field}:`, {
+          id: existingOrderId,
+          deliveryDate: existingOrder.deliveryDate,
+        });
+        break;
+      }
+    }
+  }
+
+  // If still not found and token is provided, try API
+  if (!existingOrderId && token) {
     const existing = await getExistingOrder(orderDate, token);
     existingOrderId = existing.orderId;
     existingOrder = existing.order;
+  }
+
+  // Debug: log all pageData keys if no order found
+  if (!existingOrderId) {
+    console.log('⚠️  No existing order found. PageData structure:', JSON.stringify(pageData, null, 2).substring(0, 1000));
   }
 
   return {
