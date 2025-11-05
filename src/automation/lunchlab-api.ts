@@ -93,9 +93,51 @@ async function login(): Promise<string> {
 }
 
 /**
+ * Get existing order via API
+ */
+async function getExistingOrder(orderDate: string, token: string): Promise<{
+  orderId?: string;
+  order?: any;
+}> {
+  try {
+    const mealDate = getMealDateFromOrderDate(orderDate);
+
+    // Try to fetch existing orders for this delivery date
+    const response = await axios.get(`${API_BASE_URL}/order`, {
+      params: {
+        deliveryDate: mealDate,
+      },
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    const orders = response.data?.data || [];
+
+    if (orders.length > 0) {
+      const order = orders[0]; // Get the first order
+      console.log('📋 Found existing order via API:', {
+        id: order.id,
+        deliveryDate: order.deliveryDate,
+        items: order.items?.length || 0,
+      });
+      return {
+        orderId: order.id,
+        order: order,
+      };
+    }
+  } catch (error: any) {
+    console.log('⚠️  Could not fetch existing order via API:', error.message);
+  }
+
+  return {};
+}
+
+/**
  * Get order page data to extract product IDs and address ID
  */
-async function getOrderPageData(orderDate: string, cookieHeader: string): Promise<{
+async function getOrderPageData(orderDate: string, cookieHeader: string, token?: string): Promise<{
   productIds: { [key: string]: string };
   addressId: string;
   deliveryScheduleId: number;
@@ -157,21 +199,14 @@ async function getOrderPageData(orderDate: string, cookieHeader: string): Promis
   // Get address ID from addresses
   const addressId = pageData.addresses?.[0]?.recordId || '';
 
-  // Check for existing order
-  const existingOrder = pageData.order;
-  const existingOrderId = existingOrder?.id;
+  // Try to get existing order via API if token is provided
+  let existingOrderId: string | undefined;
+  let existingOrder: any;
 
-  // Debug logging
-  if (existingOrder) {
-    console.log('📋 Found existing order:', {
-      id: existingOrderId,
-      deliveryDate: existingOrder.deliveryDate,
-      items: existingOrder.items?.length || 0,
-    });
-  } else {
-    console.log('⚠️  No existing order found in page data');
-    // Log the entire pageData structure to debug
-    console.log('Page data keys:', Object.keys(pageData));
+  if (token) {
+    const existing = await getExistingOrder(orderDate, token);
+    existingOrderId = existing.orderId;
+    existingOrder = existing.order;
   }
 
   return {
@@ -327,8 +362,8 @@ export async function updateOrder(
     const token = tokenResponse.data;
     console.log('✅ Got auth token');
 
-    // Get product IDs, address ID, and existing order info
-    const { productIds, addressId, existingOrderId, existingOrder } = await getOrderPageData(orderDate, cookieHeader);
+    // Get product IDs, address ID, and existing order info (pass token to fetch existing orders)
+    const { productIds, addressId, existingOrderId, existingOrder } = await getOrderPageData(orderDate, cookieHeader, token);
     console.log('✅ Got order page data');
 
     if (!existingOrderId) {
