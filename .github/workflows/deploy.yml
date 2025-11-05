@@ -39,8 +39,22 @@ jobs:
                   secret: slack-channel-id
                 - name: SLACK_ADMIN_IDS
                   value: U08MNHQFG0J
+                - name: DB_HOST
+                  secret: db-host
+                - name: DB_PORT
+                  secret: db-port
+                - name: DB_USER
+                  secret: db-user
                 - name: DB_PASSWORD
-                  secret: mariadb-root-password
+                  secret: db-password
+                - name: DB_NAME
+                  secret: db-name
+                - name: LUNCHLAB_USERNAME
+                  secret: lunchlab-username
+                - name: LUNCHLAB_PASSWORD
+                  secret: lunchlab-password
+                - name: LUNCHLAB_BASE_URL
+                  value: https://b2b.lunchlab.me
                 - name: TZ
                   value: Asia/Seoul
               build: npm run build

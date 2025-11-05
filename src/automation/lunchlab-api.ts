@@ -3,24 +3,11 @@
  * Direct API calls instead of browser automation
  */
 
-import axios, { AxiosInstance } from 'axios';
-import fs from 'fs/promises';
+import axios from 'axios';
 import { OrderSubmissionResult, MenuSummary } from './types';
 
 const API_BASE_URL = 'https://api.lunchlab.me/b2b/core-service';
 const B2B_BASE_URL = process.env.LUNCHLAB_BASE_URL || 'https://b2b.lunchlab.me';
-const COOKIES_PATH = './data/lunchlab-cookies.json';
-
-interface LunchlabCookie {
-  name: string;
-  value: string;
-  domain: string;
-  path: string;
-  expires?: number;
-  httpOnly?: boolean;
-  secure?: boolean;
-  sameSite?: string;
-}
 
 interface OrderItem {
   productId: string;
@@ -44,52 +31,73 @@ const PRODUCT_ID_MAP: { [key: number]: string } = {
 };
 
 /**
- * Load cookies from file
+ * Login and get session cookies
  */
-async function loadCookies(): Promise<string> {
-  try {
-    const cookiesString = await fs.readFile(COOKIES_PATH, 'utf-8');
-    const cookies: LunchlabCookie[] = JSON.parse(cookiesString);
+async function login(): Promise<string> {
+  const username = process.env.LUNCHLAB_USERNAME;
+  const password = process.env.LUNCHLAB_PASSWORD;
 
-    // Convert cookies to Cookie header format
-    return cookies
-      .map(c => `${c.name}=${c.value}`)
-      .join('; ');
-  } catch (error) {
-    throw new Error('Failed to load cookies. Please run extract-cookies.ts first.');
+  if (!username || !password) {
+    throw new Error('LUNCHLAB_USERNAME and LUNCHLAB_PASSWORD must be set in environment variables');
   }
-}
 
-/**
- * Get JWT token from B2B site
- */
-async function getAuthToken(): Promise<string> {
-  const cookieHeader = await loadCookies();
-
-  const response = await axios.get(`${B2B_BASE_URL}/api/auth/token`, {
+  // Step 1: Get CSRF token
+  const csrfResponse = await axios.get(`${B2B_BASE_URL}/api/auth/csrf`, {
     headers: {
-      'Cookie': cookieHeader,
-      'Accept': '*/*',
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
     },
   });
 
-  if (typeof response.data !== 'string') {
-    throw new Error('Invalid token response');
+  const csrfToken = csrfResponse.data.csrfToken;
+  const csrfCookies = csrfResponse.headers['set-cookie'] || [];
+
+  console.log('✅ Got CSRF token');
+
+  // Step 2: Login with credentials
+  const loginData = new URLSearchParams({
+    csrfToken: csrfToken,
+    username: username,
+    password: password,
+  });
+
+  const loginResponse = await axios.post(
+    `${B2B_BASE_URL}/api/auth/callback/credentials`,
+    loginData.toString(),
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Cookie': csrfCookies.map(c => c.split(';')[0]).join('; '),
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      },
+      maxRedirects: 0,
+      validateStatus: (status) => status === 302 || status === 200,
+    }
+  );
+
+  const sessionCookies = loginResponse.headers['set-cookie'] || [];
+
+  if (sessionCookies.length === 0) {
+    throw new Error('Login failed: No session cookies received');
   }
 
-  return response.data; // JWT token
+  console.log('✅ Login successful');
+
+  // Combine all cookies
+  const allCookies = [...csrfCookies, ...sessionCookies]
+    .map(c => c.split(';')[0])
+    .join('; ');
+
+  return allCookies;
 }
 
 /**
  * Get order page data to extract product IDs and address ID
  */
-async function getOrderPageData(orderDate: string): Promise<{
+async function getOrderPageData(orderDate: string, cookieHeader: string): Promise<{
   productIds: { [key: string]: string };
   addressId: string;
   deliveryScheduleId: number;
 }> {
-  const cookieHeader = await loadCookies();
 
   // Get the Next.js build ID first
   const htmlResponse = await axios.get(`${B2B_BASE_URL}/console/order?date=${orderDate}`, {
@@ -154,12 +162,27 @@ export async function submitOrder(
   try {
     console.log(`Submitting order for ${orderDate} via API:`, menuSummary);
 
-    // Get auth token
-    const token = await getAuthToken();
+    // Login and get session cookies
+    const cookieHeader = await login();
+
+    // Get JWT token
+    const tokenResponse = await axios.get(`${B2B_BASE_URL}/api/auth/token`, {
+      headers: {
+        'Cookie': cookieHeader,
+        'Accept': '*/*',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      },
+    });
+
+    if (typeof tokenResponse.data !== 'string') {
+      throw new Error('Invalid token response');
+    }
+
+    const token = tokenResponse.data;
     console.log('✅ Got auth token');
 
     // Get product IDs and address ID
-    const { productIds, addressId } = await getOrderPageData(orderDate);
+    const { productIds, addressId } = await getOrderPageData(orderDate, cookieHeader);
     console.log('✅ Got order page data:', { productIds, addressId });
 
     // Build order items
@@ -243,12 +266,27 @@ export async function updateOrder(
   try {
     console.log(`Updating order for ${orderDate} via API:`, menuSummary);
 
-    // Get auth token
-    const token = await getAuthToken();
+    // Login and get session cookies
+    const cookieHeader = await login();
+
+    // Get JWT token
+    const tokenResponse = await axios.get(`${B2B_BASE_URL}/api/auth/token`, {
+      headers: {
+        'Cookie': cookieHeader,
+        'Accept': '*/*',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+      },
+    });
+
+    if (typeof tokenResponse.data !== 'string') {
+      throw new Error('Invalid token response');
+    }
+
+    const token = tokenResponse.data;
     console.log('✅ Got auth token');
 
     // Get product IDs and address ID
-    const { productIds, addressId } = await getOrderPageData(orderDate);
+    const { productIds, addressId } = await getOrderPageData(orderDate, cookieHeader);
     console.log('✅ Got order page data');
 
     // Build order items

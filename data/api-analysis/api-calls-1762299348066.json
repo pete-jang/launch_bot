@@ -1,0 +1,648 @@
+[
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:36.412Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+      "headers": {
+        "accept-language": "en-US,en;q=0.9",
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:36.791Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+      "headers": {
+        "age": "0",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-encoding": "br",
+        "content-type": "text/html; charset=utf-8",
+        "date": "Tue, 04 Nov 2025 23:35:36 GMT",
+        "etag": "W/\"fl7k15dpdo6v2\"",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/console/order",
+        "x-powered-by": "Next.js",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "icn1::icn1::nfb4j-1762299336617-6b1e92716827"
+      },
+      "body": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\"/><title>런치랩 주문</title><link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"/favicon.png\"/><link rel=\"icon\" href=\"/favicon.png\" type=\"image/x-icon\"/><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\"/><meta name=\"theme-color\" content=\"#006463\"/><meta name=\"next-head-count\" content=\"6\"/><link rel=\"preload\" href=\"/_next/static/css/0ff668d5494f883f.css\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/0ff668d5494f883f.css\" data-n-g=\"\"/><noscript data-n-css=\"\"></noscript><script defer=\"\" nomodule=\"\" src=\"/_next/static/chunks/polyfills-78c92fac7aa8fdd8.js\"></script><script src=\"/_next/static/chunks/webpack-97cbba264b31538d.js\" defer=\"\"></script><script src=\"/_next/static/chunks/framework-f382654684b9961e.js\" defer=\"\"></script><script src=\"/_next/static/chunks/main-fc6f0e53aa48f83d.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/_app-f0131ae9614d01b3.js\" defer=\"\"></script><script src=\"/_next/static/chunks/6577-aebddec3309b5686.js\" defer=\"\"></script><script src=\"/_next/static/chunks/466-568f5de08dbea1cc.js\" defer=\"\"></script><script src=\"/_next/static/chunks/5103-77f304b65b9cd69a.js\" defer=\"\"></script><script src=\"/_next/static/chunks/8974-8da5f16c1872e7dd.js\" defer=\"\"></script><script src=\"/_next/static/chunks/8418-76701be4f13f7b81.js\" defer=\"\"></script><script src=\"/_next/static/chunks/1636-7b7773b1783c0528.js\" defer=\"\"></script><script src=\"/_next/static/chunks/68-32564c610873655b.js\" defer=\"\"></script><script src=\"/_next/static/chunks/5162-012c47dfdcbedb5e.js\" defer=\"\"></script><script src=\"/_next/static/chunks/212-4346c0ba574b5313.js\" defer=\"\"></script><script src=\"/_next/static/chunks/7539-02a1f46c93c6d60b.js\" defer=\"\"></script><script src=\"/_next/static/chunks/7853-70eb64603c5bc9c7.js\" defer=\"\"></script><script src=\"/_next/static/chunks/1145-6541a53592bb93e4.js\" defer=\"\"></script><script src=\"/_next/static/chunks/8715-df28690205e9a1ac.js\" defer=\"\"></script><script src=\"/_next/static/chunks/8795-2f6abda42b831213.js\" defer=\"\"></script><script src=\"/_next/static/chunks/4365-4601c2a5d91ccae2.js\" defer=\"\"></script><script src=\"/_next/static/chunks/8243-5fdcb97abc78ff56.js\" defer=\"\"></script><script src=\"/_next/static/chunks/1660-78db2d1c991ac421.js\" defer=\"\"></script><script src=\"/_next/static/chunks/6954-a87ac8314ec6b160.js\" defer=\"\"></script><script src=\"/_next/static/chunks/2151-e70932a85988bf67.js\" defer=\"\"></script><script src=\"/_next/static/chunks/1173-6cfe6199406a592d.js\" defer=\"\"></script><script src=\"/_next/static/chunks/4426-7358db30e9f013aa.js\" defer=\"\"></script><script src=\"/_next/static/chunks/4977-f7e25fab8b008c0c.js\" defer=\"\"></script><script src=\"/_next/static/chunks/2609-7aca339c7c255b78.js\" defer=\"\"></script><script src=\"/_next/static/chunks/1398-ca96564b159ba904.js\" defer=\"\"></script><script src=\"/_next/static/chunks/7364-0821de2e4da80e65.js\" defer=\"\"></script><script src=\"/_next/static/chunks/9235-e41567361d17af29.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/console/order-1ec00e53d16a4b87.js\" defer=\"\"></script><script src=\"/_next/static/6LVHnMKkIkqdRRqnSvXYg/_buildManifest.js\" defer=\"\"></script><script src=\"/_next/static/6LVHnMKkIkqdRRqnSvXYg/_ssgManifest.js\" defer=\"\"></script></head><body><script>(function() {\ntry {\n  var mode = localStorage.getItem('mui-mode') || 'light';\n  var colorScheme = '';\n  if (mode === 'system') {\n    // handle system mode\n    var mql = window.matchMedia('(prefers-color-scheme: dark)');\n    if (mql.matches) {\n      colorScheme = localStorage.getItem('mui-color-scheme-dark') || 'dark';\n    } else {\n      colorScheme = localStorage.getItem('mui-color-scheme-light') || 'light';\n    }\n  }\n  if (mode === 'light') {\n    colorScheme = localStorage.getItem('mui-color-scheme-light') || 'light';\n  }\n  if (mode === 'dark') {\n    colorScheme = localStorage.getItem('mui-color-scheme-dark') || 'dark';\n  }\n  if (colorScheme) {\n    document.documentElement.setAttribute('data-mui-color-scheme', colorScheme);\n  }\n} catch(e){}})();</script><div id=\"__next\"><style data-emotion=\"mui-style-global gflkbx\">html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;box-sizing:border-box;-webkit-text-size-adjust:100%;}*,*::before,*::after{box-sizing:inherit;}strong,b{font-weight:700;}body{margin:0;color:rgba(0, 0, 0, 0.87);font-family:Pretendard;font-weight:400;font-size:1rem;line-height:1.5;background-color:#fff;}@media print{body{background-color:#fff;}}body::backdrop{background-color:#fff;}</style><div class=\"MuiBox-root mui-style-1svsvwq\"><header class=\"MuiToolbar-root MuiToolbar-gutters MuiToolbar-regular mui-style-187jfd4\"><div class=\"MuiContainer-root MuiContainer-maxWidthLg MuiContainer-disableGutters mui-style-6ayes9\"><a style=\"height:20px\" href=\"/console\"><img alt=\"lunchlab_logo\" loading=\"lazy\" width=\"76\" height=\"21\" decoding=\"async\" data-nimg=\"1\" style=\"color:transparent\" src=\"/_next/static/media/logo-white.b068567f.svg\"/></a></div></header><main class=\"MuiContainer-root MuiContainer-maxWidthLg mui-style-1c57ai7\"></main><div class=\"MuiBox-root mui-style-v2x2hb\"><div class=\"MuiContainer-root MuiContainer-maxWidthLg MuiStack-root mui-style-1beqwdl\"><div class=\"MuiStack-root mui-style-37egle\"><div class=\"MuiBox-root mui-style-0\"><ul class=\"MuiTypography-root MuiTypography-body2 mui-style-18smmhu\"><li><a target=\"_blank\" href=\"https://www.lunchlab.me\">회사소개</a></li><li><a target=\"_blank\" href=\"/agreement/policy\">이용약관</a></li><li><a target=\"_blank\" href=\"/agreement/privacy\">개인정보취급방침</a></li></ul><div class=\"MuiTypography-root MuiTypography-body2 mui-style-1kfb7q\"><span class=\"MuiTypography-root MuiTypography-body2 mui-style-a94kwn\">주식회사 런치랩</span><br/>서울특별시 성동구 아차산로 38<!-- -->, <!-- -->4층 404호(성수동1가, 개풍빌딩)<br/>사업자등록번호 <!-- -->633-88-01020<br/>개인정보관리책임자 <!-- -->김성수<!-- --> (<!-- -->sskim@lunchlab.me<!-- -->)<br/><br/><h6 class=\"MuiTypography-root MuiTypography-subtitle2 mui-style-pkosmh\">ⓒ Lunchlab. 2022. All Rights Reserved<br/></h6></div></div></div><div class=\"MuiStack-root mui-style-1g7yraa\"><a style=\"display:flex;align-items:center;color:#9e9e9e\" href=\"mailto:sales@lunchlab.me\"><svg class=\"MuiSvgIcon-root MuiSvgIcon-fontSizeMedium mui-style-14y2quu\" focusable=\"false\" aria-hidden=\"true\" viewBox=\"0 0 24 24\" data-testid=\"EmailRoundedIcon\"><path d=\"M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m-.4 4.25-7.07 4.42c-.32.2-.74.2-1.06 0L4.4 8.25c-.25-.16-.4-.43-.4-.72 0-.67.73-1.07 1.3-.72L12 11l6.7-4.19c.57-.35 1.3.05 1.3.72 0 .29-.15.56-.4.72\"></path></svg>sales@lunchlab.me</a><div class=\"MuiBox-root mui-style-k008qs\"><button class=\"MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary mui-style-1e3y9jg\" tabindex=\"0\" type=\"button\"><svg class=\"MuiSvgIcon-root MuiSvgIcon-colorPrimary MuiSvgIcon-fontSizeMedium mui-style-bxn79q\" focusable=\"false\" aria-hidden=\"true\" viewBox=\"0 0 24 24\" data-testid=\"SmsRoundedIcon\"><path d=\"M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2M9 11H7V9h2zm4 0h-2V9h2zm4 0h-2V9h2z\"></path></svg><span class=\"MuiTypography-root MuiTypography-body2 mui-style-1t0hz7u\">채널톡 채팅 상담하기</span></button></div></div></div></div></div></div><script id=\"__NEXT_DATA__\" type=\"application/json\">{\"props\":{\"pageProps\":{\"date\":\"2025-11-07\",\"deliverySchedule\":{\"id\":599,\"updatedAt\":\"2025-10-20T11:56:02.000Z\",\"createdAt\":\"2025-10-17T15:41:06.623Z\",\"deliveryDate\":\"2025-11-07\",\"status\":\"on-sale\",\"orderClose\":\"2025-11-06T05:30:00.000Z\",\"stocks\":[{\"id\":643,\"updatedAt\":\"2025-10-17T15:41:06.848Z\",\"createdAt\":\"2025-10-17T15:41:06.848Z\",\"deliveryScheduleId\":599,\"productId\":4,\"stockCount\":null,\"orderCount\":0,\"status\":\"on-sale\"},{\"id\":644,\"updatedAt\":\"2025-10-17T15:41:06.854Z\",\"createdAt\":\"2025-10-17T15:41:06.854Z\",\"deliveryScheduleId\":599,\"productId\":23,\"stockCount\":null,\"orderCount\":0,\"status\":\"on-sale\"}]},\"addresses\":[{\"id\":2068,\"updatedAt\":\"2025-11-03T15:10:01.000Z\",\"createdAt\":\"2025-10-27T13:46:01.574Z\",\"recordId\":\"a57da85d-23ca-452d-a2ce-a0e9ef4f06f6\",\"name\":\"강남점_장*호\",\"accountId\":1980,\"postalCode\":\"06236\",\"streetAddress\":\"서울 강남구 테헤란로26길 14\",\"detailAddress\":\"위워크빌딩 1층 (테이블 위)\",\"latitude\":37.499274016,\"longitude\":127.035937614,\"status\":\"activate\",\"collectionService\":\"next-day\",\"collectionComment\":\"배송과 동일\",\"deliveryComment\":\"배송: 출입문 진입 후 선반쪽에 놓아 주세요.\",\"deliveryHour\":\"11:30\",\"wasteZoneComment\":\"\",\"orderDay\":null,\"memo\":\"\",\"managerId\":15,\"releaseNote\":\"\",\"lastDeliveredAt\":\"2025-11-04\",\"minOrderQuantity\":3,\"checklist\":null}]},\"__N_SSP\":true},\"page\":\"/console/order\",\"query\":{\"date\":\"2025-11-07\"},\"buildId\":\"6LVHnMKkIkqdRRqnSvXYg\",\"isFallback\":false,\"isExperimentalCompile\":false,\"gssp\":true,\"scriptLoader\":[]}</script></body></html>"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:36.959Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/api/auth/session",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.113Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/api/auth/session",
+      "headers": {
+        "age": "0",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-length": "364",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "etag": "\"m6zp88jg0x9g\"",
+        "server": "Vercel",
+        "set-cookie": "__Secure-next-auth.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..rK339DNWsuVsNEuR.B5beayXqy9TWiLUnL0caec2XEW1keLodK6rSgM8sWqbJqq1tL0tsbMDCiymfTXK0PuIxDN2dw_ZzLs49Kz7Bi3MwV-RbUMpfAGhVRdVH9rLXsrfgbvJBjTbLIfEYfBeRTU6Fr4YDsZiestORF605KQeHEz5yaBdAO-8QOI_yqmfzgye5Ow9RPeZSoxdYPlzni0V8w3LDaDFV3X3xIWkNcsOJG1rjCP1AMbPbugl2T3FQS8VQ9CL7J2s1Unow8bWvZXzHU-_avwlvFj6fwl5FgwIZD-8pJCmxa84qmFM5IoZwTusOeyyNXbjPjMlYVmXuo18a8RYxMXy0fOI1jMS6hLUimp8zpu326re5848s-n3WVO3DxeD1.z8L8L1bQQs-XcnOWXxTemw; Path=/; Expires=Thu, 04 Dec 2025 23:35:37 GMT; HttpOnly; Secure; SameSite=Lax",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/api/auth/[...nextauth]",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "icn1::icn1::7vbrx-1762299337003-cc79f5b0dc57"
+      },
+      "body": "{\"user\":{\"name\":\"강남점_장진호\"},\"expires\":\"2025-12-04T23:35:37.031Z\",\"token\":{\"id\":\"5b14404e-0839-4d8d-80a5-04e30124be65\",\"name\":\"강남점_장진호\",\"accountId\":1980,\"companyId\":\"5b14404e-0839-4d8d-80a5-04e30124be65\",\"appId\":null,\"sub\":\"5b14404e-0839-4d8d-80a5-04e30124be65\",\"iat\":1762245789,\"exp\":1764837789,\"jti\":\"29e8a3c4-be07-4dcd-a7b9-e8afd24c3766\"}}"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:36.968Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "x-middleware-prefetch": "1",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.194Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console.json",
+      "headers": {
+        "age": "569",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-encoding": "br",
+        "content-type": "application/json",
+        "date": "Tue, 04 Nov 2025 11:27:30 GMT",
+        "etag": "W/\"2g4rzvlfdzz4\"",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/_next/data/6LVHnMKkIkqdRRqnSvXYg/console.json",
+        "x-vercel-cache": "HIT",
+        "x-vercel-id": "icn1::icn1::8zcd2-1762299337134-9c7e2f62d286"
+      },
+      "body": "{\"pageProps\":{\"banners\":[{\"title\":\"런치랩 상담 서비스 통합 안내\",\"description\":\"10월 24일 금요일부터 채널톡으로 문의 \",\"actionName\":\"바로가기\",\"image\":{\"src\":\"//images.ctfassets.net/r2ug8n4acrsb/6TrPU3hlRiShgotuOxmt47/7713a52f3521fb38f1233e0c1ba198fc/ì__í__ë__ì___2025-10-21_ì__í___3.53.47.png\",\"alt\":\"스크린샷 2025-10-21 오후 3.53.47.png\",\"width\":2324,\"height\":1556},\"order\":9,\"area\":\"banner\",\"url\":\"https://b2b.lunchlab.me/console/notice/2Z2cVROERHjrWf4w7BEoN8\",\"blank\":false,\"id\":0,\"updatedAt\":\"2025년 10월 21일\",\"lastUpdatedBy\":\"??\",\"entryId\":\"cHyUcLrrFmnc7vcMsfwVK\"},{\"title\":\"서비스 개선을 위한 의견을 듣고 있습니다\",\"actionName\":\"의견 보내기\",\"image\":{\"src\":\"//images.ctfassets.net/r2ug8n4acrsb/2gqqnKWS9fp2l6l8J7mJJG/6bd4ee69c42d728f017389648380614d/istockphoto-1134890323-612x612.jpg\",\"alt\":\"istockphoto-1134890323-612x612.jpg\",\"width\":612,\"height\":389},\"area\":\"banner\",\"url\":\"https://forms.gle/kmY38pC1XMYrQoQ9A\",\"blank\":true,\"id\":1,\"updatedAt\":\"2025년 07월 22일\",\"lastUpdatedBy\":\"??\",\"entryId\":\"5Xoi96JXGc2qLGQk3MJmku\",\"order\":9007199254740991}],\"notices\":[{\"title\":\"런치랩 상담 서비스 통합 안내\",\"order\":5,\"area\":\"notice\",\"url\":\"https://b2b.lunchlab.me/console/notice/2Z2cVROERHjrWf4w7BEoN8\",\"blank\":false,\"image\":null,\"id\":0,\"updatedAt\":\"2025년 10월 26일\",\"lastUpdatedBy\":\"??\",\"entryId\":\"3JQbQf2eA7mXNmEbvLwCgu\"}]},\"__N_SSG\":true}"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:36.968Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/agreement/policy.json?doc=policy",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.007Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/agreement/policy.json?doc=policy",
+      "headers": {
+        "access-control-allow-origin": "*",
+        "age": "45025",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-disposition": "inline",
+        "content-encoding": "br",
+        "content-type": "application/json",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "etag": "W/\"cf73751debffaecd97cd6bcb8a206041\"",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch",
+        "x-matched-path": "/_next/data/6LVHnMKkIkqdRRqnSvXYg/agreement/policy.json",
+        "x-vercel-cache": "HIT",
+        "x-vercel-id": "icn1::4m28p-1762299337010-827fc543e950"
+      },
+      "body": "{\"pageProps\":{\"doc\":{\"id\":\"policy\",\"prefix\":\"agreement\",\"meta\":{\"title\":\"런치랩 이용약관\",\"date\":\"2022-12-30\"},\"content\":\"<h1>런치랩 이용약관</h1>\\n<h2>제1조(목적)</h2>\\n<p>이 약관은 (주)런치랩(이하 “회사”라 한다)이 운영하는 “런치랩”(이하 “서비스”라 한다)에서 제공하는 런치랩 구독 서비스를 이용함에 있어 사이버 몰과 이용자의 권리․의무 및 책임사항을 규정함을 목적으로 합니다.</p>\\n<h2>제2조(정의)</h2>\\n<p>① “서비스”란 “회사”가 재화 또는 용역(이하 “재화 등”이라 함)을 이용자에게 제공하기 위하여 컴퓨터 등 정보통신설비를 이용하여 재화 등을 거래할 수 있도록 설정한 가상의 영업장을 말하며, 아울러 사이버몰을 운영하는 사업자의 의미로도 사용합니다.</p>\\n<p>② “이용자”란 “서비스”에 접속하여 이 약관에 따라 “서비스”가 제공하는 서비스를 받는 회원 및 비회원을 말합니다.</p>\\n<p>③ ‘회원’이라 함은 “서비스”에 회원등록을 한 자로서, 계속적으로 “서비스”가 제공하는 서비스를 이용할 수 있는 자를 말합니다.</p>\\n<p>④ ‘비회원’이라 함은 회원에 가입하지 않고 “서비스”가 제공하는 서비스를 이용하는 자를 말합니다.</p>\\n<h2>제3조 (약관 등의 명시와 설명 및 개정)</h2>\\n<p>① “서비스”는 이 약관의 내용과 상호 및 대표자 성명, 영업소 소재지 주소(소비자의 불만을 처리할 수 있는 곳의 주소를 포함), 전화번호․모사전송번호․전자우편주소, 사업자등록번호, 통신판매업 신고번호, 개인정보관리책임자등을 이용자가 쉽게 알 수 있도록 00 사이버몰의 초기 서비스화면(전면)에 게시합니다. 다만, 약관의 내용은 이용자가 연결화면을 통하여 볼 수 있도록 할 수 있습니다.</p>\\n<p>② “서비스”는 이용자가 약관에 동의하기에 앞서 약관에 정하여져 있는 내용 중 청약철회․배송책임․환불조건 등과 같은 중요한 내용을 이용자가 이해할 수 있도록 별도의 연결화면 또는 팝업화면 등을 제공하여 이용자의 확인을 구하여야 합니다.</p>\\n<p>③ “서비스”는 「전자상거래 등에서의 소비자보호에 관한 법률」, 「약관의 규제에 관한 법률」, 「전자문서 및 전자거래기본법」, 「전자금융거래법」, 「전자서명법」, 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」, 「방문판매 등에 관한 법률」, 「소비자기본법」 등 관련 법을 위배하지 않는 범위에서 이 약관을 개정할 수 있습니다.</p>\\n<p>④ “서비스”가 약관을 개정할 경우에는 적용일자 및 개정사유를 명시하여 현행약관과 함께 몰의 초기화면에 그 적용일자 7일 이전부터 적용일자 전일까지 공지합니다. 다만, 이용자에게 불리하게 약관내용을 변경하는 경우에는 최소한 30일 이상의 사전 유예기간을 두고 공지합니다.  이 경우 \\\"몰“은 개정 전 내용과 개정 후 내용을 명확하게 비교하여 이용자가 알기 쉽도록 표시합니다.</p>\\n<p>⑤ “서비스”가 약관을 개정할 경우에는 그 개정약관은 그 적용일자 이후에 체결되는 계약에만 적용되고 그 이전에 이미 체결된 계약에 대해서는 개정 전의 약관조항이 그대로 적용됩니다. 다만 이미 계약을 체결한 이용자가 개정약관 조항의 적용을 받기를 원하는 뜻을 제3항에 의한 개정약관의 공지기간 내에 “서비스”에 송신하여 “서비스”의 동의를 받은 경우에는 개정약관 조항이 적용됩니다.</p>\\n<p>⑥ 이 약관에서 정하지 아니한 사항과 이 약관의 해석에 관하여는 전자상거래 등에서의 소비자보호에 관한 법률, 약관의 규제 등에 관한 법률, 공정거래위원회가 정하는 전자상거래 등에서의 소비자 보호지침 및 관계법령 또는 상관례에 따릅니다.</p>\\n<h2>제4조(서비스의 제공 및 변경)</h2>\\n<p>① “서비스”는 다음과 같은 업무를 수행합니다.</p>\\n<ol>\\n<li>재화 또는 용역에 대한 정보 제공 및 구매계약의 체결</li>\\n<li>구매계약이 체결된 재화 또는 용역의 배송</li>\\n<li>기타 “서비스”가 정하는 업무</li>\\n</ol>\\n<p>② “서비스”는 재화 또는 용역의 품절 또는 기술적 사양의 변경 등의 경우에는 장차 체결되는 계약에 의해 제공할 재화 또는 용역의 내용을 변경할 수 있습니다. 이 경우에는 변경된 재화 또는 용역의 내용 및 제공일자를 명시하여 현재의 재화 또는 용역의 내용을 게시한 곳에 즉시 공지합니다.</p>\\n<p>③ “서비스”가 제공하기로 이용자와 계약을 체결한 서비스의 내용을 재화등의 품절 또는 기술적 사양의 변경 등의 사유로 변경할 경우에는 그 사유를 이용자에게 통지 가능한 주소로 즉시 통지합니다.</p>\\n<p>④ 전항의 경우 “서비스”는 이로 인하여 이용자가 입은 손해를 배상합니다. 다만, “서비스”가 고의 또는 과실이 없음을 입증하는 경우에는 그러하지 아니합니다.</p>\\n<h2>제5조(서비스의 중단)</h2>\\n<p>① “서비스”는 컴퓨터 등 정보통신설비의 보수점검․교체 및 고장, 통신의 두절 등의 사유가 발생한 경우에는 서비스의 제공을 일시적으로 중단할 수 있습니다.</p>\\n<p>② “서비스”는 제1항의 사유로 서비스의 제공이 일시적으로 중단됨으로 인하여 이용자 또는 제3자가 입은 손해에 대하여 배상합니다. 단, “서비스”가 고의 또는 과실이 없음을 입증하는 경우에는 그러하지 아니합니다.</p>\\n<p>③ 사업종목의 전환, 사업의 포기, 업체 간의 통합 등의 이유로 서비스를 제공할 수 없게 되는 경우에는 “서비스”는 제8조에 정한 방법으로 이용자에게 통지하고 당초 “서비스”에서 제시한 조건에 따라 소비자에게 보상합니다. 다만, “서비스”가 보상기준 등을 고지하지 아니한 경우에는 이용자들의 마일리지 또는 적립금 등을 “서비스”에서 통용되는 통화가치에 상응하는 현물 또는 현금으로 이용자에게 지급합니다.</p>\\n<h2>제6조(회원가입)</h2>\\n<p>① 이용자는 “서비스”가 정한 가입 양식에 따라 회원정보를 기입한 후 이 약관에 동의한다는 의사표시를 함으로서 회원가입을 신청합니다.</p>\\n<p>② “서비스”는 제1항과 같이 회원으로 가입할 것을 신청한 이용자 중 다음 각 호에 해당하지 않는 한 회원으로 등록합니다.</p>\\n<ol>\\n<li>가입신청자가 이 약관 제7조제3항에 의하여 이전에 회원자격을 상실한 적이 있는 경우, 다만 제7조제3항에 의한 회원자격 상실 후 3년이 경과한 자로서 “서비스”의 회원재가입 승낙을 얻은 경우에는 예외로 한다.</li>\\n<li>등록 내용에 허위, 기재누락, 오기가 있는 경우</li>\\n<li>기타 회원으로 등록하는 것이 “서비스”의 기술상 현저히 지장이 있다고 판단되는 경우</li>\\n</ol>\\n<p>③ 회원가입계약의 성립 시기는 “서비스”의 승낙이 회원에게 도달한 시점으로 합니다.</p>\\n<p>④ 회원은 회원가입 시 등록한 사항에 변경이 있는 경우, 상당한 기간 이내에 “서비스”에 대하여 회원정보 수정 등의 방법으로 그 변경사항을 알려야 합니다.</p>\\n<h2>제7조(회원 탈퇴 및 자격 상실 등)</h2>\\n<p>① 회원은 “서비스”에 언제든지 탈퇴를 요청할 수 있으며 “서비스”는 즉시 회원탈퇴를 처리합니다.</p>\\n<p>② 회원이 다음 각 호의 사유에 해당하는 경우, “서비스”는 회원자격을 제한 및 정지시킬 수 있습니다.</p>\\n<ol>\\n<li>가입 신청 시에 허위 내용을 등록한 경우</li>\\n<li>“서비스”를 이용하여 구입한 재화 등의 대금, 기타 “서비스”가용에 관련하여 회원이 부담하는 채무를 기일에 지급하지 않는 경우</li>\\n<li>다른 사람의 “서비스” 이용을 방해하거나 그 정보를 도용하는 등 전자상거래 질서를 위협하는 경우</li>\\n<li>“서비스”를 이용하여 법령 또는 이 약관이 금지하거나 공서양속에 반하는 행위를 하는 경우</li>\\n</ol>\\n<p>③ “서비스”가 회원 자격을 제한․정지 시킨 후, 동일한 행위가 2회 이상 반복되거나 30일 이내에 그 사유가 시정되지 아니하는 경우 “서비스”는 회원자격을 상실시킬 수 있습니다.</p>\\n<p>④ “서비스”가 회원자격을 상실시키는 경우에는 회원등록을 말소합니다. 이 경우 회원에게 이를 통지하고, 회원등록 말소 전에 최소한 30일 이상의 기간을 정하여 소명할 기회를 부여합니다.</p>\\n<h2>제8조(회원에 대한 통지)</h2>\\n<p>① “서비스”가 회원에 대한 통지를 하는 경우, 회원이 “서비스”와 미리 약정하여 지정한 전자우편 주소로 할 수 있습니다.</p>\\n<p>② “서비스”는 불특정다수 회원에 대한 통지의 경우 1주일이상 “서비스” 게시판에 게시함으로서 개별 통지에 갈음할 수 있습니다. 다만, 회원 본인의 거래와 관련하여 중대한 영향을 미치는 사항에 대하여는 개별통지를 합니다.</p>\\n<h2>제9조(구매신청 및 개인정보 제공 동의 등)</h2>\\n<p>① “서비스”가용자는 “서비스”상에서 다음 또는 이와 유사한 방법에 의하여 구매를 신청하며, “서비스”는 이용자가 구매신청을 함에 있어서 다음의 각 내용을 알기 쉽게 제공하여야 합니다.</p>\\n<ol>\\n<li>재화 등의 검색 및 선택</li>\\n<li>받는 사람의 성명, 주소, 전화번호, 전자우편주소(또는 이동전화번호) 등의 입력</li>\\n<li>약관내용, 청약철회권이 제한되는 서비스, 배송료․설치비 등의 비용부담과 관련한 내용에 대한 확인</li>\\n<li>이 약관에 동의하고 위 3.호의 사항을 확인하거나 거부하는 표시\\n(예, 마우스 클릭)</li>\\n<li>재화등의 구매신청 및 이에 관한 확인 또는 “서비스”의 확인에 대한 동의</li>\\n<li>결제방법의 선택</li>\\n</ol>\\n<p>② “서비스”가 제3자에게 구매자 개인정보를 제공할 필요가 있는 경우 1) 개인정보를 제공받는 자, 2)개인정보를 제공받는 자의 개인정보 이용목적, 3) 제공하는 개인정보의 항목, 4) 개인정보를 제공받는 자의 개인정보 보유 및 이용기간을 구매자에게 알리고 동의를 받아야 합니다. (동의를 받은 사항이 변경되는 경우에도 같습니다.)</p>\\n<p>③ “서비스”가 제3자에게 구매자의 개인정보를 취급할 수 있도록 업무를 위탁하는 경우에는 1) 개인정보 취급위탁을 받는 자, 2) 개인정보 취급위탁을 하는 업무의 내용을 구매자에게 알리고 동의를 받아야 합니다. (동의를 받은 사항이 변경되는 경우에도 같습니다.) 다만, 서비스제공에 관한 계약이행을 위해 필요하고 구매자의 편의증진과 관련된 경우에는 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」에서 정하고 있는 방법으로 개인정보 취급방침을 통해 알림으로써 고지절차와 동의절차를 거치지 않아도 됩니다.</p>\\n<h2>제10조 (계약의 성립)</h2>\\n<p>①  “서비스”는 제9조와 같은 구매신청에 대하여 다음 각 호에 해당하면 승낙하지 않을 수 있습니다. 다만, 미성년자와 계약을 체결하는 경우에는 법정대리인의 동의를 얻지 못하면 미성년자 본인 또는 법정대리인이 계약을 취소할 수 있다는 내용을 고지하여야 합니다.</p>\\n<ol>\\n<li>신청 내용에 허위, 기재누락, 오기가 있는 경우</li>\\n<li>미성년자가 담배, 주류 등 청소년보호법에서 금지하는 재화 및 용역을 구매하는 경우</li>\\n<li>기타 구매신청에 승낙하는 것이 “서비스” 기술상 현저히 지장이 있다고 판단하는 경우</li>\\n</ol>\\n<p>② “서비스”의 승낙이 제12조제1항의 수신확인통지형태로 이용자에게 도달한 시점에 계약이 성립한 것으로 봅니다.</p>\\n<p>③ “서비스”의 승낙의 의사표시에는 이용자의 구매 신청에 대한 확인 및 판매가능 여부, 구매신청의 정정 취소 등에 관한 정보 등을 포함하여야 합니다.</p>\\n<h2>제11조(지급방법)</h2>\\n<p>“서비스”에서 구매한 재화 또는 용역에 대한 대금지급방법은 다음 각 호의 방법중 가용한 방법으로 할 수 있습니다. 단, “서비스”는 이용자의 지급방법에 대하여 재화 등의 대금에 어떠한 명목의 수수료도  추가하여 징수할 수 없습니다.</p>\\n<ol>\\n<li>폰뱅킹, 인터넷뱅킹, 메일 뱅킹 등의 각종 계좌이체</li>\\n<li>선불카드, 직불카드, 신용카드 등의 각종 카드 결제</li>\\n<li>온라인무통장입금</li>\\n<li>전자화폐에 의한 결제</li>\\n<li>수령 시 대금지급</li>\\n<li>마일리지 등 “서비스”가 지급한 포인트에 의한 결제</li>\\n<li>“서비스”와 계약을 맺었거나 “서비스”가 인정한 상품권에 의한 결제</li>\\n<li>기타 전자적 지급 방법에 의한 대금 지급 등</li>\\n</ol>\\n<h2>제12조(수신확인통지․구매신청 변경 및 취소)</h2>\\n<p>① “서비스”는 이용자의 구매신청이 있는 경우 이용자에게 수신확인통지를 합니다.</p>\\n<p>② 수신확인통지를 받은 이용자는 의사표시의 불일치 등이 있는 경우에는 수신확인통지를 받은 후 즉시 구매신청 변경 및 취소를 요청할 수 있고 “서비스”는 배송 전에 이용자의 요청이 있는 경우에는 지체 없이 그 요청에 따라 처리하여야 합니다. 다만 이미 대금을 지불한 경우에는 제15조의 청약철회 등에 관한 규정에 따릅니다.</p>\\n<h2>제13조(재화 등의 공급)</h2>\\n<p>① “서비스”는 이용자와 재화 등의 공급시기에 관하여 별도의 약정이 없는 이상, 이용자가 청약을 한 날부터 7일 이내에 재화 등을 배송할 수 있도록 주문제작, 포장 등 기타의 필요한 조치를 취합니다. 다만, “서비스”가 이미 재화 등의 대금의 전부 또는 일부를 받은 경우에는 대금의 전부 또는 일부를 받은 날부터 3영업일 이내에 조치를 취합니다.  이때 “서비스”는 이용자가 재화 등의 공급 절차 및 진행 사항을 확인할 수 있도록 적절한 조치를 합니다.</p>\\n<p>② “서비스”는 이용자가 구매한 재화에 대해 배송수단, 수단별 배송비용 부담자, 수단별 배송기간 등을 명시합니다. 만약 “서비스”가 약정 배송기간을 초과한 경우에는 그로 인한 이용자의 손해를 배상하여야 합니다. 다만 “서비스”가 고의․과실이 없음을 입증한 경우에는 그러하지 아니합니다.</p>\\n<h2>제14조(환급)</h2>\\n<p>“서비스”는 이용자가 구매신청한 재화 등이 품절 등의 사유로 인도 또는 제공을 할 수 없을 때에는 지체 없이 그 사유를 이용자에게 통지하고 사전에 재화 등의 대금을 받은 경우에는 대금을 받은 날부터 3영업일 이내에 환급하거나 환급에 필요한 조치를 취합니다.</p>\\n<h2>제15조(청약철회 등)</h2>\\n<p>① “서비스”와 재화등의 구매에 관한 계약을 체결한 이용자는 「전자상거래 등에서의 소비자보호에 관한 법률」 제13조 제2항에 따른 계약내용에 관한 서면을 받은 날(그 서면을 받은 때보다 재화 등의 공급이 늦게 이루어진 경우에는 재화 등을 공급받거나 재화 등의 공급이 시작된 날을 말합니다)부터 7일 이내에는 청약의 철회를 할 수 있습니다. 다만, 청약철회에 관하여 「전자상거래 등에서의 소비자보호에 관한 법률」에 달리 정함이 있는 경우에는 동 법 규정에 따릅니다.</p>\\n<p>② 이용자는 재화 등을 배송 받은 경우 다음 각 호의 1에 해당하는 경우에는 반품 및 교환을 할 수 없습니다.</p>\\n<ol>\\n<li>이용자에게 책임 있는 사유로 재화 등이 멸실 또는 훼손된 경우(다만, 재화 등의 내용을 확인하기 위하여 포장 등을 훼손한 경우에는 청약철회를 할 수 있습니다)</li>\\n<li>이용자의 사용 또는 일부 소비에 의하여 재화 등의 가치가 현저히 감소한 경우</li>\\n<li>시간의 경과에 의하여 재판매가 곤란할 정도로 재화등의 가치가 현저히 감소한 경우</li>\\n<li>같은 성능을 지닌 재화 등으로 복제가 가능한 경우 그 원본인 재화 등의 포장을 훼손한 경우</li>\\n</ol>\\n<p>③ 제2항제2호 내지 제4호의 경우에 “서비스”가 사전에 청약철회 등이 제한되는 사실을 소비자가 쉽게 알 수 있는 곳에 명기하거나 시용상품을 제공하는 등의 조치를 하지 않았다면 이용자의 청약철회 등이 제한되지 않습니다.</p>\\n<p>④ 이용자는 제1항 및 제2항의 규정에 불구하고 재화 등의 내용이 표시·광고 내용과 다르거나 계약내용과 다르게 이행된 때에는 당해 재화 등을 공급받은 날부터 3월 이내, 그 사실을 안 날 또는 알 수 있었던 날부터 30일 이내에 청약철회 등을 할 수 있습니다.</p>\\n<h2>제16조(청약철회 등의 효과)</h2>\\n<p>① “서비스”는 이용자로부터 재화 등을 반환받은 경우 3영업일 이내에 이미 지급받은 재화 등의 대금을 환급합니다. 이 경우 “서비스”가 이용자에게 재화등의 환급을 지연한때에는 그 지연기간에 대하여 「전자상거래 등에서의 소비자보호에 관한 법률 시행령」제21조의2에서 정하는 지연이자율을 곱하여 산정한 지연이자를 지급합니다.</p>\\n<p>② “서비스”는 위 대금을 환급함에 있어서 이용자가 신용카드 또는 전자화폐 등의 결제수단으로 재화 등의 대금을 지급한 때에는 지체 없이 당해 결제수단을 제공한 사업자로 하여금 재화 등의 대금의 청구를 정지 또는 취소하도록 요청합니다.</p>\\n<p>③ 청약철회 등의 경우 공급받은 재화 등의 반환에 필요한 비용은 이용자가 부담합니다. “서비스”는 이용자에게 청약철회 등을 이유로 위약금 또는 손해배상을 청구하지 않습니다. 다만 재화 등의 내용이 표시·광고 내용과 다르거나 계약내용과 다르게 이행되어 청약철회 등을 하는 경우 재화 등의 반환에 필요한 비용은 “서비스”가 부담합니다.</p>\\n<p>④ 이용자가 재화 등을 제공받을 때 발송비를 부담한 경우에 “서비스”는 청약철회 시 그 비용을  누가 부담하는지를 이용자가 알기 쉽도록 명확하게 표시합니다.</p>\\n<h2>제17조(개인정보보호)</h2>\\n<p>① “서비스”는 이용자의 개인정보 수집시 서비스제공을 위하여 필요한 범위에서 최소한의 개인정보를 수집합니다.</p>\\n<p>② “서비스”는 회원가입시 구매계약이행에 필요한 정보를 미리 수집하지 않습니다. 다만, 관련 법령상 의무이행을 위하여 구매계약 이전에 본인확인이 필요한 경우로서 최소한의 특정 개인정보를 수집하는 경우에는 그러하지 아니합니다.</p>\\n<p>③ “서비스”는 이용자의 개인정보를 수집·이용하는 때에는 당해 이용자에게 그 목적을 고지하고 동의를 받습니다.</p>\\n<p>④ “서비스”는 수집된 개인정보를 목적외의 용도로 이용할 수 없으며, 새로운 이용목적이 발생한 경우 또는 제3자에게 제공하는 경우에는 이용·제공단계에서 당해 이용자에게 그 목적을 고지하고 동의를 받습니다. 다만, 관련 법령에 달리 정함이 있는 경우에는 예외로 합니다.</p>\\n<p>⑤ “서비스”가 제2항과 제3항에 의해 이용자의 동의를 받아야 하는 경우에는 개인정보관리 책임자의 신원(소속, 성명 및 전화번호, 기타 연락처), 정보의 수집목적 및 이용목적, 제3자에 대한 정보제공 관련사항(제공받은자, 제공목적 및 제공할 정보의 내용) 등 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」 제22조제2항이 규정한 사항을 미리 명시하거나 고지해야 하며 이용자는 언제든지 이 동의를 철회할 수 있습니다.</p>\\n<p>⑥ 이용자는 언제든지 “서비스”가 가지고 있는 자신의 개인정보에 대해 열람 및 오류정정을 요구할 수 있으며 “서비스”는 이에 대해 지체 없이 필요한 조치를 취할 의무를 집니다. 이용자가 오류의 정정을 요구한 경우에는 “서비스”는 그 오류를 정정할 때까지 당해 개인정보를 이용하지 않습니다.</p>\\n<p>⑦ “서비스”는 개인정보 보호를 위하여 이용자의 개인정보를 취급하는 자를  최소한으로 제한하여야 하며 신용카드, 은행계좌 등을 포함한 이용자의 개인정보의 분실, 도난, 유출, 동의 없는 제3자 제공, 변조 등으로 인한 이용자의 손해에 대하여 모든 책임을 집니다.</p>\\n<p>⑧ “서비스” 또는 그로부터 개인정보를 제공받은 제3자는 개인정보의 수집목적 또는 제공받은 목적을 달성한 때에는 당해 개인정보를 지체 없이 파기합니다.</p>\\n<p>⑨ “서비스”는 개인정보의 수집·이용·제공에 관한 동의 란을 미리 선택한 것으로 설정해두지 않습니다. 또한 개인정보의 수집·이용·제공에 관한 이용자의 동의거절시 제한되는 서비스를 구체적으로 명시하고, 필수수집항목이 아닌 개인정보의 수집·이용·제공에 관한 이용자의 동의 거절을 이유로 회원가입 등 서비스 제공을 제한하거나 거절하지 않습니다.</p>\\n<h2>제18조(“몰“의 의무)</h2>\\n<p>① “서비스”는 법령과 이 약관이 금지하거나 공서양속에 반하는 행위를 하지 않으며 이 약관이 정하는 바에 따라 지속적이고, 안정적으로 재화․용역을 제공하는데 최선을 다하여야 합니다.</p>\\n<p>② “서비스”는 이용자가 안전하게 인터넷 서비스를 이용할 수 있도록 이용자의 개인정보(신용정보 포함)보호를 위한 보안 시스템을 갖추어야 합니다.</p>\\n<p>③ “서비스”가 상품이나 용역에 대하여 「표시․광고의 공정화에 관한 법률」 제3조 소정의 부당한 표시․광고행위를 함으로써 이용자가 손해를 입은 때에는 이를 배상할 책임을 집니다.</p>\\n<p>④ “서비스”는 이용자가 원하지 않는 영리목적의 광고성 전자우편을 발송하지 않습니다.</p>\\n<h2>제19조(회원의 ID 및 비밀번호에 대한 의무)</h2>\\n<p>① 제17조의 경우를 제외한 ID와 비밀번호에 관한 관리책임은 회원에게 있습니다.</p>\\n<p>② 회원은 자신의 ID 및 비밀번호를 제3자에게 이용하게 해서는 안됩니다.</p>\\n<p>③ 회원이 자신의 ID 및 비밀번호를 도난당하거나 제3자가 사용하고 있음을 인지한 경우에는 바로 “서비스”에 통보하고 “서비스”의 안내가 있는 경우에는 그에 따라야 합니다.</p>\\n<h2>제20조(이용자의 의무)</h2>\\n<p>이용자는 다음 행위를 하여서는 안 됩니다.</p>\\n<ol>\\n<li>신청 또는 변경시 허위 내용의 등록</li>\\n<li>타인의 정보 도용</li>\\n<li>“서비스”에 게시된 정보의 변경</li>\\n<li>“서비스”가 정한 정보 이외의 정보(컴퓨터 프로그램 등) 등의 송신 또는 게시</li>\\n<li>“서비스” 기타 제3자의 저작권 등 지적재산권에 대한 침해</li>\\n<li>“서비스” 기타 제3자의 명예를 손상시키거나 업무를 방해하는 행위</li>\\n<li>외설 또는 폭력적인 메시지, 화상, 음성, 기타 공서양속에 반하는 정보를 몰에 공개 또는 게시하는 행위</li>\\n</ol>\\n<h2>제21조(연결“서비스”와 피연결“서비스” 간의 관계)</h2>\\n<p>① 상위 “서비스”와 하위 “서비스”가 하이퍼링크(예: 하이퍼링크의 대상에는 문자, 그림 및 동화상 등이 포함됨)방식 등으로 연결된 경우, 전자를 연결 “서비스”(웹 사이트)이라고 하고 후자를 피연결 “서비스”(웹사이트)이라고 합니다.</p>\\n<p>② 연결“서비스”는 피연결“서비스”가 독자적으로 제공하는 재화 등에 의하여 이용자와 행하는 거래에 대해서 보증 책임을 지지 않는다는 뜻을 연결“서비스”의 초기화면 또는 연결되는 시점의 팝업화면으로 명시한 경우에는 그 거래에 대한 보증 책임을 지지 않습니다.</p>\\n<h2>제22조(저작권의 귀속 및 이용제한)</h2>\\n<p>① “몰“이 작성한 저작물에 대한 저작권 기타 지적재산권은 ”몰“에 귀속합니다.</p>\\n<p>② 이용자는 “서비스”를 이용함으로써 얻은 정보 중 “서비스”에게 지적재산권이 귀속된 정보를 “서비스”의 사전 승낙 없이 복제, 송신, 출판, 배포, 방송 기타 방법에 의하여 영리목적으로 이용하거나 제3자에게 이용하게 하여서는 안됩니다.</p>\\n<p>③ “서비스”는 약정에 따라 이용자에게 귀속된 저작권을 사용하는 경우 당해 이용자에게 통보하여야 합니다.</p>\\n<h2>제23조(분쟁해결)</h2>\\n<p>① “서비스”는 이용자가 제기하는 정당한 의견이나 불만을 반영하고 그 피해를 보상처리하기 위하여 피해보상처리기구를 설치․운영합니다.</p>\\n<p>② “서비스”는 이용자로부터 제출되는 불만사항 및 의견은 우선적으로 그 사항을 처리합니다. 다만, 신속한 처리가 곤란한 경우에는 이용자에게 그 사유와 처리일정을 즉시 통보해 드립니다.</p>\\n<p>③ “서비스”와 이용자 간에 발생한 전자상거래 분쟁과 관련하여 이용자의 피해구제신청이 있는 경우에는 공정거래위원회 또는 시·도지사가 의뢰하는 분쟁조정기관의 조정에 따를 수 있습니다.</p>\\n<h2>제24조(재판권 및 준거법)</h2>\\n<p>① “서비스”와 이용자 간에 발생한 전자상거래 분쟁에 관한 소송은 제소 당시의 이용자의 주소에 의하고, 주소가 없는 경우에는 거소를 관할하는 지방법원의 전속관할로 합니다. 다만, 제소 당시 이용자의 주소 또는 거소가 분명하지 않거나 외국 거주자의 경우에는 민사소송법상의 관할법원에 제기합니다.</p>\\n<p>② “서비스”와 이용자 간에 제기된 전자상거래 소송에는 한국법을 적용합니다.</p>\\n\"}},\"__N_SSG\":true}"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:36.968Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/agreement/privacy.json?doc=privacy",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.022Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/agreement/privacy.json?doc=privacy",
+      "headers": {
+        "access-control-allow-origin": "*",
+        "age": "45025",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-disposition": "inline",
+        "content-encoding": "br",
+        "content-type": "application/json",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "etag": "W/\"1e0cfbfd9b18a9eb0f573ee8206e6226\"",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch",
+        "x-matched-path": "/_next/data/6LVHnMKkIkqdRRqnSvXYg/agreement/privacy.json",
+        "x-vercel-cache": "HIT",
+        "x-vercel-id": "icn1::fklgx-1762299337010-86792b960c8b"
+      },
+      "body": "{\"pageProps\":{\"doc\":{\"id\":\"privacy\",\"prefix\":\"agreement\",\"meta\":{\"title\":\"런치랩 개인정보 취급방침\",\"date\":\"2022-12-30\"},\"content\":\"<h1>런치랩 개인정보 처리방침</h1>\\n<p>(주) 런치랩('https://b2b.lunchlab.me'이하 '런치랩')은(는) 「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리방침을 수립·공개합니다.</p>\\n<p>○ 이 개인정보처리방침은 2023년 1월 2부터 적용됩니다.</p>\\n<h2>제1조(개인정보의 처리 목적)</h2>\\n<p>(주) 런치랩('https://b2b.lunchlab.me'이하 '런치랩')은(는) 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며 이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</p>\\n<ol>\\n<li>\\n<p>홈페이지 회원가입 및 관리\\n회원 가입의사 확인, 회원자격 유지·관리, 서비스 부정이용 방지, 고충처리 목적으로 개인정보를 처리합니다.</p>\\n</li>\\n<li>\\n<p>재화 또는 서비스 제공\\n물품배송을 목적으로 개인정보를 처리합니다.</p>\\n</li>\\n<li>\\n<p>마케팅 및 광고에의 활용\\n이벤트 및 광고성 정보 제공 및 참여기회 제공 , 서비스의 유효성 확인, 접속빈도 파악 또는 회원의 서비스 이용에 대한 통계 등을 목적으로 개인정보를 처리합니다.</p>\\n</li>\\n</ol>\\n<h2>제2조(개인정보의 처리 및 보유 기간)</h2>\\n<p>① (주) 런치랩은(는) 법령에 따른 개인정보 보유·이용기간 또는 정보주체로부터 개인정보를 수집 시에 동의받은 개인정보 보유·이용기간 내에서 개인정보를 처리·보유합니다.</p>\\n<p>② 각각의 개인정보 처리 및 보유 기간은 다음과 같습니다.</p>\\n<h4>1. 재화 또는 서비스 제공</h4>\\n<p>재화 또는 서비스 제공와 관련한 개인정보는 수집.이용에 관한 동의일로부터 \\\"5년\\\"까지 위 이용목적을 위하여 보유.이용됩니다</p>\\n<ul>\\n<li>보유근거 : 관련법령에 따라</li>\\n<li>관련법령\\n<ol>\\n<li>소비자의 불만 또는 분쟁처리에 관한 기록 : 3년</li>\\n<li>대금결제 및 재화 등의 공급에 관한 기록 : 5년</li>\\n<li>계약 또는 청약철회 등에 관한 기록 : 5년</li>\\n</ol>\\n</li>\\n</ul>\\n<h2>제3조(개인정보의 제3자 제공)</h2>\\n<p>① (주) 런치랩은(는) 개인정보를 제1조(개인정보의 처리 목적)에서 명시한 범위 내에서만 처리하며, 정보주체의 동의, 법률의 특별한 규정 등 「개인정보 보호법」 제17조 및 제18조에 해당하는 경우에만 개인정보를 제3자에게 제공합니다.</p>\\n<p>② (주) 런치랩은(는) 다음과 같이 개인정보를 제3자에게 제공하고 있습니다.</p>\\n<ul>\\n<li>개인정보를 제공받는 자:</li>\\n<li>제공받는 자의 개인정보 이용목적 :</li>\\n<li>제공받는 자의 보유.이용기간:</li>\\n</ul>\\n<h2>제4조(개인정보처리 위탁)</h2>\\n<p>① (주) 런치랩은(는) 원활한 개인정보 업무처리를 위하여 다음과 같이 개인정보 처리업무를 위탁하고 있습니다.</p>\\n<ul>\\n<li>위탁받는 자 (수탁자) :</li>\\n<li>위탁하는 업무의 내용 :</li>\\n<li>위탁기간 :</li>\\n</ul>\\n<p>② (주) 런치랩은(는) 위탁계약 체결시 「개인정보 보호법」 제26조에 따라 위탁업무 수행목적 외 개인정보 처리금지, 기술적․관리적 보호조치, 재위탁 제한, 수탁자에 대한 관리․감독, 손해배상 등 책임에 관한 사항을 계약서 등 문서에 명시하고, 수탁자가 개인정보를 안전하게 처리하는지를 감독하고 있습니다.</p>\\n<p>③ 위탁업무의 내용이나 수탁자가 변경될 경우에는 지체없이 본 개인정보 처리방침을 통하여 공개하도록 하겠습니다.</p>\\n<h2>제5조(정보주체와 법정대리인의 권리·의무 및 그 행사방법)</h2>\\n<p>① 정보주체는 (주) 런치랩에 대해 언제든지 개인정보 열람·정정·삭제·처리정지 요구 등의 권리를 행사할 수 있습니다.</p>\\n<p>② 제1항에 따른 권리 행사는(주) 런치랩에 대해 「개인정보 보호법」 시행령 제41조제1항에 따라 서면, 전자우편, 모사전송(FAX) 등을 통하여 하실 수 있으며 (주) 런치랩은(는) 이에 대해 지체 없이 조치하겠습니다.</p>\\n<p>③ 제1항에 따른 권리 행사는 정보주체의 법정대리인이나 위임을 받은 자 등 대리인을 통하여 하실 수 있습니다.이 경우 “개인정보 처리 방법에 관한 고시(제2020-7호)” 별지 제11호 서식에 따른 위임장을 제출하셔야 합니다.</p>\\n<p>④ 개인정보 열람 및 처리정지 요구는 「개인정보 보호법」 제35조 제4항, 제37조 제2항에 의하여 정보주체의 권리가 제한 될 수 있습니다.</p>\\n<p>⑤ 개인정보의 정정 및 삭제 요구는 다른 법령에서 그 개인정보가 수집 대상으로 명시되어 있는 경우에는 그 삭제를 요구할 수 없습니다.</p>\\n<p>⑥ (주) 런치랩은(는) 정보주체 권리에 따른 열람의 요구, 정정·삭제의 요구, 처리정지의 요구 시 열람 등 요구를 한 자가 본인이거나 정당한 대리인인지를 확인합니다.</p>\\n<h2>제6조(처리하는 개인정보의 항목 작성)</h2>\\n<p>① (주) 런치랩은(는) 다음의 개인정보 항목을 처리하고 있습니다.</p>\\n<p>홈페이지 회원가입 및 관리\\n필수항목 : 이메일, 휴대전화번호\\n선택항목 : 신용카드정보</p>\\n<h2>제7조(개인정보의 파기)</h2>\\n<p>① (주) 런치랩 은(는) 개인정보 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체없이 해당 개인정보를 파기합니다.</p>\\n<p>② 정보주체로부터 동의받은 개인정보 보유기간이 경과하거나 처리목적이 달성되었음에도 불구하고 다른 법령에 따라 개인정보를 계속 보존하여야 하는 경우에는, 해당 개인정보를 별도의 데이터베이스(DB)로 옮기거나 보관장소를 달리하여 보존합니다.</p>\\n<ol>\\n<li>법령 근거 :</li>\\n<li>보존하는 개인정보 항목 : 계좌정보, 거래날짜</li>\\n</ol>\\n<p>③ 개인정보 파기의 절차 및 방법은 다음과 같습니다.</p>\\n<ol>\\n<li>\\n<p>파기절차\\n(주) 런치랩 은(는) 파기 사유가 발생한 개인정보를 선정하고, (주) 런치랩 의 개인정보 보호책임자의 승인을 받아 개인정보를 파기합니다.</p>\\n</li>\\n<li>\\n<p>파기방법</p>\\n</li>\\n</ol>\\n<p>전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을 사용합니다</p>\\n<h2>제8조(개인정보의 안전성 확보 조치)</h2>\\n<p>(주) 런치랩은(는) 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다.</p>\\n<ol>\\n<li>\\n<p>정기적인 자체 감사 실시 - 개인정보 취급 관련 안정성 확보를 위해 정기적(분기 1회)으로 자체 감사를 실시하고 있습니다.</p>\\n</li>\\n<li>\\n<p>개인정보 취급 직원의 최소화 및 교육 - 개인정보를 취급하는 직원을 지정하고 담당자에 한정시켜 최소화 하여 개인정보를 관리하는 대책을 시행하고 있습니다.</p>\\n</li>\\n<li>\\n<p>내부관리계획의 수립 및 시행 - 개인정보의 안전한 처리를 위하여 내부관리계획을 수립하고 시행하고 있습니다.</p>\\n</li>\\n<li>\\n<p>해킹 등에 대비한 기술적 대책 - (주) 런치랩('런치랩')은 해킹이나 컴퓨터 바이러스 등에 의한 개인정보 유출 및 훼손을 막기 위하여 보안프로그램을 설치하고 주기적인 갱신·점검을 하며 외부로부터 접근이 통제된 구역에 시스템을 설치하고 기술적/물리적으로 감시 및 차단하고 있습니다.</p>\\n</li>\\n<li>\\n<p>개인정보의 암호화 - 이용자의 개인정보는 비밀번호는 암호화 되어 저장 및 관리되고 있어, 본인만이 알 수 있으며 중요한 데이터는 파일 및 전송 데이터를 암호화 하거나 파일 잠금 기능을 사용하는 등의 별도 보안기능을 사용하고 있습니다.</p>\\n</li>\\n<li>\\n<p>접속기록의 보관 및 위변조 방지 - 개인정보처리시스템에 접속한 기록을 최소 1년 이상 보관, 관리하고 있으며,다만, 5만명 이상의 정보주체에 관하여 개인정보를 추가하거나, 고유식별정보 또는 민감정보를 처리하는 경우에는 2년이상 보관, 관리하고 있습니다.\\n또한, 접속기록이 위변조 및 도난, 분실되지 않도록 보안기능을 사용하고 있습니다.</p>\\n</li>\\n<li>\\n<p>개인정보에 대한 접근 제한 - 개인정보를 처리하는 데이터베이스시스템에 대한 접근권한의 부여,변경,말소를 통하여 개인정보에 대한 접근통제를 위하여 필요한 조치를 하고 있으며 침입차단시스템을 이용하여 외부로부터의 무단 접근을 통제하고 있습니다.</p>\\n</li>\\n<li>\\n<p>문서보안을 위한 잠금장치 사용 - 개인정보가 포함된 서류, 보조저장매체 등을 잠금장치가 있는 안전한 장소에 보관하고 있습니다.</p>\\n</li>\\n<li>\\n<p>비인가자에 대한 출입 통제 - 개인정보를 보관하고 있는 물리적 보관 장소를 별도로 두고 이에 대해 출입통제 절차를 수립, 운영하고 있습니다.</p>\\n</li>\\n</ol>\\n<h2>제9조(개인정보 자동 수집 장치의 설치•운영 및 거부에 관한 사항)</h2>\\n<p>① (주) 런치랩 은(는) 이용자에게 개별적인 맞춤서비스를 제공하기 위해 이용정보를 저장하고 수시로 불러오는 ‘쿠키(cookie)’를 사용합니다.\\n② 쿠키는 웹사이트를 운영하는데 이용되는 서버(http)가 이용자의 컴퓨터 브라우저에게 보내는 소량의 정보이며 이용자들의 PC 컴퓨터내의 하드디스크에 저장되기도 합니다.\\n가. 쿠키의 사용 목적 : 이용자가 방문한 각 서비스와 웹 사이트들에 대한 방문 및 이용형태, 인기 검색어, 보안접속 여부, 등을 파악하여 이용자에게 최적화된 정보 제공을 위해 사용됩니다.\\n나. 쿠키의 설치•운영 및 거부 : 웹브라우저 상단의 도구{<code>></code>}인터넷 옵션{<code>></code>}개인정보 메뉴의 옵션 설정을 통해 쿠키 저장을 거부 할 수 있습니다.\\n다. 쿠키 저장을 거부할 경우 맞춤형 서비스 이용에 어려움이 발생할 수 있습니다.</p>\\n<h2>제10조 (개인정보 보호책임자)</h2>\\n<p>① (주) 런치랩 은(는) 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>\\n<h4>▶ 개인정보 보호책임자</h4>\\n<ul>\\n<li>성명 :김성수</li>\\n<li>직책 :CEO</li>\\n<li>연락처 :070-8811-0102, sskim@lunchlab.me</li>\\n</ul>\\n<p>※ 개인정보 보호 담당부서로 연결됩니다.</p>\\n<h4>▶ 개인정보 보호 담당부서</h4>\\n<ul>\\n<li>성명 :김성수</li>\\n<li>직책 :CEO</li>\\n<li>연락처 :070-8811-0102, sskim@lunchlab.me</li>\\n</ul>\\n<p>② 정보주체께서는 (주) 런치랩 의 서비스(또는 사업)을 이용하시면서 발생한 모든 개인정보 보호 관련 문의, 불만처리, 피해구제 등에 관한 사항을 개인정보 보호책임자 및 담당부서로 문의하실 수 있습니다. (주) 런치랩 은(는) 정보주체의 문의에 대해 지체 없이 답변 및 처리해드릴 것입니다.</p>\\n<h2>제11조(개인정보 열람청구)</h2>\\n<p>정보주체는 ｢개인정보 보호법｣ 제35조에 따른 개인정보의 열람 청구를 아래의 부서에 할 수 있습니다.</p>\\n<p>(주) 런치랩은(는) 정보주체의 개인정보 열람청구가 신속하게 처리되도록 노력하겠습니다.</p>\\n<h4>▶ 개인정보 열람청구 접수·처리 부서</h4>\\n<ul>\\n<li>담당자 :김성수</li>\\n<li>연락처 :070-8811-0102, sskim@lunchlab.me, 050-4152-5787</li>\\n</ul>\\n<h2>제12조(권익침해 구제방법)</h2>\\n<p>정보주체는 개인정보침해로 인한 구제를 받기 위하여 개인정보분쟁조정위원회, 한국인터넷진흥원 개인정보침해신고센터 등에 분쟁해결이나 상담 등을 신청할 수 있습니다. 이 밖에 기타 개인정보침해의 신고, 상담에 대하여는 아래의 기관에 문의하시기 바랍니다.</p>\\n<ol>\\n<li>개인정보분쟁조정위원회 : (국번없이) 1833-6972 (www.kopico.go.kr)</li>\\n<li>개인정보침해신고센터 : (국번없이) 118 (privacy.kisa.or.kr)</li>\\n<li>대검찰청 : (국번없이) 1301 (www.spo.go.kr)</li>\\n<li>경찰청 : (국번없이) 182 (ecrm.cyber.go.kr)</li>\\n</ol>\\n<p>「개인정보보호법」제35조(개인정보의 열람), 제36조(개인정보의 정정·삭제), 제37조(개인정보의 처리정지 등)의 규정에 의한 요구에 대 하여 공공기관의 장이 행한 처분 또는 부작위로 인하여 권리 또는 이익의 침해를 받은 자는 행정심판법이 정하는 바에 따라 행정심판을 청구할 수 있습니다.</p>\\n<p>※ 행정심판에 대해 자세한 사항은 중앙행정심판위원회(www.simpan.go.kr) 홈페이지를 참고하시기 바랍니다.</p>\\n<h2>제13조(개인정보 처리방침 변경)</h2>\\n<p>① 이 개인정보처리방침은 2023년 1월 2부터 적용됩니다.</p>\\n<p>② 이전의 개인정보 처리방침은 아래에서 확인하실 수 있습니다.</p>\\n\"}},\"__N_SSG\":true}"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:36.984Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/account.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "x-middleware-prefetch": "1",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.142Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/account.json",
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/console/account",
+        "x-middleware-skip": "1",
+        "x-vercel-id": "icn1::fklgx-1762299337029-fc2ba6358519"
+      }
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.111Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/api/channel-hash",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "accept-language": "en-US,en;q=0.9",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.227Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/api/channel-hash",
+      "headers": {
+        "age": "0",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-length": "131",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "etag": "\"1z4dul2h7w3n\"",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/api/channel-hash",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "icn1::icn1::6vpfv-1762299337168-92ac8b054d0a"
+      },
+      "body": "{\"memberId\":\"5b14404e-0839-4d8d-80a5-04e30124be65\",\"memberHash\":\"5ff3cd0dc8877b891d263cc38141353e78eb0b45657b33cbba22289fcec00bfa\"}"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.113Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/api/auth/token",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "accept-language": "en-US,en;q=0.9",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.195Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/api/auth/token",
+      "headers": {
+        "age": "0",
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-length": "453",
+        "content-type": "text/plain; charset=utf-8",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "etag": "\"n8fvd7gsqicl\"",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/api/auth/token",
+        "x-vercel-cache": "MISS",
+        "x-vercel-id": "icn1::icn1::fklgx-1762299337155-612bd5050ea6"
+      },
+      "body": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViMTQ0MDRlLTA4MzktNGQ4ZC04MGE1LTA0ZTMwMTI0YmU2NSIsIm5hbWUiOiLqsJXrgqjsoJBf7J6l7KeE7Zi4IiwiYWNjb3VudElkIjoxOTgwLCJjb21wYW55SWQiOiI1YjE0NDA0ZS0wODM5LTRkOGQtODBhNS0wNGUzMDEyNGJlNjUiLCJhcHBJZCI6bnVsbCwic3ViIjoiNWIxNDQwNGUtMDgzOS00ZDhkLTgwYTUtMDRlMzAxMjRiZTY1IiwiaWF0IjoxNzYyMjk5MzM3LCJleHAiOjE3NjQ4OTEzMzcsImp0aSI6IjY5YmU4N2Y2LTNhMmItNDUyNy1iMjM0LWRiNTAwODE1MzYyMSJ9.UvD-Wt6AfpyluiXcRxxOWY_B9CjWWGReki-bXqY9K8Q"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.137Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/order.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "x-middleware-prefetch": "1",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.196Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/order.json",
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/console/order",
+        "x-middleware-skip": "1",
+        "x-vercel-id": "icn1::nfb4j-1762299337179-35df7305fd37"
+      }
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.137Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/app.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "x-middleware-prefetch": "1",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.195Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/app.json",
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/console/app",
+        "x-middleware-skip": "1",
+        "x-vercel-id": "icn1::7vbrx-1762299337179-2217627f449b"
+      }
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.137Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/history.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "x-middleware-prefetch": "1",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.191Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/history.json",
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/console/history",
+        "x-middleware-skip": "1",
+        "x-vercel-id": "icn1::4m28p-1762299337179-3ad665ef14aa"
+      }
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.137Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/billing.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "x-middleware-prefetch": "1",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.353Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/billing.json",
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/console/billing",
+        "x-middleware-skip": "1",
+        "x-vercel-id": "icn1::8zcd2-1762299337179-5d43e982ccd0"
+      }
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.138Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/notice.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "x-middleware-prefetch": "1",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.192Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/notice.json",
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/console/notice",
+        "x-middleware-skip": "1",
+        "x-vercel-id": "icn1::nfb4j-1762299337179-a1cf4fe87454"
+      }
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.138Z",
+      "method": "GET",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/inquiry.json",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/console/order?date=2025-11-07",
+        "purpose": "prefetch",
+        "x-middleware-prefetch": "1",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua-mobile": "?0",
+        "x-nextjs-data": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.329Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://b2b.lunchlab.me/_next/data/6LVHnMKkIkqdRRqnSvXYg/console/inquiry.json",
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "server": "Vercel",
+        "strict-transport-security": "max-age=63072000",
+        "x-matched-path": "/console/inquiry",
+        "x-middleware-skip": "1",
+        "x-vercel-id": "icn1::8zcd2-1762299337182-a264278dc6bc"
+      }
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.524Z",
+      "method": "POST",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-EGCVMNGVV8&gtm=45je5b31v9233141528z89233135145za200zb9233135145zd9233135145&_p=1762299336954&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=724521421.1762245779&ul=en-us&sr=3360x1890&uaa=arm&uab=64&uafvl=Not_A%2520Brand%3B99.0.0.0%7CChromium%3B142.0.7444.59&uamb=0&uam=&uap=macOS&uapv=15.6.0&uaw=0&are=1&frm=0&pscdl=&_eu=AAAAAAQ&_s=1&tag_exp=101509157~103116026~103200004~103233427~104527906~104528501~104684208~104684211~104948813~105322302~115480710~115583767~115938465~115938469~116217636~116217638&sid=1762299337&sct=2&seg=0&dl=https%3A%2F%2Fb2b.lunchlab.me%2Fconsole%2Forder%3Fdate%3D2025-11-07&dt=%EB%9F%B0%EC%B9%98%EB%9E%A9%20%EC%A3%BC%EB%AC%B8&en=page_view&_ss=1&tfd=1110",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:37.748Z",
+      "status": 204,
+      "statusText": "",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-EGCVMNGVV8&gtm=45je5b31v9233141528z89233135145za200zb9233135145zd9233135145&_p=1762299336954&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=724521421.1762245779&ul=en-us&sr=3360x1890&uaa=arm&uab=64&uafvl=Not_A%2520Brand%3B99.0.0.0%7CChromium%3B142.0.7444.59&uamb=0&uam=&uap=macOS&uapv=15.6.0&uaw=0&are=1&frm=0&pscdl=&_eu=AAAAAAQ&_s=1&tag_exp=101509157~103116026~103200004~103233427~104527906~104528501~104684208~104684211~104948813~105322302~115480710~115583767~115938465~115938469~116217636~116217638&sid=1762299337&sct=2&seg=0&dl=https%3A%2F%2Fb2b.lunchlab.me%2Fconsole%2Forder%3Fdate%3D2025-11-07&dt=%EB%9F%B0%EC%B9%98%EB%9E%A9%20%EC%A3%BC%EB%AC%B8&en=page_view&_ss=1&tfd=1110",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "https://b2b.lunchlab.me",
+        "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "content-length": "0",
+        "content-security-policy-report-only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/ascnsrsggc:106:0",
+        "content-type": "text/plain",
+        "cross-origin-opener-policy-report-only": "same-origin; report-to=ascnsrsggc:106:0",
+        "cross-origin-resource-policy": "cross-origin",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+        "pragma": "no-cache",
+        "report-to": "{\"group\":\"ascnsrsggc:106:0\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/ascnsrsggc:106:0\"}],}",
+        "server": "Golfe2"
+      },
+      "body": "[Could not read response body]"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:37.827Z",
+      "method": "POST",
+      "url": "https://o249840.ingest.sentry.io/api/306179/envelope/?sentry_version=7&sentry_key=b05367f6be924bb49e15838987b99ce6&sentry_client=sentry.javascript.react%2F9.39.0",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "content-type": "text/plain;charset=UTF-8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "postData": "{\"sent_at\":\"2025-11-04T23:35:37.826Z\",\"sdk\":{\"name\":\"sentry.javascript.react\",\"version\":\"9.39.0\"}}\n{\"type\":\"session\"}\n{\"sid\":\"e8c20df4358d4943868a597d3c2e8248\",\"init\":true,\"started\":\"2025-11-04T23:35:37.826Z\",\"timestamp\":\"2025-11-04T23:35:37.826Z\",\"status\":\"ok\",\"errors\":0,\"attrs\":{\"release\":\"17.0.3\",\"environment\":\"production|App\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36\"}}"
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:38.000Z",
+      "status": 200,
+      "statusText": "",
+      "url": "https://o249840.ingest.sentry.io/api/306179/envelope/?sentry_version=7&sentry_key=b05367f6be924bb49e15838987b99ce6&sentry_client=sentry.javascript.react%2F9.39.0",
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "x-sentry-error,x-sentry-rate-limits,retry-after",
+        "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+        "content-length": "2",
+        "content-type": "application/json",
+        "cross-origin-resource-policy": "cross-origin",
+        "date": "Tue, 04 Nov 2025 23:35:37 GMT",
+        "server": "nginx",
+        "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+        "vary": "origin, access-control-request-method, access-control-request-headers",
+        "via": "1.1 google"
+      },
+      "body": "{}"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:42.528Z",
+      "method": "POST",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-EGCVMNGVV8&gtm=45je5b31v9233141528z89233135145za200zb9233135145zd9233135145&_p=1762299336954&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=724521421.1762245779&ul=en-us&sr=3360x1890&uaa=arm&uab=64&uafvl=Not_A%2520Brand%3B99.0.0.0%7CChromium%3B142.0.7444.59&uamb=0&uam=&uap=macOS&uapv=15.6.0&uaw=0&are=1&frm=0&pscdl=&_eu=AAAAAAQ&_s=2&tag_exp=101509157~103116026~103200004~103233427~104527906~104528501~104684208~104684211~104948813~105322302~115480710~115583767~115938465~115938469~116217636~116217638&sid=1762299337&sct=2&seg=0&dl=https%3A%2F%2Fb2b.lunchlab.me%2Fconsole%2Forder%3Fdate%3D2025-11-07&dt=%EB%9F%B0%EC%B9%98%EB%9E%A9%20%EC%A3%BC%EB%AC%B8&en=order_pv&tfd=6113",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:42.604Z",
+      "status": 204,
+      "statusText": "",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-EGCVMNGVV8&gtm=45je5b31v9233141528z89233135145za200zb9233135145zd9233135145&_p=1762299336954&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=724521421.1762245779&ul=en-us&sr=3360x1890&uaa=arm&uab=64&uafvl=Not_A%2520Brand%3B99.0.0.0%7CChromium%3B142.0.7444.59&uamb=0&uam=&uap=macOS&uapv=15.6.0&uaw=0&are=1&frm=0&pscdl=&_eu=AAAAAAQ&_s=2&tag_exp=101509157~103116026~103200004~103233427~104527906~104528501~104684208~104684211~104948813~105322302~115480710~115583767~115938465~115938469~116217636~116217638&sid=1762299337&sct=2&seg=0&dl=https%3A%2F%2Fb2b.lunchlab.me%2Fconsole%2Forder%3Fdate%3D2025-11-07&dt=%EB%9F%B0%EC%B9%98%EB%9E%A9%20%EC%A3%BC%EB%AC%B8&en=order_pv&tfd=6113",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "https://b2b.lunchlab.me",
+        "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "content-length": "0",
+        "content-security-policy-report-only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/ascnsrsggc:106:0",
+        "content-type": "text/plain",
+        "cross-origin-opener-policy-report-only": "same-origin; report-to=ascnsrsggc:106:0",
+        "cross-origin-resource-policy": "cross-origin",
+        "date": "Tue, 04 Nov 2025 23:35:42 GMT",
+        "expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+        "pragma": "no-cache",
+        "report-to": "{\"group\":\"ascnsrsggc:106:0\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/ascnsrsggc:106:0\"}],}",
+        "server": "Golfe2"
+      },
+      "body": "[Could not read response body]"
+    }
+  },
+  {
+    "request": {
+      "timestamp": "2025-11-04T23:35:43.073Z",
+      "method": "POST",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-EGCVMNGVV8&gtm=45je5b31v9233141528z89233135145za200zb9233135145zd9233135145&_p=1762299336954&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=724521421.1762245779&ul=en-us&sr=3360x1890&uaa=arm&uab=64&uafvl=Not_A%2520Brand%3B99.0.0.0%7CChromium%3B142.0.7444.59&uamb=0&uam=&uap=macOS&uapv=15.6.0&uaw=0&are=1&frm=0&pscdl=&_eu=AAAAAAQ&tag_exp=101509157~103116026~103200004~103233427~104527906~104528501~104684208~104684211~104948813~105322302~115480710~115583767~115938465~115938469~116217636~116217638&sid=1762299337&sct=2&seg=0&dl=https%3A%2F%2Fb2b.lunchlab.me%2Fconsole%2Forder%3Fdate%3D2025-11-07&dt=%EB%9F%B0%EC%B9%98%EB%9E%A9%20%EC%A3%BC%EB%AC%B8&_s=3&tfd=6661",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://b2b.lunchlab.me/",
+        "accept-language": "en-US,en;q=0.9",
+        "sec-ch-ua": "\"Not_A Brand\";v=\"99\", \"Chromium\";v=\"142\"",
+        "content-type": "text/plain;charset=UTF-8",
+        "sec-ch-ua-mobile": "?0",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+      },
+      "postData": "en=order_button&_et=2586\r\nen=order_application_button&_et=1"
+    },
+    "response": {
+      "timestamp": "2025-11-04T23:35:43.144Z",
+      "status": 204,
+      "statusText": "",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-EGCVMNGVV8&gtm=45je5b31v9233141528z89233135145za200zb9233135145zd9233135145&_p=1762299336954&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=724521421.1762245779&ul=en-us&sr=3360x1890&uaa=arm&uab=64&uafvl=Not_A%2520Brand%3B99.0.0.0%7CChromium%3B142.0.7444.59&uamb=0&uam=&uap=macOS&uapv=15.6.0&uaw=0&are=1&frm=0&pscdl=&_eu=AAAAAAQ&tag_exp=101509157~103116026~103200004~103233427~104527906~104528501~104684208~104684211~104948813~105322302~115480710~115583767~115938465~115938469~116217636~116217638&sid=1762299337&sct=2&seg=0&dl=https%3A%2F%2Fb2b.lunchlab.me%2Fconsole%2Forder%3Fdate%3D2025-11-07&dt=%EB%9F%B0%EC%B9%98%EB%9E%A9%20%EC%A3%BC%EB%AC%B8&_s=3&tfd=6661",
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "https://b2b.lunchlab.me",
+        "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "content-length": "0",
+        "content-security-policy-report-only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/ascnsrsggc:106:0",
+        "content-type": "text/plain",
+        "cross-origin-opener-policy-report-only": "same-origin; report-to=ascnsrsggc:106:0",
+        "cross-origin-resource-policy": "cross-origin",
+        "date": "Tue, 04 Nov 2025 23:35:43 GMT",
+        "expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+        "pragma": "no-cache",
+        "report-to": "{\"group\":\"ascnsrsggc:106:0\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/ascnsrsggc:106:0\"}],}",
+        "server": "Golfe2"
+      },
+      "body": "[Could not read response body]"
+    }
+  }
+]
