@@ -8,6 +8,7 @@ import { OrderSubmissionResult, MenuSummary } from './types';
 import { getMealDateFromOrderDate } from '../utils/time';
 
 const API_BASE_URL = 'https://api.lunchlab.me/b2b/core-service';
+const ORDER_API_BASE_URL = 'https://api.order.lunchlab.me/b2b';  // Separate base URL for order retrieval
 const B2B_BASE_URL = process.env.LUNCHLAB_BASE_URL || 'https://b2b.lunchlab.me';
 
 interface OrderItem {
@@ -151,10 +152,11 @@ async function getExistingOrder(orderDate: string, token: string): Promise<{
   try {
     const mealDate = getMealDateFromOrderDate(orderDate);
 
-    // Try to fetch existing orders for this delivery date
-    const response = await axios.get(`${API_BASE_URL}/order`, {
+    // Use correct order API endpoint: api.order.lunchlab.me
+    const response = await axios.get(`${ORDER_API_BASE_URL}/order`, {
       params: {
-        deliveryDate: mealDate,
+        date: mealDate,
+        'with[]': 'address',
       },
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -165,12 +167,12 @@ async function getExistingOrder(orderDate: string, token: string): Promise<{
     const orders = response.data?.data || [];
 
     if (orders.length > 0) {
-      const order = orders[0]; // Get the first order
-      const orderId = order.recordId || order.id;
-      console.log('📋 Found existing order via API:', {
+      const order = orders[0];
+      const orderId = order.recordId;
+      console.log('📋 Found existing order via order API:', {
         id: orderId,
         deliveryDate: order.deliveryDate,
-        items: order.items?.length || 0,
+        orderNum: order.orderNum,
       });
       return {
         orderId: orderId,
