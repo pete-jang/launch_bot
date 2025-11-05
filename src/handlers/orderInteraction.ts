@@ -33,10 +33,11 @@ export function registerOrderInteraction(): void {
  * @param orderDate 주문 날짜
  */
 async function handleOrder(body: any, client: any, menu: Menu, orderDate: string): Promise<void> {
-  try {
-    const userId = body.user.id;
-    const userName = body.user.name || body.user.username || '알 수 없음';
+  // Extract user info at function level for error handling access
+  const userId = body.user.id;
+  const userName = body.user.name || body.user.username || '알 수 없음';
 
+  try {
     console.log(`[Order Handler] Processing order: user=${userId}, menu=${menu}, date=${orderDate}`);
 
     // 채널 확인
