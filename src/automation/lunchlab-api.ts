@@ -131,15 +131,23 @@ async function getOrderPageData(orderDate: string, cookieHeader: string): Promis
   const stocks = pageData.deliverySchedule?.stocks || [];
   const productIds: { [key: string]: string } = {};
 
-  // Map internal product IDs to actual API product IDs
-  // Stock order: 가정식 (productId: 4), 프레시밀 (productId: 23)
-  if (stocks.length >= 1) {
-    const internalId = stocks[0].productId;
-    productIds['가정식'] = PRODUCT_ID_MAP[internalId] || '';
-  }
-  if (stocks.length >= 2) {
-    const internalId = stocks[1].productId;
-    productIds['프레시밀'] = PRODUCT_ID_MAP[internalId] || '';
+  if (stocks.length > 0) {
+    // Use stocks data if available
+    // Stock order: 가정식 (productId: 4), 프레시밀 (productId: 23)
+    if (stocks.length >= 1) {
+      const internalId = stocks[0].productId;
+      productIds['가정식'] = PRODUCT_ID_MAP[internalId] || '';
+    }
+    if (stocks.length >= 2) {
+      const internalId = stocks[1].productId;
+      productIds['프레시밀'] = PRODUCT_ID_MAP[internalId] || '';
+    }
+  } else {
+    // Fallback: Use direct mapping when deliverySchedule is null
+    // This happens when modifying orders or on non-orderable dates
+    console.log('⚠️  No stocks data, using direct product ID mapping');
+    productIds['가정식'] = PRODUCT_ID_MAP[4];
+    productIds['프레시밀'] = PRODUCT_ID_MAP[23];
   }
 
   // Get address ID from addresses
