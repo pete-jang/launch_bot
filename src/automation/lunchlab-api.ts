@@ -13,6 +13,7 @@ const B2B_BASE_URL = process.env.LUNCHLAB_BASE_URL || 'https://b2b.lunchlab.me';
 interface OrderItem {
   productId: string;
   quantity: number;
+  id?: number;  // Required for update requests
 }
 
 interface OrderRequest {
@@ -98,6 +99,8 @@ async function getOrderPageData(orderDate: string, cookieHeader: string): Promis
   productIds: { [key: string]: string };
   addressId: string;
   deliveryScheduleId: number;
+  existingOrderId?: string;
+  existingOrder?: any;
 }> {
 
   // Get the Next.js build ID first
@@ -154,10 +157,16 @@ async function getOrderPageData(orderDate: string, cookieHeader: string): Promis
   // Get address ID from addresses
   const addressId = pageData.addresses?.[0]?.recordId || '';
 
+  // Check for existing order
+  const existingOrder = pageData.order;
+  const existingOrderId = existingOrder?.id;
+
   return {
     productIds,
     addressId,
     deliveryScheduleId: pageData.deliverySchedule?.id,
+    existingOrderId,
+    existingOrder,
   };
 }
 
@@ -305,15 +314,22 @@ export async function updateOrder(
     const token = tokenResponse.data;
     console.log('✅ Got auth token');
 
-    // Get product IDs and address ID
-    const { productIds, addressId } = await getOrderPageData(orderDate, cookieHeader);
+    // Get product IDs, address ID, and existing order info
+    const { productIds, addressId, existingOrderId, existingOrder } = await getOrderPageData(orderDate, cookieHeader);
     console.log('✅ Got order page data');
 
-    // Build order items
+    if (!existingOrderId) {
+      throw new Error('No existing order found to update');
+    }
+
+    console.log(`📝 Found existing order ID: ${existingOrderId}`);
+
+    // Build order items with id field (required for updates)
     const items: OrderItem[] = [];
 
     if (menuSummary.가정식 > 0 && productIds.가정식) {
       items.push({
+        id: 4,  // Internal product ID for 가정식
         productId: productIds.가정식,
         quantity: menuSummary.가정식,
       });
@@ -321,6 +337,7 @@ export async function updateOrder(
 
     if (menuSummary.프레시밀 > 0 && productIds.프레시밀) {
       items.push({
+        id: 23,  // Internal product ID for 프레시밀
         productId: productIds.프레시밀,
         quantity: menuSummary.프레시밀,
       });
@@ -331,15 +348,15 @@ export async function updateOrder(
 
     const orderRequest: OrderRequest = {
       deliveryDate: mealDate,
-      addressId: addressId,
+      addressId: addressId || '',  // Use empty string if no addressId
       items: items,
     };
 
     console.log(`📤 Updating order for ${orderDate} (meal date: ${mealDate}):`, JSON.stringify(orderRequest, null, 2));
 
-    // Try PUT or PATCH request (may need to adjust endpoint)
+    // PUT request with orderId in path
     const response = await axios.put(
-      `${API_BASE_URL}/order${submissionId ? `/${submissionId}` : ''}`,
+      `${API_BASE_URL}/order/${existingOrderId}`,
       orderRequest,
       {
         headers: {
@@ -358,7 +375,7 @@ export async function updateOrder(
 
     return {
       success: true,
-      submissionId: response.data?.id || response.data?.orderId || submissionId || orderDate,
+      submissionId: response.data?.id || existingOrderId,
     };
   } catch (error: any) {
     console.error('❌ Order update failed:', error.message);
