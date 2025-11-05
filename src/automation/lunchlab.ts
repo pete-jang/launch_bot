@@ -548,14 +548,14 @@ export async function updateOrder(
       if (!modifyButton) {
         // Try finding button by text content
         const buttonFound = await page.evaluate(() => {
-          // @ts-ignore
+          // @ts-expect-error - Running in browser context
           const buttons = Array.from(document.querySelectorAll("button"));
-          // @ts-ignore
           const modifyBtn = buttons.find((btn) =>
-            btn.textContent.includes("주문 수정"),
+            // @ts-expect-error - Running in browser context
+            btn.textContent?.includes("주문 수정"),
           );
           if (modifyBtn) {
-            // @ts-ignore
+            // @ts-expect-error - Running in browser context
             modifyBtn.click();
             return true;
           }
@@ -587,11 +587,11 @@ export async function updateOrder(
 
     // Get current quantities from input fields
     const currentQuantities = await page.evaluate(() => {
-      // @ts-ignore
       const inputs = Array.from(
+        // @ts-expect-error - Running in browser context
         document.querySelectorAll('input[type="number"]'),
       );
-      // @ts-ignore
+      // @ts-expect-error - Running in browser context
       return inputs.map((input) => parseInt(input.value) || 0);
     });
 
