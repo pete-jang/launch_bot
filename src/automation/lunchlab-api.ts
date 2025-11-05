@@ -93,12 +93,61 @@ async function login(): Promise<string> {
 }
 
 /**
+ * Get existing order via History API
+ */
+async function getExistingOrderFromHistory(orderDate: string, token: string): Promise<{
+  orderId?: string;
+  order?: any;
+}> {
+  try {
+    const mealDate = getMealDateFromOrderDate(orderDate);
+
+    // Fetch order history
+    const response = await axios.get(`${API_BASE_URL}/order/history`, {
+      params: {
+        startDate: mealDate,
+        endDate: mealDate,
+      },
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    const orders = response.data?.data || [];
+
+    if (orders.length > 0) {
+      const order = orders[0];
+      const orderId = order.recordId || order.id;
+      console.log('📋 Found existing order via history API:', {
+        id: orderId,
+        deliveryDate: order.deliveryDate,
+      });
+      return {
+        orderId: orderId,
+        order: order,
+      };
+    }
+  } catch (error: any) {
+    console.log('⚠️  Could not fetch from history API:', error.message);
+  }
+
+  return {};
+}
+
+/**
  * Get existing order via API
  */
 async function getExistingOrder(orderDate: string, token: string): Promise<{
   orderId?: string;
   order?: any;
 }> {
+  // Try history API first
+  const historyResult = await getExistingOrderFromHistory(orderDate, token);
+  if (historyResult.orderId) {
+    return historyResult;
+  }
+
   try {
     const mealDate = getMealDateFromOrderDate(orderDate);
 
@@ -117,13 +166,14 @@ async function getExistingOrder(orderDate: string, token: string): Promise<{
 
     if (orders.length > 0) {
       const order = orders[0]; // Get the first order
+      const orderId = order.recordId || order.id;
       console.log('📋 Found existing order via API:', {
-        id: order.id,
+        id: orderId,
         deliveryDate: order.deliveryDate,
         items: order.items?.length || 0,
       });
       return {
-        orderId: order.id,
+        orderId: orderId,
         order: order,
       };
     }
