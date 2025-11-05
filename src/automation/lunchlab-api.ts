@@ -161,6 +161,19 @@ async function getOrderPageData(orderDate: string, cookieHeader: string): Promis
   const existingOrder = pageData.order;
   const existingOrderId = existingOrder?.id;
 
+  // Debug logging
+  if (existingOrder) {
+    console.log('📋 Found existing order:', {
+      id: existingOrderId,
+      deliveryDate: existingOrder.deliveryDate,
+      items: existingOrder.items?.length || 0,
+    });
+  } else {
+    console.log('⚠️  No existing order found in page data');
+    // Log the entire pageData structure to debug
+    console.log('Page data keys:', Object.keys(pageData));
+  }
+
   return {
     productIds,
     addressId,
