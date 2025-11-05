@@ -37,6 +37,8 @@ async function handleOrder(body: any, client: any, menu: Menu, orderDate: string
     const userId = body.user.id;
     const userName = body.user.name || body.user.username || '알 수 없음';
 
+    console.log(`[Order Handler] Processing order: user=${userId}, menu=${menu}, date=${orderDate}`);
+
     // 채널 확인
     if (!isAllowedChannel(body.channel.id)) {
       await client.chat.postEphemeral({
@@ -120,6 +122,17 @@ async function handleOrder(body: any, client: any, menu: Menu, orderDate: string
       await submitOrdersIfReady(orderDate, body.channel.id);
     }
   } catch (error) {
-    console.error('Error handling order:', error);
+    console.error('[Order Handler] Error handling order:', error);
+
+    // Notify user about the error
+    try {
+      await client.chat.postEphemeral({
+        channel: body.channel.id,
+        user: userId,
+        text: '주문 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+      });
+    } catch (notifyError) {
+      console.error('[Order Handler] Failed to notify user about error:', notifyError);
+    }
   }
 }

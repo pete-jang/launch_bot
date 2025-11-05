@@ -5,6 +5,7 @@
 
 import axios from 'axios';
 import { OrderSubmissionResult, MenuSummary } from './types';
+import { getMealDateFromOrderDate } from '../utils/time';
 
 const API_BASE_URL = 'https://api.lunchlab.me/b2b/core-service';
 const B2B_BASE_URL = process.env.LUNCHLAB_BASE_URL || 'https://b2b.lunchlab.me';
@@ -218,13 +219,16 @@ export async function submitOrder(
     }
 
     // Submit order
+    // Convert order date (주문일) to meal date (식사일/배송일)
+    const mealDate = getMealDateFromOrderDate(orderDate);
+
     const orderRequest: OrderRequest = {
-      deliveryDate: orderDate,
+      deliveryDate: mealDate,
       addressId: addressId,
       items: items,
     };
 
-    console.log('📤 Submitting order:', JSON.stringify(orderRequest, null, 2));
+    console.log(`📤 Submitting order for ${orderDate} (meal date: ${mealDate}):`, JSON.stringify(orderRequest, null, 2));
 
     const response = await axios.post(
       `${API_BASE_URL}/order`,
@@ -314,13 +318,16 @@ export async function updateOrder(
       });
     }
 
+    // Convert order date (주문일) to meal date (식사일/배송일)
+    const mealDate = getMealDateFromOrderDate(orderDate);
+
     const orderRequest: OrderRequest = {
-      deliveryDate: orderDate,
+      deliveryDate: mealDate,
       addressId: addressId,
       items: items,
     };
 
-    console.log('📤 Updating order:', JSON.stringify(orderRequest, null, 2));
+    console.log(`📤 Updating order for ${orderDate} (meal date: ${mealDate}):`, JSON.stringify(orderRequest, null, 2));
 
     // Try PUT or PATCH request (may need to adjust endpoint)
     const response = await axios.put(
