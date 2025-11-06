@@ -107,6 +107,52 @@ export function getMealDateFromOrderDate(orderDate: string): string {
 }
 
 /**
+ * 식사일을 주문일로 역변환
+ * 월요일 식사 → 전주 금요일 주문 (-3일)
+ * 화~금 식사 → 전날 주문 (-1일)
+ */
+export function getOrderDateFromMealDate(mealDate: string): string {
+  const mealMoment = moment.tz(mealDate, TIMEZONE);
+  const dayOfWeek = mealMoment.day(); // 0(일) ~ 6(토)
+
+  if (dayOfWeek === 1) {
+    // 월요일 식사 → 전주 금요일 주문
+    return formatDate(mealMoment.clone().subtract(3, "days"));
+  } else if (dayOfWeek >= 2 && dayOfWeek <= 5) {
+    // 화~금 식사 → 전날 주문
+    return formatDate(mealMoment.clone().subtract(1, "day"));
+  } else {
+    // 주말은 에러 (방어 코드)
+    throw new Error(`Invalid meal date: ${mealDate} is not a weekday`);
+  }
+}
+
+/**
+ * 현재 시점의 식사일 반환
+ * - 평일 10시~14시: 오늘이 식사일
+ * - 평일 14시 이후: 다음 평일이 식사일
+ * - 주말: 다음 월요일이 식사일
+ */
+export function getCurrentMealDate(): string {
+  const now = getCurrentKST();
+  const hour = now.hour();
+  const dayOfWeek = now.day();
+
+  // 주말이면 다음 월요일
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    return formatDate(getNextWeekday(now));
+  }
+
+  // 평일 14시 이전이면 오늘
+  if (hour < 14) {
+    return formatDate(now);
+  }
+
+  // 평일 14시 이후면 다음 평일
+  return formatDate(getNextWeekday(now));
+}
+
+/**
  * 이번 주의 시작일과 종료일 반환 (월요일 ~ 일요일)
  */
 export function getThisWeekRange(): { start: string; end: string } {
@@ -229,33 +275,35 @@ export function isPastDate(dateString: string): boolean {
 }
 
 /**
- * 특정 날짜의 주문 마감 시간이 지났는지 확인
- * @param orderDate 주문 날짜 (YYYY-MM-DD)
+ * 특정 식사일의 주문 마감 시간이 지났는지 확인
+ * @param mealDate 식사 날짜 (YYYY-MM-DD)
  */
-export function isOrderDeadlinePassed(orderDate: string): boolean {
-  if (!isValidDate(orderDate)) {
+export function isOrderDeadlinePassed(mealDate: string): boolean {
+  if (!isValidDate(mealDate)) {
     return true;
   }
 
-  // 평일이 아니면 마감
-  if (!isWeekdayDate(orderDate)) {
+  // 식사일이 평일이 아니면 마감
+  if (!isWeekdayDate(mealDate)) {
     return true;
   }
 
+  // 식사일을 주문일로 변환하여 마감 시간 확인
+  const orderDate = getOrderDateFromMealDate(mealDate);
   const now = getCurrentKST();
   const targetDate = moment.tz(orderDate, TIMEZONE);
 
-  // 과거 날짜는 마감
+  // 주문일이 과거면 마감
   if (targetDate.isBefore(now, "day")) {
     return true;
   }
 
-  // 미래 날짜는 마감되지 않음
+  // 주문일이 미래면 마감되지 않음
   if (targetDate.isAfter(now, "day")) {
     return false;
   }
 
-  // 같은 날짜면 시간 확인 (14시 이후 마감)
+  // 주문일이 오늘이면 시간 확인 (14시 이후 마감)
   return now.hour() >= 14;
 }
 

@@ -4,6 +4,8 @@ import {
   formatDate,
   getCurrentKST,
   getMealDateFromOrderDate,
+  getOrderDateFromMealDate,
+  getCurrentMealDate,
 } from "../utils/time";
 
 export type Menu = "가정식" | "프레시밀";
@@ -101,17 +103,21 @@ export async function saveOrders(data: OrdersData): Promise<void> {
 
 /**
  * 특정 날짜의 주문 데이터 가져오기
+ * @param mealDate 식사 날짜 (YYYY-MM-DD)
  */
-export async function getOrdersForDate(date: string): Promise<DayOrders> {
+export async function getOrdersForDate(mealDate: string): Promise<DayOrders> {
   try {
+    // 식사일을 주문일로 변환
+    const orderDate = getOrderDateFromMealDate(mealDate);
+
     const [orderRows] = await pool.query<RowDataPacket[]>(
       "SELECT user_id, user_name, menu_type, ordered_at FROM orders WHERE order_date = ? ORDER BY ordered_at ASC",
-      [date],
+      [orderDate],
     );
 
     const [sessionRows] = await pool.query<RowDataPacket[]>(
       "SELECT closed, message_ts, message_sent FROM order_sessions WHERE order_date = ?",
-      [date],
+      [orderDate],
     );
 
     const session = sessionRows[0];
@@ -138,21 +144,24 @@ export async function getOrdersForDate(date: string): Promise<DayOrders> {
  * 오늘의 주문 데이터 가져오기
  */
 export async function getTodayOrders(): Promise<DayOrders> {
-  const today = formatDate();
-  return getOrdersForDate(today);
+  const mealDate = getCurrentMealDate();
+  return getOrdersForDate(mealDate);
 }
 
 /**
  * 주문 추가
- * @param orderDate 주문 날짜 (기본값: 오늘)
+ * @param mealDate 식사 날짜 (기본값: 현재 식사일)
  */
 export async function addOrder(
   userId: string,
   userName: string,
   menu: Menu,
-  orderDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<boolean> {
   try {
+    // 식사일을 주문일로 변환
+    const orderDate = getOrderDateFromMealDate(mealDate);
+
     // 세션이 마감되었는지 확인
     const [sessionRows] = await pool.query<RowDataPacket[]>(
       "SELECT closed FROM order_sessions WHERE order_date = ?",
@@ -184,13 +193,16 @@ export async function addOrder(
 /**
  * 주문 마감
  */
-export async function closeOrders(date: string = formatDate()): Promise<void> {
+export async function closeOrders(
+  mealDate: string = getCurrentMealDate(),
+): Promise<void> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     await pool.query<ResultSetHeader>(
       `INSERT INTO order_sessions (order_date, closed)
        VALUES (?, TRUE)
        ON DUPLICATE KEY UPDATE closed = TRUE`,
-      [date],
+      [orderDate],
     );
   } catch (error) {
     console.error("Failed to close orders:", error);
@@ -202,15 +214,16 @@ export async function closeOrders(date: string = formatDate()): Promise<void> {
  * 주문 메시지 타임스탬프 저장
  */
 export async function saveMessageTimestamp(
-  date: string,
+  mealDate: string,
   messageTs: string,
 ): Promise<void> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     await pool.query<ResultSetHeader>(
       `INSERT INTO order_sessions (order_date, message_ts, message_sent)
        VALUES (?, ?, TRUE)
        ON DUPLICATE KEY UPDATE message_ts = VALUES(message_ts), message_sent = TRUE`,
-      [date, messageTs],
+      [orderDate, messageTs],
     );
   } catch (error) {
     console.error("Failed to save message timestamp:", error);
@@ -222,12 +235,13 @@ export async function saveMessageTimestamp(
  * 주문 메시지가 이미 전송되었는지 확인
  */
 export async function isMessageSent(
-  date: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<boolean> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     const [rows] = await pool.query<RowDataPacket[]>(
       "SELECT message_sent FROM order_sessions WHERE order_date = ?",
-      [date],
+      [orderDate],
     );
 
     return rows.length > 0 ? !!rows[0].message_sent : false;
@@ -241,12 +255,13 @@ export async function isMessageSent(
  * 메뉴별 주문 수량 집계
  */
 export async function getMenuSummary(
-  date: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<{ [key in Menu]: number }> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     const [rows] = await pool.query<RowDataPacket[]>(
       "SELECT menu_type, COUNT(*) as count FROM orders WHERE order_date = ? GROUP BY menu_type",
-      [date],
+      [orderDate],
     );
 
     const summary: { [key in Menu]: number } = {
@@ -275,12 +290,13 @@ export interface UserOrderSummary {
 }
 
 export async function getUserOrders(
-  date: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<UserOrderSummary[]> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     const [rows] = await pool.query<RowDataPacket[]>(
       "SELECT user_id, user_name, menu_type FROM orders WHERE order_date = ? ORDER BY ordered_at ASC",
-      [date],
+      [orderDate],
     );
 
     return rows.map((row) => ({
@@ -318,13 +334,17 @@ export interface PeriodOrdersSummary {
 }
 
 export async function getOrdersForPeriod(
-  startDate: string,
-  endDate: string,
+  startMealDate: string,
+  endMealDate: string,
 ): Promise<PeriodOrdersSummary> {
   try {
+    // Convert meal date range to order date range for DB query
+    const startOrderDate = getOrderDateFromMealDate(startMealDate);
+    const endOrderDate = getOrderDateFromMealDate(endMealDate);
+
     const [rows] = await pool.query<RowDataPacket[]>(
       "SELECT order_date, user_id, user_name, menu_type, ordered_at FROM orders WHERE order_date BETWEEN ? AND ? ORDER BY order_date ASC, ordered_at ASC",
-      [startDate, endDate],
+      [startOrderDate, endOrderDate],
     );
 
     const summary: PeriodOrdersSummary = {
@@ -398,11 +418,12 @@ export async function getOrdersForPeriod(
 /**
  * 특정 날짜의 주문 건수 조회
  */
-export async function getOrderCountForDate(date: string): Promise<number> {
+export async function getOrderCountForDate(mealDate: string): Promise<number> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     const [rows] = await pool.query<RowDataPacket[]>(
       "SELECT COUNT(*) as count FROM orders WHERE order_date = ?",
-      [date],
+      [orderDate],
     );
     return rows[0]?.count || 0;
   } catch (error) {
@@ -414,11 +435,12 @@ export async function getOrderCountForDate(date: string): Promise<number> {
 /**
  * 특정 날짜의 주문 삭제
  */
-export async function deleteOrdersForDate(date: string): Promise<number> {
+export async function deleteOrdersForDate(mealDate: string): Promise<number> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     const [result] = await pool.query<ResultSetHeader>(
       "DELETE FROM orders WHERE order_date = ?",
-      [date],
+      [orderDate],
     );
     return result.affectedRows;
   } catch (error) {
@@ -431,12 +453,13 @@ export async function deleteOrdersForDate(date: string): Promise<number> {
  * 주문이 Lunchlab에 제출되었는지 확인
  */
 export async function isOrderSubmitted(
-  date: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<boolean> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     const [rows] = await pool.query<RowDataPacket[]>(
       "SELECT submitted FROM order_sessions WHERE order_date = ?",
-      [date],
+      [orderDate],
     );
 
     return rows.length > 0 ? !!rows[0].submitted : false;
@@ -450,15 +473,16 @@ export async function isOrderSubmitted(
  * Lunchlab 제출 상태 저장
  */
 export async function markOrderAsSubmitted(
-  date: string,
+  mealDate: string,
   submissionId?: string,
 ): Promise<void> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     await pool.query<ResultSetHeader>(
       `INSERT INTO order_sessions (order_date, submitted, submission_id)
        VALUES (?, TRUE, ?)
        ON DUPLICATE KEY UPDATE submitted = TRUE, submission_id = VALUES(submission_id)`,
-      [date, submissionId || null],
+      [orderDate, submissionId || null],
     );
   } catch (error) {
     console.error("Failed to mark order as submitted:", error);
@@ -470,12 +494,13 @@ export async function markOrderAsSubmitted(
  * Lunchlab 제출 ID 조회
  */
 export async function getSubmissionId(
-  date: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<string | null> {
   try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
     const [rows] = await pool.query<RowDataPacket[]>(
       "SELECT submission_id FROM order_sessions WHERE order_date = ?",
-      [date],
+      [orderDate],
     );
 
     return rows.length > 0 ? rows[0].submission_id : null;

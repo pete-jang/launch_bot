@@ -12,7 +12,7 @@ import {
   markOrderAsSubmitted,
   getSubmissionId,
 } from "../storage/orders";
-import { formatDate } from "../utils/time";
+import { getCurrentMealDate } from "../utils/time";
 import { app } from "../bot";
 
 const MINIMUM_ORDER_COUNT = 3;
@@ -23,24 +23,24 @@ const RETRY_DELAY_MS = 5 * 60 * 1000; // 5 minutes
  * Check if orders meet minimum quantity and submit if ready
  */
 export async function submitOrdersIfReady(
-  orderDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
   channelId?: string,
 ): Promise<void> {
   try {
-    console.log(`Checking if orders are ready to submit for ${orderDate}...`);
+    console.log(`Checking if orders are ready to submit for ${mealDate}...`);
 
     // Check if already submitted
-    const alreadySubmitted = await isOrderSubmitted(orderDate);
+    const alreadySubmitted = await isOrderSubmitted(mealDate);
     if (alreadySubmitted) {
       console.log(
-        `Orders for ${orderDate} already submitted. Use updateSubmittedOrder() to modify.`,
+        `Orders for ${mealDate} already submitted. Use updateSubmittedOrder() to modify.`,
       );
       return;
     }
 
     // Get order count
-    const orderCount = await getOrderCountForDate(orderDate);
-    console.log(`Current order count for ${orderDate}: ${orderCount}`);
+    const orderCount = await getOrderCountForDate(mealDate);
+    console.log(`Current order count for ${mealDate}: ${orderCount}`);
 
     // Check minimum quantity
     if (orderCount < MINIMUM_ORDER_COUNT) {
@@ -56,29 +56,29 @@ export async function submitOrdersIfReady(
     }
 
     // Get menu summary for submission
-    const menuSummary = await getMenuSummary(orderDate);
-    console.log(`Menu summary for ${orderDate}:`, menuSummary);
+    const menuSummary = await getMenuSummary(mealDate);
+    console.log(`Menu summary for ${mealDate}:`, menuSummary);
 
     // Submit with retry logic
-    const result = await submitWithRetry(orderDate, menuSummary);
+    const result = await submitWithRetry(mealDate, menuSummary);
 
     if (result.success) {
       // Mark as submitted in database
-      await markOrderAsSubmitted(orderDate, result.submissionId);
-      console.log(`Successfully submitted orders for ${orderDate}`);
+      await markOrderAsSubmitted(mealDate, result.submissionId);
+      console.log(`Successfully submitted orders for ${mealDate}`);
 
       // Notify success
       if (channelId) {
-        await notifySubmissionSuccess(channelId, orderDate, menuSummary);
+        await notifySubmissionSuccess(channelId, mealDate, menuSummary);
       }
     } else {
-      console.error(`Failed to submit orders for ${orderDate}:`, result.error);
+      console.error(`Failed to submit orders for ${mealDate}:`, result.error);
 
       // Notify failure
       if (channelId) {
         await notifySubmissionFailure(
           channelId,
-          orderDate,
+          mealDate,
           result.error,
           result.screenshotPath,
         );
@@ -93,23 +93,23 @@ export async function submitOrdersIfReady(
  * Update already submitted order
  */
 export async function updateSubmittedOrder(
-  orderDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
   channelId?: string,
 ): Promise<void> {
   try {
-    console.log(`Updating submitted order for ${orderDate}...`);
+    console.log(`Updating submitted order for ${mealDate}...`);
 
     // Check if already submitted
-    const alreadySubmitted = await isOrderSubmitted(orderDate);
+    const alreadySubmitted = await isOrderSubmitted(mealDate);
     if (!alreadySubmitted) {
       console.log(
-        `Orders for ${orderDate} not yet submitted. Use submitOrdersIfReady() first.`,
+        `Orders for ${mealDate} not yet submitted. Use submitOrdersIfReady() first.`,
       );
       return;
     }
 
     // Get current order count
-    const orderCount = await getOrderCountForDate(orderDate);
+    const orderCount = await getOrderCountForDate(mealDate);
 
     // Check minimum quantity
     if (orderCount < MINIMUM_ORDER_COUNT) {
@@ -120,14 +120,14 @@ export async function updateSubmittedOrder(
     }
 
     // Get menu summary
-    const menuSummary = await getMenuSummary(orderDate);
-    const submissionId = await getSubmissionId(orderDate);
+    const menuSummary = await getMenuSummary(mealDate);
+    const submissionId = await getSubmissionId(mealDate);
 
-    console.log(`Updating order for ${orderDate}:`, menuSummary);
+    console.log(`Updating order for ${mealDate}:`, menuSummary);
 
     // Update with retry logic
     const result = await updateWithRetry(
-      orderDate,
+      mealDate,
       menuSummary,
       submissionId || undefined,
     );
@@ -135,22 +135,22 @@ export async function updateSubmittedOrder(
     if (result.success) {
       // Update submission ID if changed
       if (result.submissionId && result.submissionId !== submissionId) {
-        await markOrderAsSubmitted(orderDate, result.submissionId);
+        await markOrderAsSubmitted(mealDate, result.submissionId);
       }
-      console.log(`Successfully updated order for ${orderDate}`);
+      console.log(`Successfully updated order for ${mealDate}`);
 
       // Notify success
       if (channelId) {
-        await notifyUpdateSuccess(channelId, orderDate, menuSummary);
+        await notifyUpdateSuccess(channelId, mealDate, menuSummary);
       }
     } else {
-      console.error(`Failed to update order for ${orderDate}:`, result.error);
+      console.error(`Failed to update order for ${mealDate}:`, result.error);
 
       // Notify failure
       if (channelId) {
         await notifySubmissionFailure(
           channelId,
-          orderDate,
+          mealDate,
           result.error,
           result.screenshotPath,
         );
@@ -165,11 +165,11 @@ export async function updateSubmittedOrder(
  * Submit order with retry logic
  */
 async function submitWithRetry(
-  orderDate: string,
+  mealDate: string,
   menuSummary: { 가정식: number; 프레시밀: number },
   retryCount: number = 0,
 ): Promise<any> {
-  const result = await submitOrder(orderDate, menuSummary);
+  const result = await submitOrder(mealDate, menuSummary);
 
   if (!result.success && retryCount < MAX_RETRIES) {
     console.log(
@@ -180,7 +180,7 @@ async function submitWithRetry(
     await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
 
     // Retry
-    return submitWithRetry(orderDate, menuSummary, retryCount + 1);
+    return submitWithRetry(mealDate, menuSummary, retryCount + 1);
   }
 
   return result;
@@ -190,12 +190,12 @@ async function submitWithRetry(
  * Update order with retry logic
  */
 async function updateWithRetry(
-  orderDate: string,
+  mealDate: string,
   menuSummary: { 가정식: number; 프레시밀: number },
   submissionId?: string,
   retryCount: number = 0,
 ): Promise<any> {
-  const result = await updateOrder(orderDate, menuSummary, submissionId);
+  const result = await updateOrder(mealDate, menuSummary, submissionId);
 
   if (!result.success && retryCount < MAX_RETRIES) {
     console.log(
@@ -206,12 +206,7 @@ async function updateWithRetry(
     await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
 
     // Retry
-    return updateWithRetry(
-      orderDate,
-      menuSummary,
-      submissionId,
-      retryCount + 1,
-    );
+    return updateWithRetry(mealDate, menuSummary, submissionId, retryCount + 1);
   }
 
   return result;
@@ -239,13 +234,13 @@ async function notifyMinimumNotMet(
  */
 async function notifySubmissionSuccess(
   channelId: string,
-  orderDate: string,
+  mealDate: string,
   menuSummary: { 가정식: number; 프레시밀: number },
 ): Promise<void> {
   try {
     await app.client.chat.postMessage({
       channel: channelId,
-      text: `✅ Lunchlab 주문이 자동으로 제출되었습니다!\n날짜: ${orderDate}\n🍚 가정식: ${menuSummary.가정식}개\n🥗 프레시밀: ${menuSummary.프레시밀}개`,
+      text: `✅ Lunchlab 주문이 자동으로 제출되었습니다!\n식사일: ${mealDate}\n🍚 가정식: ${menuSummary.가정식}개\n🥗 프레시밀: ${menuSummary.프레시밀}개`,
     });
   } catch (error) {
     console.error("Failed to notify submission success:", error);
@@ -257,13 +252,13 @@ async function notifySubmissionSuccess(
  */
 async function notifyUpdateSuccess(
   channelId: string,
-  orderDate: string,
+  mealDate: string,
   menuSummary: { 가정식: number; 프레시밀: number },
 ): Promise<void> {
   try {
     await app.client.chat.postMessage({
       channel: channelId,
-      text: `🔄 Lunchlab 주문이 수정되었습니다.\n날짜: ${orderDate}\n🍚 가정식: ${menuSummary.가정식}개\n🥗 프레시밀: ${menuSummary.프레시밀}개`,
+      text: `🔄 Lunchlab 주문이 수정되었습니다.\n식사일: ${mealDate}\n🍚 가정식: ${menuSummary.가정식}개\n🥗 프레시밀: ${menuSummary.프레시밀}개`,
     });
   } catch (error) {
     console.error("Failed to notify update success:", error);
@@ -275,7 +270,7 @@ async function notifyUpdateSuccess(
  */
 async function notifySubmissionFailure(
   channelId: string,
-  orderDate: string,
+  mealDate: string,
   error?: string,
   screenshotPath?: string,
 ): Promise<void> {
@@ -283,7 +278,7 @@ async function notifySubmissionFailure(
     const adminIds = process.env.SLACK_ADMIN_IDS?.split(",") || [];
     const adminMentions = adminIds.map((id) => `<@${id.trim()}>`).join(" ");
 
-    let text = `❌ Lunchlab 주문 제출에 실패했습니다. ${adminMentions}\n날짜: ${orderDate}`;
+    let text = `❌ Lunchlab 주문 제출에 실패했습니다. ${adminMentions}\n식사일: ${mealDate}`;
 
     if (error) {
       text += `\n에러: ${error}`;

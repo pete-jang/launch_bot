@@ -5,7 +5,6 @@
 
 import axios from "axios";
 import { OrderSubmissionResult, MenuSummary } from "./types";
-import { getMealDateFromOrderDate } from "../utils/time";
 
 const API_BASE_URL = "https://api.lunchlab.me/b2b/core-service";
 const ORDER_API_BASE_URL = "https://api.order.lunchlab.me/b2b"; // Separate base URL for order retrieval
@@ -101,15 +100,13 @@ async function login(): Promise<string> {
  * Get existing order via History API
  */
 async function getExistingOrderFromHistory(
-  orderDate: string,
+  mealDate: string,
   token: string,
 ): Promise<{
   orderId?: string;
   order?: any;
 }> {
   try {
-    const mealDate = getMealDateFromOrderDate(orderDate);
-
     // Fetch order history
     const response = await axios.get(`${API_BASE_URL}/order/history`, {
       params: {
@@ -147,21 +144,19 @@ async function getExistingOrderFromHistory(
  * Get existing order via API
  */
 async function getExistingOrder(
-  orderDate: string,
+  mealDate: string,
   token: string,
 ): Promise<{
   orderId?: string;
   order?: any;
 }> {
   // Try history API first
-  const historyResult = await getExistingOrderFromHistory(orderDate, token);
+  const historyResult = await getExistingOrderFromHistory(mealDate, token);
   if (historyResult.orderId) {
     return historyResult;
   }
 
   try {
-    const mealDate = getMealDateFromOrderDate(orderDate);
-
     // Use correct order API endpoint: api.order.lunchlab.me
     const response = await axios.get(`${ORDER_API_BASE_URL}/order`, {
       params: {
@@ -200,7 +195,7 @@ async function getExistingOrder(
  * Get order page data to extract product IDs and address ID
  */
 async function getOrderPageData(
-  orderDate: string,
+  mealDate: string,
   cookieHeader: string,
   token?: string,
 ): Promise<{
@@ -210,9 +205,8 @@ async function getOrderPageData(
   existingOrderId?: string;
   existingOrder?: any;
 }> {
-  // IMPORTANT: Use meal date (not order date) to fetch page data
+  // Use meal date (delivery date) to fetch page data
   // This ensures we get existing order information
-  const mealDate = getMealDateFromOrderDate(orderDate);
 
   // Get the Next.js build ID first
   const htmlResponse = await axios.get(
@@ -302,7 +296,7 @@ async function getOrderPageData(
 
   // If still not found and token is provided, try API
   if (!existingOrderId && token) {
-    const existing = await getExistingOrder(orderDate, token);
+    const existing = await getExistingOrder(mealDate, token);
     existingOrderId = existing.orderId;
     existingOrder = existing.order;
   }
@@ -328,11 +322,14 @@ async function getOrderPageData(
  * Submit order via API
  */
 export async function submitOrder(
-  orderDate: string,
+  mealDate: string,
   menuSummary: MenuSummary,
 ): Promise<OrderSubmissionResult> {
   try {
-    console.log(`Submitting order for ${orderDate} via API:`, menuSummary);
+    console.log(
+      `Submitting order for meal date ${mealDate} via API:`,
+      menuSummary,
+    );
 
     // Login and get session cookies
     const cookieHeader = await login();
@@ -356,7 +353,7 @@ export async function submitOrder(
 
     // Get product IDs and address ID
     const { productIds, addressId } = await getOrderPageData(
-      orderDate,
+      mealDate,
       cookieHeader,
     );
     console.log("✅ Got order page data:", { productIds, addressId });
@@ -385,10 +382,7 @@ export async function submitOrder(
       };
     }
 
-    // Submit order
-    // Convert order date (주문일) to meal date (식사일/배송일)
-    const mealDate = getMealDateFromOrderDate(orderDate);
-
+    // Submit order with meal date (delivery date)
     const orderRequest: OrderRequest = {
       deliveryDate: mealDate,
       addressId: addressId,
@@ -396,7 +390,7 @@ export async function submitOrder(
     };
 
     console.log(
-      `📤 Submitting order for ${orderDate} (meal date: ${mealDate}):`,
+      `📤 Submitting order for meal date ${mealDate}:`,
       JSON.stringify(orderRequest, null, 2),
     );
 
@@ -417,7 +411,7 @@ export async function submitOrder(
 
     return {
       success: true,
-      submissionId: response.data?.id || response.data?.orderId || orderDate,
+      submissionId: response.data?.id || response.data?.orderId || mealDate,
     };
   } catch (error: any) {
     console.error("❌ Order submission failed:", error.message);
@@ -434,7 +428,7 @@ export async function submitOrder(
         console.log(
           "🔄 Order already exists, automatically switching to update...",
         );
-        return await updateOrder(orderDate, menuSummary);
+        return await updateOrder(mealDate, menuSummary);
       }
     }
 
@@ -449,13 +443,16 @@ export async function submitOrder(
  * Update existing order via API
  */
 export async function updateOrder(
-  orderDate: string,
+  mealDate: string,
   menuSummary: MenuSummary,
   submissionId?: string,
   isRetry: boolean = false,
 ): Promise<OrderSubmissionResult> {
   try {
-    console.log(`Updating order for ${orderDate} via API:`, menuSummary);
+    console.log(
+      `Updating order for meal date ${mealDate} via API:`,
+      menuSummary,
+    );
 
     // Login and get session cookies
     const cookieHeader = await login();
@@ -479,7 +476,7 @@ export async function updateOrder(
 
     // Get product IDs, address ID, and existing order info (pass token to fetch existing orders)
     const { productIds, addressId, existingOrderId, existingOrder } =
-      await getOrderPageData(orderDate, cookieHeader, token);
+      await getOrderPageData(mealDate, cookieHeader, token);
     console.log("✅ Got order page data");
 
     if (!existingOrderId) {
@@ -507,9 +504,6 @@ export async function updateOrder(
       });
     }
 
-    // Convert order date (주문일) to meal date (식사일/배송일)
-    const mealDate = getMealDateFromOrderDate(orderDate);
-
     const orderRequest: OrderRequest = {
       deliveryDate: mealDate,
       addressId: addressId || "", // Use empty string if no addressId
@@ -517,7 +511,7 @@ export async function updateOrder(
     };
 
     console.log(
-      `📤 Updating order for ${orderDate} (meal date: ${mealDate}):`,
+      `📤 Updating order for meal date ${mealDate}:`,
       JSON.stringify(orderRequest, null, 2),
     );
 

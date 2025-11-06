@@ -1,6 +1,6 @@
 import { app, getChannelId } from "../bot";
 import {
-  formatDate,
+  getCurrentMealDate,
   formatDateTime,
   formatDateWithDay,
   getCurrentKST,
@@ -13,14 +13,14 @@ import {
 
 /**
  * 주문 메시지 블록 생성
- * @param targetDate 주문 대상 날짜 (기본값: 오늘)
+ * @param mealDate 식사 날짜 (기본값: 현재 식사일)
  */
 async function createOrderBlocks(
-  targetDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<any[]> {
   const now = getCurrentKST();
-  const orders = await getOrdersForDate(targetDate);
-  const menuSummary = await getMenuSummary(targetDate);
+  const orders = await getOrdersForDate(mealDate);
+  const menuSummary = await getMenuSummary(mealDate);
 
   const blocks: any[] = [
     {
@@ -35,7 +35,7 @@ async function createOrderBlocks(
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*${formatDateWithDay(targetDate)}*\n2시까지 주문해주세요.`,
+        text: `*${formatDateWithDay(mealDate)}*\n2시까지 주문해주세요.`,
       },
     },
     {
@@ -67,7 +67,7 @@ async function createOrderBlocks(
           },
           style: "primary",
           value: "가정식",
-          action_id: `order_가정식_${targetDate}`,
+          action_id: `order_가정식_${mealDate}`,
         },
         {
           type: "button",
@@ -78,7 +78,7 @@ async function createOrderBlocks(
           },
           style: "primary",
           value: "프레시밀",
-          action_id: `order_프레시밀_${targetDate}`,
+          action_id: `order_프레시밀_${mealDate}`,
         },
       ],
     },
@@ -123,27 +123,27 @@ async function createOrderBlocks(
 
 /**
  * 주문 메시지 전송
- * @param targetDate 주문 대상 날짜 (기본값: 오늘)
+ * @param mealDate 주문 대상 날짜 (기본값: 오늘)
  */
 export async function sendOrderMessage(
-  targetDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<void> {
   try {
     const channelId = getChannelId();
-    const blocks = await createOrderBlocks(targetDate);
+    const blocks = await createOrderBlocks(mealDate);
 
     const result = await app.client.chat.postMessage({
       channel: channelId,
-      text: `🍱 ${formatDateWithDay(targetDate)} 점심 주문이 시작되었습니다!`,
+      text: `🍱 ${formatDateWithDay(mealDate)} 점심 주문이 시작되었습니다!`,
       blocks: blocks,
     });
 
     // 메시지 타임스탬프 저장 (나중에 업데이트하기 위해)
     if (result.ts) {
-      await saveMessageTimestamp(targetDate, result.ts);
+      await saveMessageTimestamp(mealDate, result.ts);
     }
 
-    console.log(`[${formatDateTime()}] Order message sent for ${targetDate}`);
+    console.log(`[${formatDateTime()}] Order message sent for ${mealDate}`);
   } catch (error) {
     console.error("Failed to send order message:", error);
     throw error;
@@ -153,26 +153,24 @@ export async function sendOrderMessage(
 /**
  * 주문 메시지 업데이트
  * @param messageTs 메시지 타임스탬프
- * @param targetDate 주문 대상 날짜 (기본값: 오늘)
+ * @param mealDate 주문 대상 날짜 (기본값: 오늘)
  */
 export async function updateOrderMessage(
   messageTs: string,
-  targetDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<void> {
   try {
     const channelId = getChannelId();
-    const blocks = await createOrderBlocks(targetDate);
+    const blocks = await createOrderBlocks(mealDate);
 
     await app.client.chat.update({
       channel: channelId,
       ts: messageTs,
-      text: `🍱 ${formatDateWithDay(targetDate)} 점심 주문`,
+      text: `🍱 ${formatDateWithDay(mealDate)} 점심 주문`,
       blocks: blocks,
     });
 
-    console.log(
-      `[${formatDateTime()}] Order message updated for ${targetDate}`,
-    );
+    console.log(`[${formatDateTime()}] Order message updated for ${mealDate}`);
   } catch (error) {
     console.error("Failed to update order message:", error);
     // 업데이트 실패는 치명적이지 않으므로 에러를 던지지 않음
@@ -181,15 +179,15 @@ export async function updateOrderMessage(
 
 /**
  * 주문 마감 메시지 업데이트
- * @param targetDate 주문 대상 날짜 (기본값: 오늘)
+ * @param mealDate 주문 대상 날짜 (기본값: 오늘)
  */
 export async function sendClosedMessage(
-  targetDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<void> {
   try {
     const channelId = getChannelId();
-    const orders = await getOrdersForDate(targetDate);
-    const menuSummary = await getMenuSummary(targetDate);
+    const orders = await getOrdersForDate(mealDate);
+    const menuSummary = await getMenuSummary(mealDate);
 
     const blocks: any[] = [
       {
@@ -204,7 +202,7 @@ export async function sendClosedMessage(
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `*${formatDateWithDay(targetDate)}*`,
+          text: `*${formatDateWithDay(mealDate)}*`,
         },
       },
       {
@@ -245,7 +243,7 @@ export async function sendClosedMessage(
     }
 
     console.log(
-      `[${formatDateTime()}] Orders closed message sent for ${targetDate}`,
+      `[${formatDateTime()}] Orders closed message sent for ${mealDate}`,
     );
   } catch (error) {
     console.error("Failed to send closed message:", error);
