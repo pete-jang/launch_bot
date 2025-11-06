@@ -113,6 +113,66 @@ export async function initializeDatabase(): Promise<void> {
       }
     }
 
+    // meal_date 컬럼 추가 (마이그레이션)
+    try {
+      // Check if meal_date column exists in orders table
+      const [ordersColumns] = await connection.query(
+        `SHOW COLUMNS FROM orders WHERE Field = 'meal_date'`,
+      );
+
+      if (!Array.isArray(ordersColumns) || ordersColumns.length === 0) {
+        console.log("🔄 Adding meal_date column to orders table...");
+        await connection.query(`
+          ALTER TABLE orders
+          ADD COLUMN meal_date DATE NULL COMMENT '식사 날짜 (KST)' AFTER order_date,
+          ADD INDEX idx_meal_date (meal_date)
+        `);
+
+        // Backfill meal_date for existing records
+        await connection.query(`
+          UPDATE orders
+          SET meal_date = DATE_ADD(order_date, INTERVAL
+            CASE DAYOFWEEK(order_date)
+              WHEN 6 THEN 3  -- Friday: +3 days to Monday
+              ELSE 1         -- Mon-Thu: +1 day
+            END DAY)
+          WHERE meal_date IS NULL
+        `);
+        console.log("✅ meal_date column added and backfilled in orders table");
+      }
+
+      // Check if meal_date column exists in order_sessions table
+      const [sessionsColumns] = await connection.query(
+        `SHOW COLUMNS FROM order_sessions WHERE Field = 'meal_date'`,
+      );
+
+      if (!Array.isArray(sessionsColumns) || sessionsColumns.length === 0) {
+        console.log("🔄 Adding meal_date column to order_sessions table...");
+        await connection.query(`
+          ALTER TABLE order_sessions
+          ADD COLUMN meal_date DATE NULL COMMENT '식사 날짜 (KST)' AFTER order_date,
+          ADD INDEX idx_meal_date_session (meal_date)
+        `);
+
+        // Backfill meal_date for existing records
+        await connection.query(`
+          UPDATE order_sessions
+          SET meal_date = DATE_ADD(order_date, INTERVAL
+            CASE DAYOFWEEK(order_date)
+              WHEN 6 THEN 3  -- Friday: +3 days to Monday
+              ELSE 1         -- Mon-Thu: +1 day
+            END DAY)
+          WHERE meal_date IS NULL
+        `);
+        console.log(
+          "✅ meal_date column added and backfilled in order_sessions table",
+        );
+      }
+    } catch (error) {
+      console.error("❌ Failed to add meal_date columns:", error);
+      // Don't throw - this is a non-critical migration
+    }
+
     console.log("✅ Database tables initialized");
   } catch (error) {
     console.error("❌ Failed to initialize database:", error);

@@ -175,12 +175,12 @@ export async function addOrder(
     // MySQL DATETIME 형식으로 변환
     const timestamp = getCurrentKST().format("YYYY-MM-DD HH:mm:ss");
 
-    // INSERT ... ON DUPLICATE KEY UPDATE를 사용하여 주문 추가/업데이트
+    // INSERT ... ON DUPLICATE KEY UPDATE를 사용하여 주문 추가/업데이트 (dual-write: both dates)
     await pool.query<ResultSetHeader>(
-      `INSERT INTO orders (order_date, user_id, user_name, menu_type, ordered_at)
-       VALUES (?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE user_name = VALUES(user_name), menu_type = VALUES(menu_type), ordered_at = VALUES(ordered_at)`,
-      [orderDate, userId, userName, menu, timestamp],
+      `INSERT INTO orders (order_date, meal_date, user_id, user_name, menu_type, ordered_at)
+       VALUES (?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE user_name = VALUES(user_name), menu_type = VALUES(menu_type), ordered_at = VALUES(ordered_at), meal_date = VALUES(meal_date)`,
+      [orderDate, mealDate, userId, userName, menu, timestamp],
     );
 
     return true;
@@ -199,10 +199,10 @@ export async function closeOrders(
   try {
     const orderDate = getOrderDateFromMealDate(mealDate);
     await pool.query<ResultSetHeader>(
-      `INSERT INTO order_sessions (order_date, closed)
-       VALUES (?, TRUE)
-       ON DUPLICATE KEY UPDATE closed = TRUE`,
-      [orderDate],
+      `INSERT INTO order_sessions (order_date, meal_date, closed)
+       VALUES (?, ?, TRUE)
+       ON DUPLICATE KEY UPDATE closed = TRUE, meal_date = VALUES(meal_date)`,
+      [orderDate, mealDate],
     );
   } catch (error) {
     console.error("Failed to close orders:", error);
@@ -220,10 +220,10 @@ export async function saveMessageTimestamp(
   try {
     const orderDate = getOrderDateFromMealDate(mealDate);
     await pool.query<ResultSetHeader>(
-      `INSERT INTO order_sessions (order_date, message_ts, message_sent)
-       VALUES (?, ?, TRUE)
-       ON DUPLICATE KEY UPDATE message_ts = VALUES(message_ts), message_sent = TRUE`,
-      [orderDate, messageTs],
+      `INSERT INTO order_sessions (order_date, meal_date, message_ts, message_sent)
+       VALUES (?, ?, ?, TRUE)
+       ON DUPLICATE KEY UPDATE message_ts = VALUES(message_ts), message_sent = TRUE, meal_date = VALUES(meal_date)`,
+      [orderDate, mealDate, messageTs],
     );
   } catch (error) {
     console.error("Failed to save message timestamp:", error);
@@ -479,10 +479,10 @@ export async function markOrderAsSubmitted(
   try {
     const orderDate = getOrderDateFromMealDate(mealDate);
     await pool.query<ResultSetHeader>(
-      `INSERT INTO order_sessions (order_date, submitted, submission_id)
-       VALUES (?, TRUE, ?)
-       ON DUPLICATE KEY UPDATE submitted = TRUE, submission_id = VALUES(submission_id)`,
-      [orderDate, submissionId || null],
+      `INSERT INTO order_sessions (order_date, meal_date, submitted, submission_id)
+       VALUES (?, ?, TRUE, ?)
+       ON DUPLICATE KEY UPDATE submitted = TRUE, submission_id = VALUES(submission_id), meal_date = VALUES(meal_date)`,
+      [orderDate, mealDate, submissionId || null],
     );
   } catch (error) {
     console.error("Failed to mark order as submitted:", error);
