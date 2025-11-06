@@ -509,3 +509,52 @@ export async function getSubmissionId(
     return null;
   }
 }
+
+/**
+ * 주문 취소 (사용자의 주문 삭제)
+ */
+export async function cancelOrder(
+  userId: string,
+  mealDate: string = getCurrentMealDate(),
+): Promise<boolean> {
+  try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
+
+    // Check if session is closed
+    const [sessionRows] = await pool.query<RowDataPacket[]>(
+      "SELECT closed FROM order_sessions WHERE order_date = ?",
+      [orderDate],
+    );
+
+    if (sessionRows.length > 0 && sessionRows[0].closed) {
+      return false; // Already closed
+    }
+
+    // Delete the order
+    const [result] = await pool.query<ResultSetHeader>(
+      "DELETE FROM orders WHERE order_date = ? AND user_id = ?",
+      [orderDate, userId],
+    );
+
+    return result.affectedRows > 0;
+  } catch (error) {
+    console.error("Failed to cancel order:", error);
+    return false;
+  }
+}
+
+/**
+ * Mark order as not submitted (when cancelled on Lunchlab)
+ */
+export async function markOrderAsNotSubmitted(mealDate: string): Promise<void> {
+  try {
+    const orderDate = getOrderDateFromMealDate(mealDate);
+    await pool.query<ResultSetHeader>(
+      `UPDATE order_sessions SET submitted = FALSE, submission_id = NULL WHERE order_date = ?`,
+      [orderDate],
+    );
+  } catch (error) {
+    console.error("Failed to mark order as not submitted:", error);
+    throw error;
+  }
+}

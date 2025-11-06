@@ -4,13 +4,14 @@
  */
 
 // Use API client instead of Puppeteer automation
-import { submitOrder, updateOrder } from "./lunchlab-api";
+import { submitOrder, updateOrder, cancelOrder } from "./lunchlab-api";
 import {
   getMenuSummary,
   getOrderCountForDate,
   isOrderSubmitted,
   markOrderAsSubmitted,
   getSubmissionId,
+  markOrderAsNotSubmitted,
 } from "../storage/orders";
 import { getCurrentMealDate } from "../utils/time";
 import { app } from "../bot";
@@ -294,5 +295,119 @@ async function notifySubmissionFailure(
     });
   } catch (error) {
     console.error("Failed to notify submission failure:", error);
+  }
+}
+
+/**
+ * Cancel Lunchlab order when count falls below minimum
+ */
+export async function cancelSubmittedOrder(
+  mealDate: string = getCurrentMealDate(),
+  channelId?: string,
+): Promise<void> {
+  try {
+    console.log(`Cancelling submitted order for ${mealDate}...`);
+
+    const alreadySubmitted = await isOrderSubmitted(mealDate);
+    if (!alreadySubmitted) {
+      console.log(
+        `Orders for ${mealDate} not yet submitted. Nothing to cancel.`,
+      );
+      return;
+    }
+
+    const submissionId = await getSubmissionId(mealDate);
+
+    // Cancel on Lunchlab
+    const result = await cancelWithRetry(mealDate, submissionId || undefined);
+
+    if (result.success) {
+      // Mark as not submitted in database
+      await markOrderAsNotSubmitted(mealDate);
+      console.log(`Successfully cancelled order for ${mealDate}`);
+
+      // Notify success
+      if (channelId) {
+        await notifyCancellationSuccess(channelId, mealDate);
+      }
+    } else {
+      console.error(`Failed to cancel order for ${mealDate}:`, result.error);
+
+      // Notify failure
+      if (channelId) {
+        await notifyCancellationFailure(channelId, mealDate, result.error);
+      }
+    }
+  } catch (error) {
+    console.error("Error in cancelSubmittedOrder:", error);
+  }
+}
+
+/**
+ * Cancel order with retry logic
+ */
+async function cancelWithRetry(
+  mealDate: string,
+  submissionId?: string,
+  retryCount: number = 0,
+): Promise<any> {
+  const result = await cancelOrder(mealDate, submissionId);
+
+  if (!result.success && retryCount < MAX_RETRIES) {
+    console.log(
+      `Cancellation failed (attempt ${retryCount + 1}/${MAX_RETRIES}). Retrying in ${RETRY_DELAY_MS / 1000}s...`,
+    );
+
+    // Wait before retry
+    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+
+    // Retry
+    return cancelWithRetry(mealDate, submissionId, retryCount + 1);
+  }
+
+  return result;
+}
+
+/**
+ * Notify cancellation success
+ */
+async function notifyCancellationSuccess(
+  channelId: string,
+  mealDate: string,
+): Promise<void> {
+  try {
+    await app.client.chat.postMessage({
+      channel: channelId,
+      text: `✅ Lunchlab 주문이 취소되었습니다.\n식사일: ${mealDate}`,
+    });
+  } catch (error) {
+    console.error("Failed to notify cancellation success:", error);
+  }
+}
+
+/**
+ * Notify cancellation failure
+ */
+async function notifyCancellationFailure(
+  channelId: string,
+  mealDate: string,
+  error?: string,
+): Promise<void> {
+  try {
+    const adminIds = process.env.SLACK_ADMIN_IDS?.split(",") || [];
+    const adminMentions = adminIds.map((id) => `<@${id.trim()}>`).join(" ");
+
+    let text = `❌ Lunchlab 주문 취소에 실패했습니다. ${adminMentions}\n식사일: ${mealDate}`;
+
+    if (error) {
+      text += `\n에러: ${error}`;
+    }
+
+    await app.client.chat.postMessage({
+      channel: channelId,
+      text,
+    });
+  } catch (error) {
+    console.error("Failed to notify cancellation failure:", error);
   }
 }

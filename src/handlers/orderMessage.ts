@@ -80,6 +80,17 @@ async function createOrderBlocks(
           value: "프레시밀",
           action_id: `order_프레시밀_${mealDate}`,
         },
+        {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "❌ 주문 취소",
+            emoji: true,
+          },
+          style: "danger",
+          value: "cancel",
+          action_id: `cancel_order_${mealDate}`,
+        },
       ],
     },
     {

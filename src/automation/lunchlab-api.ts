@@ -553,3 +553,83 @@ export async function updateOrder(
     };
   }
 }
+
+/**
+ * Cancel existing order via API
+ */
+export async function cancelOrder(
+  mealDate: string,
+  submissionId?: string,
+): Promise<OrderSubmissionResult> {
+  try {
+    console.log(`Cancelling order for meal date ${mealDate} via API`);
+
+    // Login and get session cookies
+    const cookieHeader = await login();
+
+    // Get JWT token
+    const tokenResponse = await axios.get(`${B2B_BASE_URL}/api/auth/token`, {
+      headers: {
+        Cookie: cookieHeader,
+        Accept: "*/*",
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      },
+    });
+
+    if (typeof tokenResponse.data !== "string") {
+      throw new Error("Invalid token response");
+    }
+
+    const token = tokenResponse.data;
+    console.log("✅ Got auth token");
+
+    // Get existing order ID
+    const { existingOrderId } = await getOrderPageData(
+      mealDate,
+      cookieHeader,
+      token,
+    );
+
+    if (!existingOrderId) {
+      throw new Error("No existing order found to cancel");
+    }
+
+    console.log(`🗑️  Cancelling order ID: ${existingOrderId}`);
+
+    // DELETE request
+    const response = await axios.delete(
+      `${API_BASE_URL}/order/${existingOrderId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json, text/plain, */*",
+          Origin: B2B_BASE_URL,
+          Referer: `${B2B_BASE_URL}/`,
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        },
+      },
+    );
+
+    console.log("✅ Order cancelled successfully");
+    console.log("Response:", response.data);
+
+    return {
+      success: true,
+      submissionId: existingOrderId,
+    };
+  } catch (error: any) {
+    console.error("❌ Order cancellation failed:", error.message);
+
+    if (error.response) {
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
+    }
+
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || "Unknown error",
+    };
+  }
+}
