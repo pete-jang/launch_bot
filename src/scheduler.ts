@@ -4,11 +4,11 @@ import { closeOrders, isMessageSent } from "./storage/orders";
 import { isTodayWeekday, formatDateTime, formatDate } from "./utils/time";
 
 /**
- * 주문 메시지 전송 작업 (매일 12시)
+ * 주문 메시지 전송 작업 (매일 10시)
  */
 function scheduleOrderMessage(): void {
-  // 매일 12시 (평일만)
-  schedule.scheduleJob("0 12 * * 1-5", async () => {
+  // 매일 10시 (평일만)
+  schedule.scheduleJob("0 10 * * 1-5", async () => {
     try {
       if (!isTodayWeekday()) {
         console.log(
@@ -32,7 +32,7 @@ function scheduleOrderMessage(): void {
     }
   });
 
-  console.log("📅 Scheduled: Daily order message at 12:00 PM (Mon-Fri)");
+  console.log("📅 Scheduled: Daily order message at 10:00 AM (Mon-Fri)");
 }
 
 /**
