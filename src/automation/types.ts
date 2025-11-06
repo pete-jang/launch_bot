@@ -17,5 +17,5 @@ export interface OrderSubmissionResult {
 export interface SubmissionStatus {
   submitted: boolean;
   submissionId?: string;
-  mealDate: string;
+  orderDate: string;
 }

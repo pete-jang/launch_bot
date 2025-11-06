@@ -34,22 +34,22 @@ export function registerOrderInteraction(): void {
       }
 
       const menu = match[1] as Menu;
-      const mealDate = match[2];
+      const orderDate = match[2];
 
-      await handleOrder(body, client, menu, mealDate);
+      await handleOrder(body, client, menu, orderDate);
     },
   );
 }
 
 /**
  * 주문 처리 로직
- * @param mealDate 식사 날짜
+ * @param orderDate 주문 날짜
  */
 async function handleOrder(
   body: any,
   client: any,
   menu: Menu,
-  mealDate: string,
+  orderDate: string,
 ): Promise<void> {
   // Extract user info at function level for error handling access
   const userId = body.user.id;
@@ -57,7 +57,7 @@ async function handleOrder(
 
   try {
     console.log(
-      `[Order Handler] Processing order: user=${userId}, menu=${menu}, date=${mealDate}`,
+      `[Order Handler] Processing order: user=${userId}, menu=${menu}, date=${orderDate}`,
     );
 
     // 채널 확인
@@ -71,7 +71,7 @@ async function handleOrder(
     }
 
     // 해당 날짜의 주문 마감 확인
-    if (isOrderDeadlinePassed(mealDate)) {
+    if (isOrderDeadlinePassed(orderDate)) {
       await client.chat.postEphemeral({
         channel: body.channel.id,
         user: userId,
@@ -80,7 +80,7 @@ async function handleOrder(
       return;
     }
 
-    const orders = await getOrdersForDate(mealDate);
+    const orders = await getOrdersForDate(orderDate);
 
     // 이미 마감된 경우
     if (orders.closed) {
@@ -98,7 +98,7 @@ async function handleOrder(
     );
 
     // 주문 추가
-    const success = await addOrder(userId, userName, menu, mealDate);
+    const success = await addOrder(userId, userName, menu, orderDate);
 
     if (!success) {
       await client.chat.postEphemeral({
@@ -127,24 +127,24 @@ async function handleOrder(
 
     // 주문 메시지 업데이트 (현황 반영)
     if (body.message?.ts) {
-      await updateOrderMessage(body.message.ts, mealDate);
+      await updateOrderMessage(body.message.ts, orderDate);
     }
 
     console.log(
-      `Order received: ${userName} (${userId}) ordered ${menu} for ${mealDate}`,
+      `Order received: ${userName} (${userId}) ordered ${menu} for ${orderDate}`,
     );
 
     // 자동 제출 로직: 주문 3개 이상 시 자동으로 Lunchlab에 제출
-    const alreadySubmitted = await isOrderSubmitted(mealDate);
+    const alreadySubmitted = await isOrderSubmitted(orderDate);
 
     if (alreadySubmitted) {
       // 이미 제출된 경우, 수정 요청
-      console.log(`Order already submitted for ${mealDate}, updating...`);
-      await updateSubmittedOrder(mealDate, body.channel.id);
+      console.log(`Order already submitted for ${orderDate}, updating...`);
+      await updateSubmittedOrder(orderDate, body.channel.id);
     } else {
       // 아직 제출되지 않은 경우, 최소 수량 확인 후 제출
-      console.log(`Checking if ready to submit for ${mealDate}...`);
-      await submitOrdersIfReady(mealDate, body.channel.id);
+      console.log(`Checking if ready to submit for ${orderDate}...`);
+      await submitOrdersIfReady(orderDate, body.channel.id);
     }
   } catch (error) {
     console.error("[Order Handler] Error handling order:", error);
