@@ -4,6 +4,7 @@ import {
   formatDateTime,
   formatDateWithDay,
   getCurrentKST,
+  getCurrentMealDate,
 } from "../utils/time";
 import {
   saveMessageTimestamp,
@@ -13,11 +14,12 @@ import {
 
 /**
  * 주문 메시지 블록 생성
- * @param targetDate 주문 대상 날짜 (기본값: 오늘)
+ * @param mealDate 식사 날짜 (기본값: 현재 식사일)
  */
 async function createOrderBlocks(
-  targetDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<any[]> {
+  const targetDate = mealDate;
   const now = getCurrentKST();
   const orders = await getOrdersForDate(targetDate);
   const menuSummary = await getMenuSummary(targetDate);
@@ -123,11 +125,12 @@ async function createOrderBlocks(
 
 /**
  * 주문 메시지 전송
- * @param targetDate 주문 대상 날짜 (기본값: 오늘)
+ * @param mealDate 식사 날짜 (기본값: 현재 식사일)
  */
 export async function sendOrderMessage(
-  targetDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<void> {
+  const targetDate = mealDate;
   try {
     const channelId = getChannelId();
     const blocks = await createOrderBlocks(targetDate);
@@ -153,12 +156,13 @@ export async function sendOrderMessage(
 /**
  * 주문 메시지 업데이트
  * @param messageTs 메시지 타임스탬프
- * @param targetDate 주문 대상 날짜 (기본값: 오늘)
+ * @param mealDate 식사 날짜 (기본값: 현재 식사일)
  */
 export async function updateOrderMessage(
   messageTs: string,
-  targetDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<void> {
+  const targetDate = mealDate;
   try {
     const channelId = getChannelId();
     const blocks = await createOrderBlocks(targetDate);
@@ -181,11 +185,12 @@ export async function updateOrderMessage(
 
 /**
  * 주문 마감 메시지 업데이트
- * @param targetDate 주문 대상 날짜 (기본값: 오늘)
+ * @param mealDate 식사 날짜 (기본값: 현재 식사일)
  */
 export async function sendClosedMessage(
-  targetDate: string = formatDate(),
+  mealDate: string = getCurrentMealDate(),
 ): Promise<void> {
+  const targetDate = mealDate;
   try {
     const channelId = getChannelId();
     const orders = await getOrdersForDate(targetDate);

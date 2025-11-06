@@ -122,8 +122,8 @@ export function getThisWeekRange(): { start: string; end: string } {
 
 /**
  * 이번 달의 시작일과 종료일 반환 (식사일 기준)
- * 이번 달에 먹을 식사들의 주문일 범위를 반환
- * 예: 11월 식사(11/3~11/28) → 주문일(10/31~11/27)
+ * 이번 달에 먹을 식사들의 날짜 범위를 반환
+ * 예: 11월 식사(11/3~11/28)
  */
 export function getThisMonthRange(): { start: string; end: string } {
   const now = getCurrentKST();
@@ -142,32 +142,9 @@ export function getThisMonthRange(): { start: string; end: string } {
     lastMealDate.subtract(1, "day");
   }
 
-  // 식사일의 전날이 주문일
-  // 첫 식사일의 주문일 계산
-  const firstOrderDate = firstMealDate.clone();
-  const firstDayOfWeek = firstMealDate.day();
-  if (firstDayOfWeek === 1) {
-    // 월요일 식사 → 전주 금요일 주문 (-3일)
-    firstOrderDate.subtract(3, "days");
-  } else {
-    // 화~금 식사 → 전날 주문 (-1일)
-    firstOrderDate.subtract(1, "day");
-  }
-
-  // 마지막 식사일의 주문일 계산
-  const lastOrderDate = lastMealDate.clone();
-  const lastDayOfWeek = lastMealDate.day();
-  if (lastDayOfWeek === 1) {
-    // 월요일 식사 → 전주 금요일 주문 (-3일)
-    lastOrderDate.subtract(3, "days");
-  } else {
-    // 화~금 식사 → 전날 주문 (-1일)
-    lastOrderDate.subtract(1, "day");
-  }
-
   return {
-    start: formatDate(firstOrderDate),
-    end: formatDate(lastOrderDate),
+    start: formatDate(firstMealDate),
+    end: formatDate(lastMealDate),
   };
 }
 
@@ -230,20 +207,20 @@ export function isPastDate(dateString: string): boolean {
 
 /**
  * 특정 날짜의 주문 마감 시간이 지났는지 확인
- * @param orderDate 주문 날짜 (YYYY-MM-DD)
+ * @param mealDate 식사 날짜 (YYYY-MM-DD)
  */
-export function isOrderDeadlinePassed(orderDate: string): boolean {
-  if (!isValidDate(orderDate)) {
+export function isOrderDeadlinePassed(mealDate: string): boolean {
+  if (!isValidDate(mealDate)) {
     return true;
   }
 
   // 평일이 아니면 마감
-  if (!isWeekdayDate(orderDate)) {
+  if (!isWeekdayDate(mealDate)) {
     return true;
   }
 
   const now = getCurrentKST();
-  const targetDate = moment.tz(orderDate, TIMEZONE);
+  const targetDate = moment.tz(mealDate, TIMEZONE);
 
   // 과거 날짜는 마감
   if (targetDate.isBefore(now, "day")) {
@@ -257,6 +234,31 @@ export function isOrderDeadlinePassed(orderDate: string): boolean {
 
   // 같은 날짜면 시간 확인 (14시 이후 마감)
   return now.hour() >= 14;
+}
+
+/**
+ * 현재 시점의 식사일 반환
+ * - 평일 10시~14시: 오늘이 식사일
+ * - 평일 14시 이후: 다음 평일이 식사일
+ * - 주말: 다음 월요일이 식사일
+ */
+export function getCurrentMealDate(): string {
+  const now = getCurrentKST();
+  const hour = now.hour();
+  const dayOfWeek = now.day();
+
+  // 주말이면 다음 월요일
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    return formatDate(getNextWeekday(now));
+  }
+
+  // 평일 14시 이전이면 오늘
+  if (hour < 14) {
+    return formatDate(now);
+  }
+
+  // 평일 14시 이후면 다음 평일
+  return formatDate(getNextWeekday(now));
 }
 
 /**

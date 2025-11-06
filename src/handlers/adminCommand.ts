@@ -34,11 +34,11 @@ export function registerAdminCommand(): void {
         return;
       }
 
-      const orderDate = args[0];
+      const mealDate = args[0];
       const status = args[1];
 
       // 날짜 형식 검증 (YYYY-MM-DD)
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(orderDate)) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(mealDate)) {
         await respond({
           text: "❌ 날짜 형식이 올바르지 않습니다. (예: 2025-11-05)",
           response_type: "ephemeral",
@@ -48,12 +48,12 @@ export function registerAdminCommand(): void {
 
       if (status === "submitted") {
         // 현재 상태 확인
-        const currentStatus = await isOrderSubmitted(orderDate);
+        const currentStatus = await isOrderSubmitted(mealDate);
 
-        await markOrderAsSubmitted(orderDate, orderDate);
+        await markOrderAsSubmitted(mealDate, mealDate);
 
         await respond({
-          text: `✅ ${orderDate}의 주문 상태를 submitted로 변경했습니다.\n이전 상태: ${currentStatus ? "submitted" : "not submitted"}`,
+          text: `✅ ${mealDate}의 주문 상태를 submitted로 변경했습니다.\n이전 상태: ${currentStatus ? "submitted" : "not submitted"}`,
           response_type: "ephemeral",
         });
       } else {
@@ -88,10 +88,10 @@ export function registerAdminCommand(): void {
 
     try {
       const args = command.text.trim().split(/\s+/);
-      const orderDate = args[0] || formatDate();
+      const mealDate = args[0] || formatDate();
 
       // 날짜 형식 검증
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(orderDate)) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(mealDate)) {
         await respond({
           text: "❌ 날짜 형식이 올바르지 않습니다. (예: 2025-11-05)",
           response_type: "ephemeral",
@@ -99,10 +99,10 @@ export function registerAdminCommand(): void {
         return;
       }
 
-      const isSubmitted = await isOrderSubmitted(orderDate);
+      const isSubmitted = await isOrderSubmitted(mealDate);
 
       await respond({
-        text: `📊 ${orderDate} 주문 상태\nLunchlab 제출 여부: ${isSubmitted ? "✅ 제출됨" : "❌ 미제출"}`,
+        text: `📊 ${mealDate} 주문 상태\nLunchlab 제출 여부: ${isSubmitted ? "✅ 제출됨" : "❌ 미제출"}`,
         response_type: "ephemeral",
       });
     } catch (error) {
