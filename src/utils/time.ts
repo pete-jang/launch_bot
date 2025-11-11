@@ -153,12 +153,12 @@ export function getCurrentMealDate(): string {
 }
 
 /**
- * 이번 주의 시작일과 종료일 반환 (월요일 ~ 일요일)
+ * 이번 주의 시작일과 종료일 반환 (월요일 ~ 금요일, 평일만)
  */
 export function getThisWeekRange(): { start: string; end: string } {
   const now = getCurrentKST();
-  const startOfWeek = now.clone().startOf("week"); // 일요일
-  const endOfWeek = now.clone().endOf("week"); // 토요일
+  const startOfWeek = now.clone().startOf("isoWeek"); // 월요일
+  const endOfWeek = now.clone().startOf("isoWeek").add(4, "days"); // 금요일
 
   return {
     start: formatDate(startOfWeek),
